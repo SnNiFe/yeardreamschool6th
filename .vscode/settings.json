@@ -1,0 +1,17 @@
+{
+    "sqltools.useNodeRuntime": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "chinook",
+            "database": "${workspaceFolder:yeardreamschool6th}/datasets/chinook.db"
+        },
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "book",
+            "database": "${workspaceFolder:yeardreamschool6th}/datasets/book.db"
+        }
+    ]
+}
