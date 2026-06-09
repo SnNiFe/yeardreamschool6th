@@ -191,10 +191,10 @@ INNER JOIN tracks
 -- 고객 이름과 담당 직원 이름을 보여주세요.
 -- (customers.SupportRepId = employees.EmployeeId)
 SELECT 
-    customers.LastName AS customer_las
-    , customers.FirstName AS customer_fir
-    , employees.LastName AS employee_las
-    , employees.FirstName AS employee_fir
+    customers.FirstName AS customer_name
+    --, customers.LastName AS customer_las
+    , employees.FirstName AS support_rep
+    --, employees.LastName AS employee_las
 FROM customers
 INNER JOIN employees
     ON customers.SupportRepId = employees.EmployeeId
@@ -207,23 +207,43 @@ SELECT
     tracks.Name AS track_name
     , albums.Title AS album_title
     , artists.Name AS artists_name
-FROM albums
-INNER JOIN tracks
+FROM tracks
+INNER JOIN albums
     ON albums.AlbumId = tracks.AlbumId
 INNER JOIN artists
     ON albums.ArtistId = artists.ArtistId
 LIMIT 20
 ;
 
+
 /* ========================  05. LEFT JOIN  ========================= */
 
 -- 문제 17.
 -- 모든 아티스트(artists)를 기준으로 앨범(albums)을 연결하세요.
 -- 앨범이 하나도 없는 아티스트도 포함해 출력해야 합니다.
+SELECT artists.Name, albums.Title
+FROM artists
+LEFT JOIN albums
+    ON artists.ArtistId = albums.ArtistId
+;
 
 -- 문제 18.
 -- 17번을 활용해 '앨범이 하나도 없는' 아티스트만 골라 이름을 보여주세요.
 -- 힌트: LEFT JOIN 후 오른쪽 테이블 컬럼이 NULL인 행을 거릅니다.
+SELECT artists.Name, albums.AlbumId
+FROM artists
+LEFT JOIN albums
+    ON artists.ArtistId = albums.ArtistId
+WHERE albums.AlbumId IS NULL
+;
+
+-- 반대로 앨범이 NULL 이 아닌 경우
+SELECT artists.Name, albums.AlbumId
+FROM artists
+LEFT JOIN albums
+    ON artists.ArtistId = albums.ArtistId
+WHERE albums.AlbumId IS NOT NULL
+;
 
 
 /* ========================  06. RIGHT JOIN  ======================== */
@@ -232,7 +252,17 @@ LIMIT 20
 -- 모든 앨범(albums)을 기준으로 아티스트(artists)를 연결하세요.
 -- (RIGHT JOIN 사용: 오른쪽 테이블 albums의 모든 행을 출력)
 -- 주의: RIGHT JOIN은 SQLite 3.39.0 이상에서만 동작합니다.
+SELECT albums.Title, artists.Name
+FROM artists
+RIGHT JOIN albums
+    ON artists.ArtistId = albums.ArtistId
+;
 
 -- 문제 20.
 -- 19번과 '같은 결과'를 RIGHT JOIN 없이 LEFT JOIN으로 작성해 보세요.
 -- (구버전 SQLite 호환: 테이블 순서를 뒤집어 왼쪽을 albums로 둡니다.)
+SELECT albums.Title, artists.Name
+FROM albums
+LEFT JOIN artists
+    ON artists.ArtistId = albums.ArtistId
+;
