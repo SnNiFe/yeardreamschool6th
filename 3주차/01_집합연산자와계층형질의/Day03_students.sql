@@ -308,9 +308,35 @@ LIMIT 5
 
 -- (a) 직원 이름 + 고객 이름 통합 목록
 -- ref: https://www.sqlitetutorial.net/sqlite-union/
+SELECT FirstName, LastName, 'Employee' AS Type
+FROM employees
+
+UNION
+
+SELECT FirstName, LastName, 'customer'
+FROM customers
+
+ORDER BY FirstName, LastName
+;
 
 
 -- (b) 구매 이력 유무별 고객 분류
+-- 테이블명: customers, invoices
+-- 출력 : CustomerId, FirstName + LastName 고객명 AS 고객명, 
+--                      'Has Invoice' / 'No Invoice'
+-- HINT : WHERE 절 Customer ID 활용해서 서브쿼리
+SELECT CustomerId, FirstName || ' ' || LastName AS 고객명, 'Has Invoice' AS stat
+FROM customers
+WHERE CustomerId IN (SELECT DISTINCT CustomerId FROM invoices)
+
+UNION
+
+SELECT CustomerId, FirstName || ' ' || LastName AS 고객명, 'No Invoice'
+FROM customers
+WHERE CustomerId NOT IN (SELECT DISTINCT CustomerId FROM invoices)
+;
+
+
 
 
 -- ──────────────────────────────────────────────────────────
@@ -318,9 +344,38 @@ LIMIT 5
 -- ──────────────────────────────────────────────────────────
 
 -- (a) 연도별 매출 + 전체 합계 리포트 (소계 패턴)
+SELECT 
+    strftime('%Y', InvoiceDate) AS 연도
+    , ROUND(SUM(Total), 2) AS 매출합계
+FROM invoices
+GROUP BY 연도
+
+UNION ALL
+
+SELECT '------전체합계'
+    , ROUND(SUM(Total), 1)
+FROM invoices
+;
 
 
 -- (b) 장르별 트랙 수 + 전체 합계
+-- 테이블명 : genres, tracks
+-- LEFT JOIN
+SELECT 
+    g.Name              AS 장르명
+    , COUNT(t.TrackId)  AS 트랙수
+FROM genres g
+LEFT JOIN tracks t
+    ON t.GenreId = g.GenreId
+GROUP BY g.Name
+
+UNION ALL
+
+SELECT '------전체합계'
+    , COUNT(*)
+FROM tracks
+;
+
 
 
 -- ──────────────────────────────────────────────────────────
@@ -329,9 +384,41 @@ LIMIT 5
 
 -- (a) 청구서가 있는 고객 (INTERSECT 방식)
 -- ref: https://www.sqlitetutorial.net/sqlite-intersect/
+-- 현재 문제점.. customers 59명, invoices 59명 모두 구매를 했음
+-- 차집합을 하거나 할 때, 차이점이 존재하지 않는다.
 
 
 -- (b) 2009년과 2010년 모두 구매한 고객 ID
+-- 2009년에 구매한 고객 id
+-- 테이블 : invoices
+SELECT CustomerId
+FROM invoices
+WHERE strftime('%Y', InvoiceDate) = '2009'
+
+INTERSECT
+
+SELECT CustomerId
+FROM invoices
+WHERE strftime('%Y', InvoiceDate) = '2010'
+;
+
+-- 고객 이름 궁금함, 고객 id FirstName, LastName
+SELECT c.CustomerId, c.FirstName, c.LastName
+FROM customers c
+INNER JOIN (
+SELECT CustomerId
+FROM invoices
+WHERE strftime('%Y', InvoiceDate) = '2009'
+
+INTERSECT
+
+SELECT CustomerId
+FROM invoices
+WHERE strftime('%Y', InvoiceDate) = '2010'
+) AS y
+ON c.CustomerId = y.CustomerId
+;
+
 
 
 -- ──────────────────────────────────────────────────────────
@@ -343,6 +430,33 @@ LIMIT 5
 
 
 -- (b) 2009년 구매 고객 중 2010년에 구매 안 한 고객
+SELECT CustomerId
+FROM invoices
+WHERE strftime('%Y', InvoiceDate) = '2009'
+
+EXCEPT
+
+SELECT CustomerId
+FROM invoices
+WHERE strftime('%Y', InvoiceDate) = '2010'
+;
+
+--
+SELECT c.CustomerId, c.FirstName || ' ' || c.LastName AS Name, c.Email
+FROM customers c
+INNER JOIN (
+SELECT CustomerId
+FROM invoices
+WHERE strftime('%Y', InvoiceDate) = '2009'
+
+EXCEPT
+
+SELECT CustomerId
+FROM invoices
+WHERE strftime('%Y', InvoiceDate) = '2010'
+) AS y
+ON c.CustomerId = y.CustomerId
+;
 
 
 -- (c) 플레이리스트에 없는 트랙 (미포함 트랙)
@@ -353,13 +467,34 @@ LIMIT 5
 -- ============================================================
 
 -- ──────────────────────────────────────────────────────────
--- 4-1. 집계 + 서브쿼리 + UNION ALL
+-- 4-1. 집계 + (서브쿼리)INNER JOIN + UNION ALL
 --      장르별 매출 통계 리포트 (합계 행 포함)
 -- ──────────────────────────────────────────────────────────
+-- 테이블명 : invoice_items, tracks, genres
+-- 집합연산자 : UNION ALL
+
+SELECT 
+    g.Name                                      AS 장르
+    , COUNT(DISTINCT ii.InvoiceId)              AS 청구서수
+    , SUM(ii.Quantity)                          AS 판매수량
+    , ROUND(SUM(ii.InvoiceId * ii.Quantity), 2) AS 총매출
+FROM invoice_items ii
+INNER JOIN tracks t ON ii.TrackId = t.TrackId
+INNER JOIN genres g ON t.GenreId = g.GenreId
+GROUP BY g.Name
+
+UNION ALL
+
+SELECT '------전체합계'
+    , COUNT(DISTINCT InvoiceId)
+    , SUM(Quantity)
+    , ROUND(SUM(InvoiceId * Quantity), 2)
+FROM invoice_items
+;
 
 
 -- ──────────────────────────────────────────────────────────
--- 4-2. 서브쿼리 + EXCEPT
+-- XXX 4-2. 서브쿼리 + EXCEPT
 --      판매 실적이 있는 트랙 중 현재 플레이리스트에 없는 트랙
 -- ──────────────────────────────────────────────────────────
 -- 확인 1: 판매된 트랙 수
@@ -375,10 +510,13 @@ LIMIT 5
 -- 4-3. 집계 + HAVING + EXISTS 조합
 --      앨범이 2개 이상이면서 총 트랙이 30개 이상인 아티스트
 -- ──────────────────────────────────────────────────────────
+-- join, where, exists...
+
+
 
 
 -- ──────────────────────────────────────────────────────────
--- 4-4. 인라인 뷰 + UNION ALL - 월별 매출 + 분기 소계
+-- XXX 4-4. 인라인 뷰 + UNION ALL - 월별 매출 + 분기 소계
 -- ──────────────────────────────────────────────────────────
 
 
@@ -394,23 +532,128 @@ LIMIT 5
 -- ──────────────────────────────────────────────────────────
 -- 5-1. 기본 계층형 질의 - 보고 체계 전체 조회
 -- ──────────────────────────────────────────────────────────
--- Anchor: 최상위 직원 (Root)
--- Recursive: 직속 부하 반복 탐색
+WITH RECURSIVE emp_hierarchy(
+    EmployeeId, FirstName, LastName, Title, ReportsTo, lvl
+) AS (
+    -- Anchor: 최상위 직원 (Root)
+    SELECT EmployeeId, FirstName, LastName, Title, ReportsTo,
+           0 AS lvl
+    FROM employees
+    WHERE ReportsTo IS NULL
+
+    UNION ALL
+
+    -- Recursive: 직속 부하 반복 탐색
+    SELECT e.EmployeeId, e.FirstName, e.LastName,
+           e.Title, e.ReportsTo, h.lvl + 1
+    FROM employees e
+    JOIN emp_hierarchy h ON e.ReportsTo = h.EmployeeId
+)
+SELECT lvl                                                AS 계층레벨,
+       EmployeeId                                         AS 직원ID,
+       SUBSTR('                ', 1, lvl * 4)
+           || FirstName || ' ' || LastName                AS 직원명,
+       Title                                              AS 직책,
+       ReportsTo                                          AS 관리자ID
+FROM emp_hierarchy
+ORDER BY lvl, EmployeeId;
 
 
 -- ──────────────────────────────────────────────────────────
 -- 5-2. 계층형 + 집계 - 직원별 담당 고객 수 포함 조회
 -- ──────────────────────────────────────────────────────────
+WITH RECURSIVE emp_hier(
+    EmployeeId, FirstName, LastName, Title, ReportsTo, lvl
+) AS (
+    SELECT EmployeeId, FirstName, LastName, Title, ReportsTo, 0 AS lvl
+    FROM employees
+    WHERE ReportsTo IS NULL
+
+    UNION ALL
+
+    SELECT e.EmployeeId, e.FirstName, e.LastName,
+           e.Title, e.ReportsTo, h.lvl + 1
+    FROM employees e
+    JOIN emp_hier h ON e.ReportsTo = h.EmployeeId
+)
+SELECT h.lvl        AS 계층레벨,
+       h.EmployeeId AS 직원ID,
+       SUBSTR('                ', 1, h.lvl * 4)
+           || h.FirstName || ' ' || h.LastName AS 직원명,
+       h.Title      AS 직책,
+       COUNT(c.CustomerId)                     AS 담당고객수,
+       ROUND(SUM(i.Total), 2)                  AS 담당매출합계
+FROM emp_hier h
+LEFT JOIN customers c ON h.EmployeeId = c.SupportRepId
+LEFT JOIN invoices  i ON c.CustomerId  = i.CustomerId
+GROUP BY h.EmployeeId, h.lvl, h.FirstName, h.LastName, h.Title
+ORDER BY h.lvl, h.EmployeeId;
 
 
 -- ──────────────────────────────────────────────────────────
 -- 5-3. 경로(PATH) + 리프(Leaf) 노드 판별
 -- ──────────────────────────────────────────────────────────
+WITH RECURSIVE emp_path(
+    EmployeeId, FirstName, LastName, Title, ReportsTo, lvl, path
+) AS (
+    SELECT EmployeeId, FirstName, LastName, Title, ReportsTo,
+           0,
+           FirstName || ' ' || LastName AS path
+    FROM employees
+    WHERE ReportsTo IS NULL
+
+    UNION ALL
+
+    SELECT e.EmployeeId, e.FirstName, e.LastName,
+           e.Title, e.ReportsTo, p.lvl + 1,
+           p.path || ' > ' || e.FirstName || ' ' || e.LastName
+    FROM employees e
+    JOIN emp_path p ON e.ReportsTo = p.EmployeeId
+)
+SELECT lvl        AS 계층레벨,
+       EmployeeId AS 직원ID,
+       path       AS 조직경로,
+       Title      AS 직책,
+       CASE
+           WHEN EmployeeId NOT IN (
+               SELECT ReportsTo
+               FROM employees
+               WHERE ReportsTo IS NOT NULL
+           ) THEN 'Leaf'
+           ELSE 'Branch'
+       END AS 노드유형
+FROM emp_path
+ORDER BY path;
 
 
 -- ──────────────────────────────────────────────────────────
 -- 5-4. 계층형 + UNION ALL - 레벨별 인원 + 전체 합계
 -- ──────────────────────────────────────────────────────────
+WITH RECURSIVE emp_cte(
+    EmployeeId, FirstName, LastName, Title, ReportsTo, lvl
+) AS (
+    SELECT EmployeeId, FirstName, LastName, Title, ReportsTo, 0
+    FROM employees
+    WHERE ReportsTo IS NULL
+
+    UNION ALL
+
+    SELECT e.EmployeeId, e.FirstName, e.LastName,
+           e.Title, e.ReportsTo, c.lvl + 1
+    FROM employees e
+    JOIN emp_cte c ON e.ReportsTo = c.EmployeeId
+)
+SELECT 'Level ' || CAST(lvl AS TEXT) AS 계층레벨,
+       COUNT(*)                      AS 직원수
+FROM emp_cte
+GROUP BY lvl
+
+UNION ALL
+
+SELECT '── 합계', COUNT(*)
+FROM emp_cte
+
+ORDER BY 계층레벨;
 
 
 -- ============================================================

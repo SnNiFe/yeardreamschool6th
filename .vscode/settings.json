@@ -12,6 +12,12 @@
             "driver": "SQLite",
             "name": "book",
             "database": "${workspaceFolder:yeardreamschool6th}/datasets/book.db"
+        },
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "sample",
+            "database": "${workspaceFolder:yeardreamschool6th}/datasets/sample.db"
         }
     ]
 }
