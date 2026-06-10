@@ -64,6 +64,10 @@
 -- (d) DISTINCT - 중복 제거 후 COUNT
 --     실제 청구서가 발생한 고유 고객 수
 
+SELECT COUNT(DISTINCT CustomerId) AS 실제구매고객수
+FROM invoices;
+
+
 
 -- ──────────────────────────────────────────────────────────
 -- 1-2. SUM() - 합계
@@ -73,6 +77,12 @@
 -- ref: https://www.sqlitetutorial.net/sqlite-aggregate-functions/
 
 -- (b) 연도별 총 매출
+SELECT 
+    strftime('%Y', InvoiceDate) AS 연도
+    , ROUND(SUM(Total), 1)      AS 연매출
+FROM invoices
+GROUP BY 연도
+;
 
 -- (c) 장르별 총 트랙 용량 (MB)
 
@@ -108,11 +118,26 @@
 
 -- (a) 앨범 ID = 1 의 트랙 이름 목록 (쉼표 구분)
 -- ref: https://www.sqlitetutorial.net/sqlite-aggregate-functions/
+SELECT GROUP_CONCAT(Name) AS 트랙목록
+FROM tracks
+WHERE AlbumId = 1
+;
 
 -- (b) 구분자를 ' / ' 로 변경
+SELECT GROUP_CONCAT(Name, ' / ') AS 트랙목록
+FROM tracks
+WHERE AlbumId = 1
+;
 
 -- (c) 장르별 미디어 타입 종류 나열
-
+SELECT 
+    g.Name                          AS 장르
+    , GROUP_CONCAT(DISTINCT m.Name) AS 미디어타입목록
+FROM tracks t
+INNER JOIN genres g ON t.GenreId = g.GenreId
+INNER JOIN media_types m ON t.MediaTypeId = m.MediaTypeId
+GROUP BY g.Name
+;
 
 -- ──────────────────────────────────────────────────────────
 -- 1-6. HAVING - 집계 결과 필터링
@@ -151,6 +176,19 @@
 -- (b) 가장 짧은 트랙 정보 조회
 
 -- (c) 평균 청구 금액보다 높은 청구서 목록
+-- 테이블 invoices
+-- 메인쿼리 : InvoiceId, CustomerId, 청구금액
+SELECT InvoiceId, CustomerId, Total AS 청구금액 FROM invoices;
+
+-- 서브쿼리 : 평균 청구 금액
+SELECT AVG(Total) FROM invoices;
+
+--메인쿼리 + 서브쿼리
+SELECT InvoiceId, CustomerId, Total AS 청구금액
+FROM invoices
+WHERE Total > (SELECT AVG(Total) FROM invoices)
+ORDER BY Total DESC
+;
 
 -- (d) IN 서브쿼리 - Rock 장르 트랙 조회
 
@@ -163,11 +201,38 @@
 -- ──────────────────────────────────────────────────────────
 
 -- (a) 고객별 총 매출 TOP 5
+SELECT *
+FROM (인라인 뷰)
+JOIN customers ON
+ORDER BY 
+LIMIT 5
+;
+
+-- 총매출 구하기
+-- 구체적으로 고객id, 고객이름, 총매출
+
+SELECT 
+    sub.CustomerId
+    , c.FirstName || ' ' || c.LastName AS 고객명
+    , sub.총매출
+    FROM (
+    SELECT CustomerId, SUM(Total) AS 총매출
+    FROM invoices
+    GROUP BY CustomerId
+) AS sub
+INNER JOIN customers c ON sub.CustomerId = c.CustomerId
+ORDER BY 3 DESC
+LIMIT 5
+;
+
 
 -- (b) 앨범별 트랙 수 평균보다 많은 앨범 조회
 
 -- (c) 용량이 10MB 미만인 앨범 조회
 -- ref: sqlitetutorial.net 서브쿼리 예제 패턴
+
+-- 메인쿼리 : 앨범 조회 => AlbumId, Title
+
 
 
 -- ──────────────────────────────────────────────────────────
