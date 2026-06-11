@@ -103,54 +103,40 @@ ORDER BY c.customerNumber ASC
 -- 테이블: customers, orders
 -- ============================================================
 -- [메인 쿼리] 미국 또는 프랑스 국적 고객 중 2004년에 주문한 적이 있는 고객들의 정보를 조회
+
+-- 메인쿼리 : customerNumber, customerName, country, city, orderCount
+SELECT customerNumber, customerName, country, city, orderCount
+FROM (
+-- 서브쿼리 
+---- 서브쿼리 1 - 미국 고객 중 2004년에 주문한 고객
 SELECT 
-FROM (
-    -- [서브쿼리1] 미국 고객 중 2004년에 주문한 고객
-    SELECT 
-           (
-               -- [서브쿼리1-1] 해당 고객의 2004년 주문 개수
-               SELECT COUNT(*) FROM orders o WHERE o.customerNumber
-           ) AS orderCount
-    
+    c.customerNumber
+    , c.customerName
+    , c.country
+    , c.city
+    , COUNT(*) AS orderCount
+    --(SELECT COUNT(*) FROM orders o WHERE o.customerNumber = c.customerNumber AND strftime('%Y', o.orderDate) = '2004') AS orderCount
+FROM customers c
+INNER JOIN orders o ON c.customerNumber = o.customerNumber
+WHERE c.country = 'USA'
+    AND strftime('%Y', o.orderDate) = '2004'
+GROUP BY c.customerNumber
 
-    UNION
-
-    -- [서브쿼리2] 프랑스 고객 중 2004년에 주문한 고객
-    SELECT 
-           (
-               -- [서브쿼리2-1] 해당 고객의 2004년 주문 개수
-               
-           ) AS orderCount
-    
+UNION
+---- 서브쿼리 2 - 프랑스 고객 중 2004년에 주문한 고객
+SELECT 
+    c.customerNumber
+    , c.customerName
+    , c.country
+    , c.city
+    , COUNT(*) AS orderCount
+    --(SELECT COUNT(*) FROM orders o WHERE o.customerNumber = c.customerNumber AND strftime('%Y', o.orderDate) = '2004') AS orderCount
+FROM customers c
+INNER JOIN orders o ON c.customerNumber = o.customerNumber
+WHERE c.country = 'France'
+    AND strftime('%Y', o.orderDate) = '2004'
+GROUP BY c.customerNumber
 )
-ORDER BY 
-
-
----답
-
-FROM (
-    -- 미국 고객 중 2004년에 주문한 고객
-    SELECT c.customerNumber,
-           c.customerName,
-           c.country,
-           c.city,
-           (SELECT COUNT(*) FROM orders o WHERE o.customerNumber = c.customerNumber AND strftime('%Y', o.orderDate) = '2004') AS orderCount
-    FROM customers c
-    JOIN orders o ON c.customerNumber = o.customerNumber
-    WHERE c.country = 'USA'
-      AND strftime('%Y', o.orderDate) = '2004'
-    GROUP BY c.customerNumber
-    UNION
-    -- 프랑스 고객 중 2004년에 주문한 고객
-    SELECT c.customerNumber,
-           c.customerName,
-           c.country,
-           c.city,
-           (SELECT COUNT(*) FROM orders o WHERE o.customerNumber = c.customerNumber AND strftime('%Y', o.orderDate) = '2004') AS orderCount
-    FROM customers c
-    JOIN orders o ON c.customerNumber = o.customerNumber
-    WHERE c.country = 'France'
-      AND strftime('%Y', o.orderDate) = '2004'
-    GROUP BY c.customerNumber
-)
-ORDER BY country, customerNumber;
+ORDER BY country, customerNumber
+;
+-- 분할하고 합치기
