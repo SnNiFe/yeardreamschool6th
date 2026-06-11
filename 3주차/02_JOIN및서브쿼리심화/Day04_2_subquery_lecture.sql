@@ -46,26 +46,50 @@
 SELECT Title AS AlbumTitle
 FROM albums
 WHERE ArtistId = (
-   SELECT ArtistId 
-   FROM artists 
-   WHERE Name = 'AC/DC'
-) 
-;
+    SELECT ArtistId
+    FROM artists
+    WHERE Name = 'AC/DC'
+)
+ORDER BY Title;
 
 
 -- 문제 2. [비연관 - 집계 값 제공]
 -- 전체 트랙의 평균 단가(UnitPrice)를 서브쿼리로 구하여,
 -- 평균 단가보다 비싼 트랙의 이름과 단가를 조회하세요.
+SELECT Name, UnitPrice
+FROM tracks
+WHERE UnitPrice > (
+    SELECT AVG(UnitPrice)
+    FROM tracks
+)
+ORDER BY UnitPrice DESC;
 
 
 -- 문제 3. [비연관 - 최솟값/최댓값 제공]
 -- 재생시간(Milliseconds)이 가장 긴 트랙과
 -- 동일한 앨범에 속한 모든 트랙의 이름과 재생시간을 조회하세요.
+SELECT Name, Milliseconds
+FROM tracks
+WHERE AlbumId = (
+    SELECT AlbumId
+    FROM tracks
+    WHERE Milliseconds = (SELECT MAX(Milliseconds) FROM tracks)
+)
+ORDER BY Milliseconds DESC;
 
 
 -- 문제 4. [비연관 - IN으로 다중 값 제공]
 -- 'Rock' 또는 'Jazz' 장르에 해당하는 GenreId를 서브쿼리로 구하여,
 -- 그 장르에 속한 트랙의 이름과 장르 ID를 조회하세요. (상위 10행)
+SELECT Name, GenreId
+FROM tracks
+WHERE GenreId IN (
+    SELECT GenreId
+    FROM genres
+    WHERE Name = 'Rock' OR Name = 'Jazz'
+)
+ORDER BY GenreId, Name
+LIMIT 10;
 
 
 -- ----------------------------------------------------------------
@@ -77,6 +101,14 @@ WHERE ArtistId = (
 -- 각 아티스트(a)에 대해, 해당 아티스트의 앨범이 존재하는지를
 -- 연관 서브쿼리로 확인하여 앨범이 있는 아티스트 이름만 조회하세요.
 -- (강의 예시의 "본인 부서 평균보다 높은 급여" 패턴과 동일 구조)
+SELECT Name AS ArtistName
+FROM artists a
+WHERE (
+    SELECT COUNT(*)
+    FROM albums al
+    WHERE al.ArtistId = a.ArtistId   -- 메인쿼리 컬럼 참조 ← 연관
+) > 0
+ORDER BY Name;
 
 
 -- 문제 6. [연관 - 자기 자신 비교]
@@ -98,11 +130,28 @@ LIMIT 20;
 -- 문제 7. [연관 - EXISTS 패턴]
 -- 한 번 이상 실제로 판매된 적 있는 트랙(invoice_items에 존재)의
 -- 이름을 연관 EXISTS 서브쿼리로 조회하세요. (상위 10행)
+SELECT t.Name AS TrackName
+FROM tracks t
+WHERE EXISTS (
+    SELECT 1
+    FROM invoice_items ii
+    WHERE ii.TrackId = t.TrackId     -- 메인쿼리 t.TrackId 참조 ← 연관
+)
+ORDER BY t.Name
+LIMIT 10;
 
 
 -- 문제 8. [연관 vs 비연관 비교]
 -- 문제 7을 비연관 IN으로 동일하게 작성하세요.
 -- (EXISTS = 연관, IN = 비연관 — 결과는 동일, 동작 방식 차이 이해)
+SELECT t.Name AS TrackName
+FROM tracks t
+WHERE t.TrackId IN (
+    SELECT ii.TrackId
+    FROM invoice_items ii            -- 메인쿼리 컬럼 미참조 ← 비연관
+)
+ORDER BY t.Name
+LIMIT 10;
 
 
 /* ================================================================
@@ -117,36 +166,59 @@ LIMIT 20;
 -- 문제 9. [단일 행 - =]
 -- 'Let There Be Rock' 앨범의 ArtistId를 서브쿼리로 구하여,
 -- 같은 아티스트의 다른 앨범 제목을 조회하세요.
+SELECT Title AS AlbumTitle
+FROM albums
+WHERE ArtistId = (
+    SELECT ArtistId
+    FROM albums
+    WHERE Title = 'Let There Be Rock'
+)
+  AND Title != 'Let There Be Rock'
+ORDER BY Title;
 
 
 -- 문제 10. [단일 행 - >]
 -- 전체 인보이스 평균 총액보다 큰 인보이스의
 -- InvoiceId, CustomerId, Total을 조회하세요. (상위 10행)
+SELECT InvoiceId, CustomerId, Total
+FROM invoices
+WHERE Total > (
+    SELECT AVG(Total)
+    FROM invoices
+)
+ORDER BY Total DESC
+LIMIT 10;
 
 
 -- 문제 11. [단일 행 - <=]
 -- 가장 짧은 트랙의 재생시간 이하인 트랙을 모두 조회하세요.
 -- (MIN 서브쿼리 = 단일 행 반환)
+SELECT Name, Milliseconds
+FROM tracks
+WHERE Milliseconds <= (
+    SELECT MIN(Milliseconds)
+    FROM tracks
+)
+ORDER BY Milliseconds;
 
 
 -- 문제 12. [단일 행 - HAVING 절 활용]
 -- 앨범별 트랙 수를 집계하되,
 -- 전체 앨범의 평균 트랙 수보다 많은 앨범만 조회하세요.
 -- (AlbumId, 트랙 수) — 트랙 수 내림차순
-SELECT
-   AlbumId
-   , COUNT(*) AS TrackCount
+SELECT AlbumId,
+       COUNT(*) AS TrackCount
 FROM tracks
 GROUP BY AlbumId
 HAVING COUNT(*) > (
-   SELECT AVG(track_cnt) 
-   FROM (
-      SELECT COUNT(*) AS track_cnt 
-      FROM tracks 
-      GROUP BY AlbumId
-      )
+    SELECT AVG(track_cnt)
+    FROM (
+        SELECT COUNT(*) AS track_cnt
+        FROM tracks
+        GROUP BY AlbumId
+    )
 )
-;
+ORDER BY TrackCount DESC;
 
 
 -- ----------------------------------------------------------------
@@ -158,6 +230,22 @@ HAVING COUNT(*) > (
 -- 문제 13. [다중 행 - IN]
 -- 'Rock' 또는 'Metal' 장르 트랙이 포함된
 -- 플레이리스트 이름을 중복 없이 조회하세요.
+SELECT DISTINCT p.Name AS PlaylistName
+FROM playlists p
+WHERE p.PlaylistId IN (
+    SELECT pt.PlaylistId
+    FROM playlist_track pt
+    WHERE pt.TrackId IN (
+        SELECT t.TrackId
+        FROM tracks t
+        WHERE t.GenreId IN (
+            SELECT g.GenreId
+            FROM genres g
+            WHERE g.Name IN ('Rock', 'Metal')
+        )
+    )
+)
+ORDER BY p.Name;
 
 
 -- 문제 14. [다중 행 - NOT IN]
@@ -166,19 +254,38 @@ HAVING COUNT(*) > (
 SELECT Name AS TrackName
 FROM tracks
 WHERE TrackId NOT IN (
-   SELECT DISTINCT TrackId  --- 판매가 된 TrackID
-   FROM invoice_items
+    SELECT DISTINCT TrackId
+    FROM invoice_items
 )
-;
+ORDER BY Name
+LIMIT 20;
+
 
 -- 문제 15. [다중 행 - EXISTS]
 -- 강의 슬라이드 EXISTS 예시 패턴:
 -- "인보이스 총액이 10 이상인 인보이스가 존재하는 고객"의
 -- 이름을 조회하세요.
+SELECT c.FirstName || ' ' || c.LastName AS CustomerName
+FROM customers c
+WHERE EXISTS (
+    SELECT 1
+    FROM invoices i
+    WHERE i.CustomerId = c.CustomerId
+      AND i.Total >= 10
+)
+ORDER BY CustomerName;
 
 
 -- 문제 16. [다중 행 - NOT EXISTS]
 -- 앨범이 단 한 장도 없는 아티스트의 이름을 조회하세요.
+SELECT a.Name AS ArtistName
+FROM artists a
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM albums al
+    WHERE al.ArtistId = a.ArtistId
+)
+ORDER BY ArtistName;
 
 
 -- 문제 17. [다중 행 - ALL 대체 : MAX]
@@ -188,6 +295,16 @@ WHERE TrackId NOT IN (
 --
 -- 'Rock' 장르 트랙 중 가장 긴 재생시간보다도 긴 트랙을 조회하세요.
 -- (= Rock 최장 트랙보다 긴 모든 트랙)
+SELECT Name, Milliseconds
+FROM tracks
+WHERE Milliseconds > (
+    SELECT MAX(t.Milliseconds)          -- ALL 대체: MAX
+    FROM tracks t
+    INNER JOIN genres g ON t.GenreId = g.GenreId
+    WHERE g.Name = 'Rock'
+)
+ORDER BY Milliseconds DESC
+LIMIT 10;
 
 
 -- 문제 18. [다중 행 - ANY 대체 : MIN]
@@ -197,6 +314,16 @@ WHERE TrackId NOT IN (
 --
 -- 'Classical' 장르 트랙 중 가장 짧은 재생시간보다 긴 트랙을 조회하세요.
 -- (= Classical 최단 트랙보다 긴 모든 트랙)
+SELECT Name, Milliseconds
+FROM tracks
+WHERE Milliseconds > (
+    SELECT MIN(t.Milliseconds)          -- ANY 대체: MIN
+    FROM tracks t
+    INNER JOIN genres g ON t.GenreId = g.GenreId
+    WHERE g.Name = 'Classical'
+)
+ORDER BY Milliseconds
+LIMIT 10;
 
 
 -- ----------------------------------------------------------------
@@ -209,32 +336,73 @@ WHERE TrackId NOT IN (
 -- 강의 슬라이드 예시 패턴:
 -- 각 앨범(AlbumId)에서 재생시간이 가장 긴 트랙을 조회하세요.
 -- (AlbumId, MAX(Milliseconds)) 쌍을 다중 컬럼 서브쿼리로 활용
-SELECT
-   Name
-   , AlbumId
-   , Milliseconds
+SELECT Name,
+       AlbumId,
+       Milliseconds
 FROM tracks
 WHERE (AlbumId, Milliseconds) IN (
-   SELECT AlbumId, MAX(Milliseconds)
-   FROM tracks
-   GROUP BY AlbumId
+    SELECT AlbumId, MAX(Milliseconds)
+    FROM tracks
+    GROUP BY AlbumId
 )
-LIMIT 15
-;
+ORDER BY AlbumId
+LIMIT 15;
 
 
 -- 문제 20. [다중 컬럼 - 각 그룹 최솟값]
 -- 각 장르(GenreId)에서 단가(UnitPrice)가 가장 낮은 트랙을 조회하세요.
+SELECT Name,
+       GenreId,
+       UnitPrice
+FROM tracks
+WHERE (GenreId, UnitPrice) IN (
+    SELECT GenreId, MIN(UnitPrice)
+    FROM tracks
+    GROUP BY GenreId
+)
+ORDER BY GenreId
+LIMIT 15;
 
 
 -- 문제 21. [다중 컬럼 - 연관과 결합]
 -- 각 고객(CustomerId)의 가장 최근 인보이스 날짜와 금액을 조회하세요.
 -- (CustomerId, MAX(InvoiceDate)) 쌍으로 해당 인보이스를 특정
+SELECT i.CustomerId,
+       i.InvoiceDate,
+       i.Total
+FROM invoices i
+WHERE (i.CustomerId, i.InvoiceDate) IN (
+    SELECT CustomerId, MAX(InvoiceDate)
+    FROM invoices
+    GROUP BY CustomerId
+)
+ORDER BY i.InvoiceDate DESC
+LIMIT 15;
 
 
 -- 문제 22. [다중 컬럼 - 응용]
 -- 각 장르에서 가장 많이 판매된 트랙(판매 수량 합계 기준)을 조회하세요.
 -- (GenreId, 최대 판매 수량) 쌍 활용
+SELECT t.Name  AS TrackName,
+       t.GenreId,
+       SUM(ii.Quantity) AS TotalQty
+FROM tracks t
+INNER JOIN invoice_items ii ON t.TrackId = ii.TrackId
+GROUP BY t.TrackId, t.Name, t.GenreId
+HAVING (t.GenreId, SUM(ii.Quantity)) IN (
+    SELECT t2.GenreId, MAX(sub.total_qty)
+    FROM (
+        SELECT t3.GenreId,
+               t3.TrackId,
+               SUM(ii2.Quantity) AS total_qty
+        FROM tracks t3
+        INNER JOIN invoice_items ii2 ON t3.TrackId = ii2.TrackId
+        GROUP BY t3.GenreId, t3.TrackId
+    ) sub
+    INNER JOIN tracks t2 ON sub.TrackId = t2.TrackId
+    GROUP BY t2.GenreId
+)
+ORDER BY t.GenreId;
 
 
 /* ================================================================
@@ -246,23 +414,60 @@ LIMIT 15
 -- 강의 슬라이드 "부서명과 부서 구성원 수" 패턴:
 -- 각 장르(genres) 이름과 해당 장르에 속한 트랙 수를
 -- 스칼라 서브쿼리로 조회하세요.
+SELECT g.Name AS GenreName,
+       (
+           SELECT COUNT(*)
+           FROM tracks t
+           WHERE t.GenreId = g.GenreId  -- 메인쿼리 g.GenreId 참조
+       ) AS TrackCount
+FROM genres g
+ORDER BY TrackCount DESC;
 
 
 -- 문제 24. [스칼라 - SELECT 절, 여러 컬럼]
 -- 각 아티스트 이름과 아티스트의 총 앨범 수,
 -- 그리고 전체 앨범 평균 트랙 수를 스칼라 서브쿼리로 함께 조회하세요.
+SELECT ar.Name AS ArtistName,
+       (SELECT COUNT(*)
+        FROM albums al
+        WHERE al.ArtistId = ar.ArtistId)       AS AlbumCount,
+       (SELECT ROUND(AVG(track_cnt), 1)
+        FROM (SELECT COUNT(*) AS track_cnt
+              FROM tracks GROUP BY AlbumId))   AS AvgTracksPerAlbum
+FROM artists ar
+ORDER BY AlbumCount DESC
+LIMIT 10;
 
 
 -- 문제 25. [스칼라 - DUAL 대체: FROM 없이 SELECT]
 -- [주의] SQLite는 DUAL 테이블이 없습니다. FROM 절 없이 바로 SELECT 작성.
 -- 강의 슬라이드 "전체 중 특정 그룹 비율" 패턴:
 -- 전체 트랙 중 'Rock' 장르가 차지하는 비율을 소수점 4자리로 출력하세요.
+SELECT ROUND(
+    CAST((SELECT COUNT(*) FROM tracks t INNER JOIN genres g ON t.GenreId = g.GenreId WHERE g.Name = 'Rock') AS REAL)
+    / CAST((SELECT COUNT(*) FROM tracks) AS REAL),
+    4
+) AS RockRatio;
 
 
 -- 문제 26. [스칼라 - WHERE 절]
 -- 전체 고객의 평균 인보이스 총액보다 많이 지출한 고객의
 -- 이름과 총 지출액을 조회하세요.
 -- (스칼라 서브쿼리로 고객별 총 지출액을 WHERE에 활용)
+SELECT c.FirstName || ' ' || c.LastName AS CustomerName,
+       (SELECT ROUND(SUM(i.Total), 2)
+        FROM invoices i
+        WHERE i.CustomerId = c.CustomerId)     AS TotalSpent
+FROM customers c
+WHERE (SELECT COALESCE(SUM(i.Total), 0)
+       FROM invoices i
+       WHERE i.CustomerId = c.CustomerId)
+      >
+      (SELECT AVG(customer_total)
+       FROM (SELECT SUM(Total) AS customer_total
+             FROM invoices
+             GROUP BY CustomerId))
+ORDER BY TotalSpent DESC;
 
 
 /* ================================================================
@@ -277,6 +482,7 @@ LIMIT 15
 -- 강의 슬라이드 EMPLOYEE_FULL 예시 패턴:
 -- 트랙 정보와 장르명, 앨범 제목, 아티스트 이름을 통합한
 -- 뷰 'view_track_full'을 생성하고, 그 내용을 조회하세요.
+
 DROP VIEW IF EXISTS view_track_full;
 CREATE VIEW view_track_full AS
 SELECT t.TrackId,
@@ -291,40 +497,44 @@ INNER JOIN albums   al ON t.AlbumId   = al.AlbumId
 INNER JOIN artists  ar ON al.ArtistId = ar.ArtistId
 INNER JOIN genres   g  ON t.GenreId   = g.GenreId;
 
+-- 뷰 조회
+SELECT *
+FROM view_track_full
+ORDER BY ArtistName, AlbumTitle
+LIMIT 10;
+
+
 -- 문제 28. [VIEW - 뷰를 이용한 집계]
 -- view_track_full을 활용하여
 -- 장르별 평균 재생시간과 트랙 수를 조회하세요.
-
-SELECT 
-   GenreName
-   , COUNT(*)                           AS TrackCount
-   , ROUND(AVG(Milliseconds) / 1000.0, 1) AS AvgSeconds
+SELECT GenreName,
+       COUNT(*)                           AS TrackCount,
+       ROUND(AVG(Milliseconds) / 1000.0, 1) AS AvgSeconds
 FROM view_track_full
 GROUP BY GenreName
-ORDER BY TrackCount DESC
-;
+ORDER BY TrackCount DESC;
 
 
 -- 문제 29. [VIEW - 보안성 활용: 특정 컬럼만 노출]
 -- 강의 슬라이드 "보안성" 예시 패턴:
 -- 고객 정보 중 민감 정보(Phone, Fax, Address)를 제외한
 -- 뷰 'view_customer_public'을 생성하고 조회하세요.
+
 DROP VIEW IF EXISTS view_customer_public;
 CREATE VIEW view_customer_public AS
-SELECT 
-   CustomerId
-   , FirstName || ' ' || LastName AS CustomerName
-   , Company
-   , City
-   , State
-   , Country
-   , PostalCode
-   , Email
-   , SupportRepId
-FROM customers
-;
+SELECT CustomerId,
+       FirstName || ' ' || LastName AS CustomerName,
+       Company,
+       City,
+       Country,
+       Email
+FROM customers;
 
-SELECT * FROM view_customer_public ORDER BY Country, CustomerName;
+-- 뷰 조회
+SELECT *
+FROM view_customer_public
+ORDER BY Country, CustomerName
+LIMIT 10;
 
 
 -- 문제 30. [VIEW - 뷰 위에 뷰 생성]
@@ -332,6 +542,18 @@ SELECT * FROM view_customer_public ORDER BY Country, CustomerName;
 -- view_customer_public을 기반으로
 -- 국가별 고객 수를 집계한 뷰 'view_customer_by_country'를 생성하고
 -- 고객 수 내림차순으로 조회하세요.
+
+DROP VIEW IF EXISTS view_customer_by_country;
+CREATE VIEW view_customer_by_country AS
+SELECT Country,
+       COUNT(*) AS CustomerCount
+FROM view_customer_public          -- 뷰 위에 뷰 생성
+GROUP BY Country;
+
+-- 뷰 조회
+SELECT *
+FROM view_customer_by_country
+ORDER BY CustomerCount DESC;
 
 
 -- END OF DOCUMENT
