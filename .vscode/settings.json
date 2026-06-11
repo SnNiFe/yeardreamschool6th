@@ -18,6 +18,12 @@
             "driver": "SQLite",
             "name": "sample",
             "database": "${workspaceFolder:yeardreamschool6th}/datasets/sample.db"
+        },
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:yeardreamschool6th}/datasets/classicmodels.db",
+            "name": "classicmodels"
         }
     ]
 }
