@@ -58,6 +58,36 @@ SELECT sqlite_version();
 
 SELECT e.firstName || ' ' || e.lastName          AS SalesRep,
        off.territory,
+
+       -- 해당 영업 사원이 관리하는 고객의 수
+       COUNT(DISTINCT c.customerNumber)          AS CustomerCount,
+
+       -- 매출 합계
+       ROUND(SUM(od.quantityOrdered * od.priceEach), 2) AS TotalSales,
+
+       -- 같은 지역 내에서 매출 기준 순위 부여 (1=최고)
+       RANK() OVER (
+           PARTITION BY off.territory
+           ORDER BY SUM(od.quantityOrdered * od.priceEach) DESC
+       )                                         AS TerritoryRank
+
+-- employees ==> orderdetails 테이블 연결
+FROM   employees   e
+JOIN   offices     off ON e.officeCode = off.officeCode
+JOIN   customers   c   ON e.employeeNumber = c.salesRepEmployeeNumber
+JOIN   orders     o   ON c.customerNumber = o.customerNumber
+JOIN   orderdetails od ON o.orderNumber = od.orderNumber
+WHERE  e.jobTitle LIKE '%Sales Rep%' -- 영업사원만 추출
+  AND  o.status = 'Shipped' -- 출하(Shipped) 주문에 한정
+GROUP BY e.employeeNumber, e.firstName, e.lastName, off.territory
+ORDER BY off.territory, TerritoryRank;
+
+-- 추가 문제
+-- 각 지역 내 1등만 뽑아서 알려주세요.
+SELECT *
+FROM (
+    SELECT e.firstName || ' ' || e.lastName          AS SalesRep,
+       off.territory,
        COUNT(DISTINCT c.customerNumber)          AS CustomerCount,
        ROUND(SUM(od.quantityOrdered * od.priceEach), 2) AS TotalSales,
        RANK() OVER (
@@ -69,11 +99,13 @@ JOIN   offices     off ON e.officeCode = off.officeCode
 JOIN   customers   c   ON e.employeeNumber = c.salesRepEmployeeNumber
 JOIN   orders     o   ON c.customerNumber = o.customerNumber
 JOIN   orderdetails od ON o.orderNumber = od.orderNumber
-WHERE  e.jobTitle LIKE '%Sales Rep%'
-  AND  o.status = 'Shipped'
+WHERE  e.jobTitle LIKE '%Sales Rep%' -- 영업사원만 추출
+  AND  o.status = 'Shipped' -- 출하(Shipped) 주문에 한정
 GROUP BY e.employeeNumber, e.firstName, e.lastName, off.territory
-ORDER BY off.territory, TerritoryRank;
-
+ORDER BY off.territory, TerritoryRank
+) a
+WHERE a.TerritoryRank = 1
+;
 
 -- ------------------------------------------------------------
 -- [실전 2] 월별 출하 매출 추이 & 누적 매출 (Running Total)
@@ -101,13 +133,20 @@ ORDER BY off.territory, TerritoryRank;
 --   → 파티션·정렬 없이 전체 합 (전체 매출)
 -- ------------------------------------------------------------
 
-SELECT YearMonth,
+SELECT YearMonth, -- 주문월(YYYY-MM)
+        -- 월 매출 (2자리 반올림)
        ROUND(MonthlyRevenue, 2)                              AS MonthlyRevenue,
+
+       -- 월 별 누적 매출
        ROUND(SUM(MonthlyRevenue) OVER (
            ORDER BY YearMonth
            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
        ), 2)                                                 AS RunningTotal,
+
+       -- 전체(모든월) 매출 총합
        ROUND(SUM(MonthlyRevenue) OVER (), 2)                 AS GrandTotal,
+
+       -- 누적매출 / 총매출 비율 (목표대비 진척도)
        ROUND(
            SUM(MonthlyRevenue) OVER (
                ORDER BY YearMonth
@@ -116,8 +155,12 @@ SELECT YearMonth,
        , 4)                                                  AS CumulRatio
 FROM (
     /* ① 월별 출하 매출 집계 — 서브쿼리로 먼저 정리 */
-    SELECT strftime('%Y-%m', o.orderDate)                    AS YearMonth,
-           SUM(od.quantityOrdered * od.priceEach)            AS MonthlyRevenue
+    SELECT 
+        -- 주문일을 연-월 포맷으로 변환
+        strftime('%Y-%m', o.orderDate)                    AS YearMonth,
+
+        -- 월별 매출 총합 계산
+        SUM(od.quantityOrdered * od.priceEach)            AS MonthlyRevenue
     FROM   orders       o
     JOIN   orderdetails od ON o.orderNumber = od.orderNumber
     WHERE  o.status = 'Shipped'
@@ -155,7 +198,11 @@ ORDER BY YearMonth;
 SELECT customerName,
        country,
        creditLimit,
+
+       -- 국가평균 신용한도
        ROUND(AVG(creditLimit) OVER (PARTITION BY country), 2) AS CountryAvgCredit,
+
+       -- 국가별로 나눔 / 신용한도 높은 순서 분할
        NTILE(3) OVER (
            PARTITION BY country
            ORDER BY creditLimit DESC
@@ -203,15 +250,23 @@ ORDER BY country, CreditTier, creditLimit DESC;
 --   2004-12 → 2005-01 구간에서 큰 폭 감소가 보이면 연말·연초 계절성을 의심
 -- ------------------------------------------------------------
 
-SELECT YearMonth,
+SELECT YearMonth, -- YYYY-MM 형식(월)
+
+       -- 해당 월 매출
        ROUND(MonthlyRevenue, 2)                              AS MonthlyRevenue,
+
+       -- 시간 순 정렬로 직전 월 값 추출
        ROUND(LAG(MonthlyRevenue, 1) OVER (
            ORDER BY YearMonth
        ), 2)                                                 AS PrevMonthRevenue,
+
+       -- 해당 월매출 - 직전 월매출 => 전월 대비 증감액
        ROUND(
            MonthlyRevenue -
            LAG(MonthlyRevenue, 1) OVER (ORDER BY YearMonth)
        , 2)                                                  AS MoM_Change,
+
+       -- (해당 월매출 - 직전 월매출) / 직전 월매출 => 전월 대비 증감률
        ROUND(
            (MonthlyRevenue -
             LAG(MonthlyRevenue, 1) OVER (ORDER BY YearMonth))
@@ -229,7 +284,7 @@ ORDER BY YearMonth;
 
 
 -- ------------------------------------------------------------
--- [시계열 2] 고객별 재주문 간격 분석 — LAG로 주문 간 며칠?
+-- [시계열 2] 고객별 재주문 간격 분석 — LAG로 주문 간격 며칠?
 -- ------------------------------------------------------------
 -- [비즈니스 배경]
 -- CRM 팀은 "고객이 평소 얼마나 자주 주문하는가?"를 알아야
@@ -268,14 +323,22 @@ SELECT customerName,
        orderDate,
        orderRevenue,
        prevOrderDate,
+
+       -- 현 주문일 - 직전 주문일(일수)
        CAST(
            julianday(orderDate) - julianday(prevOrderDate)
        AS INTEGER)                                           AS DaysSincePrevOrder
 FROM (
     SELECT c.customerName,
            c.country,
+
+           -- 주문일
            o.orderDate,
+
+           -- 주문별 매출합
            ROUND(SUM(od.quantityOrdered * od.priceEach), 2)  AS orderRevenue,
+
+           -- 이전 주문일, 주문일 기준 과거순 정렬
            LAG(o.orderDate, 1) OVER (
                PARTITION BY c.customerNumber
                ORDER BY o.orderDate
@@ -288,7 +351,7 @@ FROM (
              o.orderNumber, o.orderDate
 ) order_gap
 WHERE  prevOrderDate IS NOT NULL          /* 첫 주문은 비교 대상 제외 */
-ORDER BY DaysSincePrevOrder DESC
+ORDER BY DaysSincePrevOrder DESC        -- 주문 간격 많은 순 정렬
 LIMIT 20;
 
 
