@@ -24,6 +24,12 @@
             "driver": "SQLite",
             "database": "${workspaceFolder:yeardreamschool6th}/datasets/classicmodels.db",
             "name": "classicmodels"
+        },
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "school",
+            "database": "${workspaceFolder:yeardreamschool6th}/datasets/school_db.db"
         }
     ]
 }
