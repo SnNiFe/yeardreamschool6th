@@ -1,0 +1,16 @@
+[
+    {
+        "start": "09:00",
+        "end": "09:30",
+        "extra_count": 1,
+        "filter": "yeardream2026.elice.io",
+        "repeat": "평일 (월~금)"
+    },
+    {
+        "start": "16:20",
+        "end": "17:00",
+        "extra_count": 1,
+        "filter": "yeardream2026.elice.io",
+        "repeat": "평일 (월~금)"
+    }
+]
