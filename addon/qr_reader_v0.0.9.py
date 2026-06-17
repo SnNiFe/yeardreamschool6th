@@ -30,7 +30,7 @@ def ensure_packages(packages):
 REQUIRED_PACKAGES = {
     "pyzbar": "pyzbar",
     "Pillow": "PIL",
-    "selenium": "selenium" 
+#    "selenium": "selenium" 
 }
 
 # 파이썬 내장 센서: getattr(sys, 'frozen', False) 가 True면 exe 상태라는 뜻입니다.
