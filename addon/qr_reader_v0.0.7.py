@@ -477,7 +477,7 @@ result_label = tk.Label(root, text="여기에 링크가 표시됩니다.", font=
 result_label.pack()
 
 # 프로그램 우측 하단 버전 표시 (v0.0.6 적용)
-version_label = tk.Label(root, text="v0.0.6", font=("Malgun Gothic", 8), fg="gray")
+version_label = tk.Label(root, text="v0.0.7", font=("Malgun Gothic", 8), fg="gray")
 version_label.pack(side="bottom", anchor="e", padx=10, pady=5)
 
 root.bind('<Control-v>', load_from_clipboard)
