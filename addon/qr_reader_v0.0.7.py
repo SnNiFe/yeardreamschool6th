@@ -3,21 +3,30 @@ import subprocess
 import importlib
 
 # ==========================================
-# 1. 자동 설치 기능 정의 (무조건 제일 먼저 실행되어야 함!)
+# 1. 자동 설치 및 자가 치유 기능 정의
 # ==========================================
 def ensure_packages(packages):
-    """필요한 패키지가 없으면 자동으로 pip install을 실행합니다."""
+    # 단계 1: 환경에 pip 자체가 있는지 검사하고, 없으면 파이썬 내장 기능으로 강제 복구
+    try:
+        import pip
+    except ImportError:
+        print("\n[시스템 알림] 현재 환경에 패키지 설치 도구(pip)가 누락되어 있습니다.")
+        print(">>> pip 자가 복구를 시작합니다. 잠시만 기다려주세요...\n")
+        subprocess.check_call([sys.executable, "-m", "ensurepip", "--upgrade"])
+        print("\n[시스템 알림] pip 자동 복구 완료!\n")
+
+    # 단계 2: 필요한 개별 패키지 검사 및 설치
     for package_name, import_name in packages.items():
         try:
             importlib.import_module(import_name)
         except ImportError:
             print(f"\n[알림] '{package_name}' 패키지가 설치되어 있지 않습니다.")
-            print(f">>> '{package_name}' 자동 설치를 진행합니다. 잠시만 기다려주세요...\n")
+            print(f">>> '{package_name}' 자동 설치를 진행합니다...\n")
             subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
             print(f"\n[성공] '{package_name}' 설치가 완료되었습니다!\n")
 
 # ==========================================
-# 2. 필요한 패키지 검사 및 자동 설치 실행!
+# 2. 필요한 패키지 검사 및 자동 설치/복구 실행!
 # ==========================================
 REQUIRED_PACKAGES = {
     "pyzbar": "pyzbar",
@@ -27,19 +36,20 @@ REQUIRED_PACKAGES = {
 ensure_packages(REQUIRED_PACKAGES)
 
 # ==========================================
-# 3. 설치가 보장된 상태에서 비로소 패키지들을 불러옴 (순서 중요!)
+# 3. 설치가 보장된 상태에서 비로소 패키지들을 불러옴
 # ==========================================
-import tkinter as tk
-from tkinter import filedialog, messagebox, ttk
-from PIL import Image, ImageGrab
-from pyzbar.pyzbar import decode
-import webbrowser
-import ctypes
-import datetime
-import json
-import os
+import tkinter as tk # noqa: E402
+from tkinter import filedialog, messagebox, ttk # noqa: E402
+from PIL import Image, ImageGrab # type: ignore
+from pyzbar.pyzbar import decode # type: ignore
+import webbrowser # noqa: E402
+import ctypes # noqa: E402
+import datetime # noqa: E402
+import json # noqa: E402
+import os # noqa: E402
 
 # --- 윈도우 화면 배율(DPI) 강제 인식 ---
+# (이하 기존 코드 그대로 유지)
 try:
     ctypes.windll.shcore.SetProcessDpiAwareness(2)
 except Exception:
