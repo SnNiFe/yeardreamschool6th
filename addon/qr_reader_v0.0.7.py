@@ -7,7 +7,53 @@ import ctypes
 import datetime
 import json
 import os
+import sys
+import subprocess
+import importlib
 
+# ==========================================
+# 1. 자동 설치 기능 정의
+# ==========================================
+def ensure_packages(packages):
+    """필요한 패키지가 없으면 자동으로 pip install을 실행합니다."""
+    for package_name, import_name in packages.items():
+        try:
+            # 패키지가 존재하는지 확인
+            importlib.import_module(import_name)
+        except ImportError:
+            print(f"\n[알림] '{package_name}' 패키지가 설치되어 있지 않습니다.")
+            print(f">>> '{package_name}' 자동 설치를 진행합니다. 잠시만 기다려주세요...\n")
+            # 터미널에서 pip install을 치는 것과 동일한 동작을 코드로 실행
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
+            print(f"\n[성공] '{package_name}' 설치가 완료되었습니다!\n")
+
+# ==========================================
+# 2. 필요한 패키지 목록 작성
+# ==========================================
+# 딕셔너리 구조: {"설치할_패키지명": "코드에서_부르는_이름"}
+REQUIRED_PACKAGES = {
+    "pyzbar": "pyzbar",
+    "Pillow": "PIL",        # 설치명은 Pillow지만 import 할 때는 PIL을 씁니다.
+    "selenium": "selenium" 
+}
+
+# 검사 및 자동 설치 실행!
+ensure_packages(REQUIRED_PACKAGES)
+
+# ==========================================
+# 3. 이제부터 안심하고 기존 코드 시작!
+# ==========================================
+import tkinter as tk
+from tkinter import filedialog, messagebox, ttk
+from PIL import Image, ImageGrab
+from pyzbar.pyzbar import decode
+import webbrowser
+import ctypes
+import datetime
+import json
+import os
+
+# ... (이하 작성하신 프로그램 코드 그대로 진행) ...
 # --- 윈도우 화면 배율(DPI) 강제 인식 ---
 try:
     ctypes.windll.shcore.SetProcessDpiAwareness(2)
