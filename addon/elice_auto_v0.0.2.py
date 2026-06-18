@@ -9,7 +9,7 @@ from tkinter import messagebox
 import platform 
 
 def check_and_install_packages():
-    """파이썬 외부 라이브러리 자동 설치 (권한 부족 회피 로직 포함)"""
+    """파이썬 외부 라이브러리 스마트 자동 설치 (일괄 설치 및 에러 추적)"""
     print("🔍 필수 라이브러리를 점검합니다...")
     packages = {
         "selenium": "selenium",
@@ -20,30 +20,59 @@ def check_and_install_packages():
         "Pillow": "PIL"
     }
     
+    missing_packages = []
+    
+    # 1. 설치가 안 된 패키지만 골라내기
     for pip_name, module_name in packages.items():
         try:
             importlib.import_module(module_name)
         except ImportError:
-            print(f"⚙️ [{pip_name}] 설치 중... (잠시만 기다려주세요)")
-            try:
-                # 1차 시도: 기본 설치
-                subprocess.check_call([sys.executable, "-m", "pip", "install", pip_name])
-                print(f"✅ [{pip_name}] 설치 완료!")
-            except subprocess.CalledProcessError:
-                print(f"⚠️ 기본 권한으로 설치 실패. 사용자 권한(--user)으로 재시도합니다...")
-                try:
-                    # 2차 시도: 권한 부족 에러 시 --user 옵션을 붙여서 현재 사용자 폴더에 설치
-                    subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", pip_name])
-                    print(f"✅ [{pip_name}] 사용자 권한 설치 완료!")
-                except subprocess.CalledProcessError:
-                    print(f"⚠️ 시스템 보호 정책(PEP 668) 차단 감지. 강제 설치 모드로 우회합니다...")
-                    try:
-                        # 3차 시도: PEP 668(외부 관리 환경) 정책을 무시하고 강제로 설치
-                        subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "--break-system-packages", pip_name])
-                        print(f"✅ [{pip_name}] 보호 정책 우회 및 설치 완료!")
-                    except Exception as e:
-                        print(f"❌ [{pip_name}] 자동 설치 완전 실패. 터미널의 에러를 확인해주세요.")
-                        sys.exit(1)
+            missing_packages.append(pip_name)
+            
+    if not missing_packages:
+        return # 다 있으면 바로 통과
+        
+    print(f"⚙️ 부족한 패키지를 설치합니다: {', '.join(missing_packages)}")
+    
+    # 2. 설치 도구(pip) 자체를 최신으로 업데이트 (구버전 에러 방지)
+    try:
+        print("   - pip 설치 도구 최신화 중...")
+        subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip", "--quiet"])
+    except Exception:
+        pass # 실패해도 메인 설치로 넘어감
+
+    # 3. 누락된 패키지들을 한 번에 묶어서 일괄 설치 (의존성 충돌 해결)
+    try:
+        print("   - 패키지 일괄 설치 진행 중... (시간이 조금 걸릴 수 있습니다)")
+        # 설치 명령어 조합
+        install_cmd = [sys.executable, "-m", "pip", "install"] + missing_packages
+        
+        # subprocess.run을 사용하여 결과와 에러 메시지를 가로채기
+        result = subprocess.run(install_cmd, capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print("✅ 모든 패키지 일괄 설치 완료!")
+        else:
+            print("\n⚠️ 기본 설치에 실패했습니다. (권한 문제일 수 있어 사용자 모드로 재시도합니다)")
+            
+            # 4. 실패 시 사용자 권한(--user)으로 재시도
+            user_install_cmd = [sys.executable, "-m", "pip", "install", "--user"] + missing_packages
+            result_user = subprocess.run(user_install_cmd, capture_output=True, text=True)
+            
+            if result_user.returncode == 0:
+                print("✅ 사용자 권한(--user) 일괄 설치 완료!")
+            else:
+                # 5. 그래도 실패하면 진짜 이유(에러 로그)를 화면에 뱉어내기
+                print("\n❌ 최종 설치 실패! 아래의 진짜 에러 원인을 확인해주세요:")
+                print("="*50)
+                print(result_user.stderr) # 시스템이 뱉어낸 실제 빨간 에러 글씨들
+                print("="*50)
+                print("💡 힌트: C++ 빌드 도구가 없거나, 인터넷 방화벽 문제일 수 있습니다.")
+                sys.exit(1)
+                
+    except Exception as e:
+        print(f"❌ 설치 프로세스 작동 중 치명적 에러 발생: {e}")
+        sys.exit(1)
 
 def setup_mac_env():
     """맥(Mac) 환경 감지 시 zbar 엔진 자동 설치 시도"""
