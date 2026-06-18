@@ -22,7 +22,6 @@ def check_and_install_packages():
     
     missing_packages = []
     
-    # 1. 설치가 안 된 패키지만 골라내기
     for pip_name, module_name in packages.items():
         try:
             importlib.import_module(module_name)
@@ -30,18 +29,16 @@ def check_and_install_packages():
             missing_packages.append(pip_name)
             
     if not missing_packages:
-        return # 다 있으면 바로 통과
+        return 
         
     print(f"⚙️ 부족한 패키지를 설치합니다: {', '.join(missing_packages)}")
     
-    # 2. 설치 도구(pip) 자체를 최신으로 업데이트 (구버전 에러 방지)
     try:
         print("   - pip 설치 도구 최신화 중...")
         subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip", "--quiet"])
     except Exception:
-        pass # 실패해도 메인 설치로 넘어감
+        pass 
 
-    # 3. 누락된 패키지들을 한 번에 묶어서 일괄 설치 (의존성 충돌 해결)
     try:
         print("   - 패키지 일괄 설치 진행 중... (시간이 조금 걸릴 수 있습니다)")
         install_cmd = [sys.executable, "-m", "pip", "install"] + missing_packages
@@ -51,8 +48,6 @@ def check_and_install_packages():
             print("✅ 모든 패키지 일괄 설치 완료!")
         else:
             print("\n⚠️ 기본 설치에 실패했습니다. (권한 문제일 수 있어 사용자 모드로 재시도합니다)")
-            
-            # 4. 실패 시 사용자 권한(--user)으로 재시도
             user_install_cmd = [sys.executable, "-m", "pip", "install", "--user"] + missing_packages
             result_user = subprocess.run(user_install_cmd, capture_output=True, text=True)
             
@@ -60,28 +55,23 @@ def check_and_install_packages():
                 print("✅ 사용자 권한(--user) 일괄 설치 완료!")
             else:
                 print("\n⚠️ 시스템 보호 정책(uv/PEP 668) 차단 감지. 'uv' 전용 우회를 시도합니다...")
-                
-                # 5. [신규 추가 핵심 로직] uv 환경 감지 및 전용 명령어로 시스템 우회 설치
                 uv_success = False
                 try:
-                    # uv 명령어가 존재하는지 확인 후 uv pip install --system 실행
                     result_uv = subprocess.run(["uv", "pip", "install", "--system"] + missing_packages, capture_output=True, text=True)
                     if result_uv.returncode == 0:
                         print("✅ uv 환경 전용 명령어(--system)로 강제 설치 완료!")
                         uv_success = True
                 except Exception:
-                    pass # uv 명령어가 없거나 에러가 나면 조용히 넘어감
+                    pass 
                 
                 if not uv_success:
                     print("\n⚠️ 최후의 수단(break-system-packages)으로 우회를 시도합니다...")
-                    
                     force_install_cmd = [sys.executable, "-m", "pip", "install", "--break-system-packages", "--user"] + missing_packages
                     result_force = subprocess.run(force_install_cmd, capture_output=True, text=True)
                     
                     if result_force.returncode == 0:
                         print("✅ 보호 정책 우회 및 강제 일괄 설치 완료!")
                     else:
-                        # 6. 그래도 실패하면 진짜 이유(에러 로그)를 화면에 뱉어내기
                         print("\n❌ 최종 설치 실패! 아래의 진짜 에러 원인을 확인해주세요:")
                         print("="*50)
                         print(result_force.stderr) 
@@ -94,25 +84,19 @@ def check_and_install_packages():
         sys.exit(1)
 
 def setup_mac_env():
-    """맥(Mac) 환경 감지 시 zbar 엔진 자동 설치 시도"""
     if platform.system() == "Darwin":
         print("🍎 Mac 환경 감지됨: QR 해독용 zbar 엔진 자동 설치를 점검합니다...")
         try:
             subprocess.run(["brew", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             subprocess.run(["brew", "install", "zbar"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             print("✅ [Mac] zbar 엔진 설치/확인 완료!")
-        except FileNotFoundError:
-            print("⚠️ [경고] Homebrew가 설치되어 있지 않아 zbar를 자동 설치할 수 없습니다.")
-            print("   터미널을 열고 Homebrew 설치 후, 'brew install zbar'를 직접 입력해주세요.")
-        except Exception as e:
-            print(f"⚠️ [Mac] zbar 자동 설치 중 무시 가능한 문제 발생: {e}")
+        except Exception:
+            pass
 
-# --- 1. 봇 실행 전 환경 점검 및 셋업 ---
 check_and_install_packages()
 setup_mac_env() 
 print("✅ 모든 환경 준비 완료!\n")
 
-# --- 자동 설치 완료 후 라이브러리 불러오기 ---
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -127,14 +111,23 @@ from selenium.webdriver.common.keys import Keys
 
 import schedule
 import pyautogui
-from pyzbar.pyzbar import decode
 from PIL import Image
+
+# --- [핵심 수정] QR 엔진(pyzbar) 로드 실패 시 무시하고 넘어가도록 예외 처리 ---
+QR_AVAILABLE = True
+try:
+    from pyzbar.pyzbar import decode
+except Exception as e:
+    # dll 로드 실패 시 뻗지 않고 변수만 False로 변경
+    QR_AVAILABLE = False
+    print(f"\n⚠️ [경고] 컴퓨터에 C++ 기본 라이브러리가 부족하여 QR 스캐너 모듈이 고장났습니다.")
+    print(f"   강의실 자동 입장은 정상적으로 진행되지만, QR 자동 출석은 작동하지 않습니다.")
+# -------------------------------------------------------------------------
 
 current_folder = os.getcwd()
 driver = None
 
 def get_browser_driver():
-    """크롬을 우선 시도하고, 실패 시 엣지로 자동 전환하는 듀얼 엔진 함수"""
     prefs = {
         "profile.default_content_setting_values.media_stream_mic": 2,    
         "profile.default_content_setting_values.media_stream_camera": 2, 
@@ -206,6 +199,13 @@ def get_today_str():
     return f"{now.month}/{now.day}{weekdays[now.weekday()]}"
 
 def scan_screen_for_qr():
+    # --- [수정] QR 엔진이 고장난 상태면 튕기지 않고 바로 함수 종료 ---
+    if not QR_AVAILABLE:
+        print("\n❌ QR 감시 모듈이 비활성화 되어있습니다.")
+        print("💡 팁: 나중에 이 컴퓨터에서 QR 기능을 살리려면 인터넷에서 'Visual C++ 재배포 가능 패키지(x64)'를 다운받아 설치하세요.")
+        return None
+    # -------------------------------------------------------------
+
     print("👀 [QR 감시 모드] 화면에서 QR 코드를 찾는 중... (종료하려면 터미널에서 Ctrl+C)")
     while True:
         try:
