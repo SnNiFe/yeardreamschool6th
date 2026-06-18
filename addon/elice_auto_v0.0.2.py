@@ -35,9 +35,15 @@ def check_and_install_packages():
                     # 2차 시도: 권한 부족 에러 시 --user 옵션을 붙여서 현재 사용자 폴더에 설치
                     subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", pip_name])
                     print(f"✅ [{pip_name}] 사용자 권한 설치 완료!")
-                except Exception as e:
-                    print(f"❌ [{pip_name}] 자동 설치 완전 실패. 터미널의 에러를 확인해주세요.")
-                    sys.exit(1)
+                except subprocess.CalledProcessError:
+                    print(f"⚠️ 시스템 보호 정책(PEP 668) 차단 감지. 강제 설치 모드로 우회합니다...")
+                    try:
+                        # 3차 시도: PEP 668(외부 관리 환경) 정책을 무시하고 강제로 설치
+                        subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "--break-system-packages", pip_name])
+                        print(f"✅ [{pip_name}] 보호 정책 우회 및 설치 완료!")
+                    except Exception as e:
+                        print(f"❌ [{pip_name}] 자동 설치 완전 실패. 터미널의 에러를 확인해주세요.")
+                        sys.exit(1)
 
 def setup_mac_env():
     """맥(Mac) 환경 감지 시 zbar 엔진 자동 설치 시도"""
