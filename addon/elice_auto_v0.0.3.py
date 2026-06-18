@@ -116,13 +116,12 @@ from PIL import Image
 # [추가] 브라우저 열기용 모듈 (수동 다운로드 유도용)
 import webbrowser
 
-# --- [핵심 수정] QR 엔진 로드 실패 시 "진짜 에러 로그"를 출력하고 32비트 링크 유도 ---
+# --- [핵심 수정] QR 엔진 구동 실패 시 2013 버전 C++ 설치 유도 ---
 QR_AVAILABLE = True
 try:
     from pyzbar.pyzbar import decode
 except Exception as e:
     QR_AVAILABLE = False
-    # 파이썬이 뱉어낸 진짜 시스템 에러 메시지를 화면에 출력
     print(f"\n⚠️ [경고] QR 스캐너 모듈 고장! (실제 에러 원인: {e})")
     
     if platform.system() == "Windows":
@@ -131,20 +130,20 @@ except Exception as e:
             root.withdraw()
             root.attributes('-topmost', True)
             result = messagebox.askyesno(
-                "QR 스캐너 복구 (32비트용 시도)",
-                f"QR 엔진을 켤 수 없습니다.\n[에러: {e}]\n\n"
-                "이미 64비트 C++이 깔려있는데도 이 창이 뜬다면, \n"
-                "이 컴퓨터의 파이썬이 32비트(x86) 버전이기 때문일 수 있습니다.\n\n"
-                "32비트용(x86) C++ 설치 파일을 추가로 다운로드하시겠습니까?"
+                "QR 스캐너 복구 (2013년도 구형 C++ 필요)",
+                f"QR 엔진이 작동을 멈췄습니다.\n[실제 에러 내용: {e}]\n\n"
+                "최신 C++을 깔아도 이 창이 뜬다면, pyzbar 모듈의 고질적인 문제인\n"
+                "'2013년도 구형 C++ 뼈대(vcredist 2013)'가 없기 때문입니다.\n\n"
+                "마이크로소프트 2013년도 공식 설치 파일을 다운로드하시겠습니까?"
             )
             root.destroy()
             return result
             
         if ask_cpp_install():
-            print("🌐 브라우저를 열어 32비트(x86)용 공식 C++ 설치 파일을 다운로드합니다...")
-            # x64가 아닌 x86(32비트) 공식 링크로 변경
-            webbrowser.open("https://aka.ms/vs/17/release/vc_redist.x86.exe")
-            print("💡 안내: 다운로드된 파일을 직접 설치하신 후, PC를 재부팅하고 봇을 다시 실행해주세요!")
+            print("🌐 브라우저를 열어 2013년도 버전 공식 C++ 설치 파일을 다운로드합니다...")
+            # [변경] pyzbar가 요구하는 2013년도 x64 공식 다이렉트 다운로드 링크
+            webbrowser.open("https://aka.ms/highdpimfc2013x64enu")
+            print("💡 안내: 다운로드된 파일을 설치하신 후, PC를 한 번만 더 재부팅해주세요!")
             time.sleep(3)
             sys.exit(0) 
         else:
