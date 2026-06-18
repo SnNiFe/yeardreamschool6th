@@ -59,22 +59,35 @@ def check_and_install_packages():
             if result_user.returncode == 0:
                 print("✅ 사용자 권한(--user) 일괄 설치 완료!")
             else:
-                print("\n⚠️ 시스템 보호 정책(uv/PEP 668) 차단 감지. 강제 설치 모드로 우회합니다...")
+                print("\n⚠️ 시스템 보호 정책(uv/PEP 668) 차단 감지. 'uv' 전용 우회를 시도합니다...")
                 
-                # 5. [추가된 핵심 로직] uv 등 외부 환경 관리자에 의한 차단 시 강제 무시 설치
-                force_install_cmd = [sys.executable, "-m", "pip", "install", "--break-system-packages", "--user"] + missing_packages
-                result_force = subprocess.run(force_install_cmd, capture_output=True, text=True)
+                # 5. [신규 추가 핵심 로직] uv 환경 감지 및 전용 명령어로 시스템 우회 설치
+                uv_success = False
+                try:
+                    # uv 명령어가 존재하는지 확인 후 uv pip install --system 실행
+                    result_uv = subprocess.run(["uv", "pip", "install", "--system"] + missing_packages, capture_output=True, text=True)
+                    if result_uv.returncode == 0:
+                        print("✅ uv 환경 전용 명령어(--system)로 강제 설치 완료!")
+                        uv_success = True
+                except Exception:
+                    pass # uv 명령어가 없거나 에러가 나면 조용히 넘어감
                 
-                if result_force.returncode == 0:
-                    print("✅ 보호 정책 우회 및 강제 일괄 설치 완료!")
-                else:
-                    # 6. 그래도 실패하면 진짜 이유(에러 로그)를 화면에 뱉어내기
-                    print("\n❌ 최종 설치 실패! 아래의 진짜 에러 원인을 확인해주세요:")
-                    print("="*50)
-                    print(result_force.stderr) 
-                    print("="*50)
-                    print("💡 힌트: C++ 빌드 도구가 없거나, 인터넷 방화벽 문제일 수 있습니다.")
-                    sys.exit(1)
+                if not uv_success:
+                    print("\n⚠️ 최후의 수단(break-system-packages)으로 우회를 시도합니다...")
+                    
+                    force_install_cmd = [sys.executable, "-m", "pip", "install", "--break-system-packages", "--user"] + missing_packages
+                    result_force = subprocess.run(force_install_cmd, capture_output=True, text=True)
+                    
+                    if result_force.returncode == 0:
+                        print("✅ 보호 정책 우회 및 강제 일괄 설치 완료!")
+                    else:
+                        # 6. 그래도 실패하면 진짜 이유(에러 로그)를 화면에 뱉어내기
+                        print("\n❌ 최종 설치 실패! 아래의 진짜 에러 원인을 확인해주세요:")
+                        print("="*50)
+                        print(result_force.stderr) 
+                        print("="*50)
+                        print("💡 힌트: C++ 빌드 도구가 없거나, 파이썬 가상환경(venv)을 직접 만들어야 할 수 있습니다.")
+                        sys.exit(1)
                 
     except Exception as e:
         print(f"❌ 설치 프로세스 작동 중 치명적 에러 발생: {e}")
