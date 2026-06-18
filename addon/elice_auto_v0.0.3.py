@@ -116,13 +116,14 @@ from PIL import Image
 # [추가] 브라우저 열기용 모듈 (수동 다운로드 유도용)
 import webbrowser
 
-# --- [핵심 수정] QR 엔진(pyzbar) 로드 실패 시 명확한 팝업 안내 및 다운로드 유도 ---
+# --- [핵심 수정] QR 엔진 로드 실패 시 "진짜 에러 로그"를 출력하고 32비트 링크 유도 ---
 QR_AVAILABLE = True
 try:
     from pyzbar.pyzbar import decode
 except Exception as e:
     QR_AVAILABLE = False
-    print(f"\n⚠️ [경고] 컴퓨터에 C++ 기본 라이브러리가 부족하여 QR 스캐너 모듈이 고장났습니다.")
+    # 파이썬이 뱉어낸 진짜 시스템 에러 메시지를 화면에 출력
+    print(f"\n⚠️ [경고] QR 스캐너 모듈 고장! (실제 에러 원인: {e})")
     
     if platform.system() == "Windows":
         def ask_cpp_install():
@@ -130,20 +131,22 @@ except Exception as e:
             root.withdraw()
             root.attributes('-topmost', True)
             result = messagebox.askyesno(
-                "QR 스캐너 복구 (선택)",
-                "컴퓨터에 C++ 기본 뼈대(vcredist)가 부족하여 QR 자동 출석 기능이 비활성화되었습니다.\n\n"
-                "마이크로소프트 공식 링크를 열어 C++ 설치 파일을 다운로드하시겠습니까?\n\n"
-                "(※ 직접 설치 완료 후, 반드시 컴퓨터를 재부팅하셔야 QR 기능이 정상 작동합니다!)"
+                "QR 스캐너 복구 (32비트용 시도)",
+                f"QR 엔진을 켤 수 없습니다.\n[에러: {e}]\n\n"
+                "이미 64비트 C++이 깔려있는데도 이 창이 뜬다면, \n"
+                "이 컴퓨터의 파이썬이 32비트(x86) 버전이기 때문일 수 있습니다.\n\n"
+                "32비트용(x86) C++ 설치 파일을 추가로 다운로드하시겠습니까?"
             )
             root.destroy()
             return result
             
         if ask_cpp_install():
-            print("🌐 브라우저를 열어 공식 C++ 설치 파일을 다운로드합니다...")
-            webbrowser.open("https://aka.ms/vs/17/release/vc_redist.x64.exe")
-            print("💡 안내: 다운로드된 파일을 더블클릭하여 설치하신 후, 반드시 PC를 재부팅해주세요!")
+            print("🌐 브라우저를 열어 32비트(x86)용 공식 C++ 설치 파일을 다운로드합니다...")
+            # x64가 아닌 x86(32비트) 공식 링크로 변경
+            webbrowser.open("https://aka.ms/vs/17/release/vc_redist.x86.exe")
+            print("💡 안내: 다운로드된 파일을 직접 설치하신 후, PC를 재부팅하고 봇을 다시 실행해주세요!")
             time.sleep(3)
-            sys.exit(0) # 설치를 위해 매크로 종료
+            sys.exit(0) 
         else:
             print("❌ 다운로드를 건너뛰셨습니다. QR 기능을 끈 채로 강의실 자동 입장만 진행합니다.")
     else:
