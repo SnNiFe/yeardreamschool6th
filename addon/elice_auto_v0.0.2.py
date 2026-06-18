@@ -44,10 +44,7 @@ def check_and_install_packages():
     # 3. 누락된 패키지들을 한 번에 묶어서 일괄 설치 (의존성 충돌 해결)
     try:
         print("   - 패키지 일괄 설치 진행 중... (시간이 조금 걸릴 수 있습니다)")
-        # 설치 명령어 조합
         install_cmd = [sys.executable, "-m", "pip", "install"] + missing_packages
-        
-        # subprocess.run을 사용하여 결과와 에러 메시지를 가로채기
         result = subprocess.run(install_cmd, capture_output=True, text=True)
         
         if result.returncode == 0:
@@ -62,13 +59,22 @@ def check_and_install_packages():
             if result_user.returncode == 0:
                 print("✅ 사용자 권한(--user) 일괄 설치 완료!")
             else:
-                # 5. 그래도 실패하면 진짜 이유(에러 로그)를 화면에 뱉어내기
-                print("\n❌ 최종 설치 실패! 아래의 진짜 에러 원인을 확인해주세요:")
-                print("="*50)
-                print(result_user.stderr) # 시스템이 뱉어낸 실제 빨간 에러 글씨들
-                print("="*50)
-                print("💡 힌트: C++ 빌드 도구가 없거나, 인터넷 방화벽 문제일 수 있습니다.")
-                sys.exit(1)
+                print("\n⚠️ 시스템 보호 정책(uv/PEP 668) 차단 감지. 강제 설치 모드로 우회합니다...")
+                
+                # 5. [추가된 핵심 로직] uv 등 외부 환경 관리자에 의한 차단 시 강제 무시 설치
+                force_install_cmd = [sys.executable, "-m", "pip", "install", "--break-system-packages", "--user"] + missing_packages
+                result_force = subprocess.run(force_install_cmd, capture_output=True, text=True)
+                
+                if result_force.returncode == 0:
+                    print("✅ 보호 정책 우회 및 강제 일괄 설치 완료!")
+                else:
+                    # 6. 그래도 실패하면 진짜 이유(에러 로그)를 화면에 뱉어내기
+                    print("\n❌ 최종 설치 실패! 아래의 진짜 에러 원인을 확인해주세요:")
+                    print("="*50)
+                    print(result_force.stderr) 
+                    print("="*50)
+                    print("💡 힌트: C++ 빌드 도구가 없거나, 인터넷 방화벽 문제일 수 있습니다.")
+                    sys.exit(1)
                 
     except Exception as e:
         print(f"❌ 설치 프로세스 작동 중 치명적 에러 발생: {e}")
@@ -93,7 +99,7 @@ check_and_install_packages()
 setup_mac_env() 
 print("✅ 모든 환경 준비 완료!\n")
 
-# --- 자동 설치 완료 후 라이브러리 불러오기 (끊겼던 부분 복구) ---
+# --- 자동 설치 완료 후 라이브러리 불러오기 ---
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
