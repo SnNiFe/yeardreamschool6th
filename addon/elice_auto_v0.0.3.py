@@ -138,7 +138,10 @@ except Exception as e:
             # /quiet (조용히 설치), /norestart (컴퓨터 재부팅 방지) 옵션 적용
             subprocess.run([exe_path, "/install", "/quiet", "/norestart"], check=True)
             
-            print("✅ C++ 라이브러리 자동 설치 성공! (다음 봇 실행 시부터 QR 기능이 정상 작동합니다 🎉)")
+            print("✅ C++ 라이브러리 자동 설치 성공!")
+            print("🔄 새 엔진을 파이썬에 적용하기 위해 봇을 종료합니다. 다시 한 번 실행해 주세요!")
+            time.sleep(3)
+            sys.exit(0) # [추가] 설치 직후 강제 종료하여 봇 재실행(새로고침)을 유도
         except Exception as ex:
             print(f"❌ 자동 설치 실패. 수동으로 설치해주세요. 에러: {ex}")
             print("   강의실 자동 입장은 정상적으로 진행되지만, QR 자동 출석은 보류됩니다.")
@@ -163,6 +166,12 @@ def get_browser_driver():
         c_options.add_argument("--disable-blink-features=AutomationControlled")
         c_options.add_experimental_option("excludeSwitches", ["enable-automation"])
         c_options.add_experimental_option("useAutomationExtension", False)
+        
+        # [추가] 이미 실행 중인 크롬과의 세션/메모리 충돌 방지용 방어구 3종 세트
+        c_options.add_argument("--remote-allow-origins=*")
+        c_options.add_argument("--no-sandbox")
+        c_options.add_argument("--disable-dev-shm-usage")
+        
         c_options.add_experimental_option("prefs", prefs)
         chrome_profile = os.path.join(current_folder, "bot_profile_chrome")
         c_options.add_argument(f"user-data-dir={chrome_profile}")
@@ -170,8 +179,9 @@ def get_browser_driver():
         d = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=c_options)
         print("✅ 크롬 연결 성공!")
         return d
-    except Exception:
-        print("⚠️ 크롬 연결 실패. 엣지(Edge)로 전환합니다...")
+    except Exception as e:
+        # [수정] 실패 시 단순히 넘어가지 않고 이유를 터미널에 출력하여 원인 파악 가능하게 함
+        print(f"⚠️ 크롬 연결 실패 (원인: {e}). 엣지(Edge)로 전환합니다...")
 
     try:
         print("🌐 엣지(Edge) 브라우저 연결 시도 중...")
