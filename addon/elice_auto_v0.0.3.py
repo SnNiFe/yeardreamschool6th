@@ -113,11 +113,10 @@ import schedule
 import pyautogui
 from PIL import Image
 
-# [추가] 다운로드 및 임시 폴더 제어용 기본 모듈
-import urllib.request
-import tempfile
+# [추가] 브라우저 열기용 모듈 (수동 다운로드 유도용)
+import webbrowser
 
-# --- [핵심 복구] QR 엔진(pyzbar) 로드 실패 시 무시하고 넘어가도록 예외 처리 ---
+# --- [핵심 수정] QR 엔진(pyzbar) 로드 실패 시 명확한 팝업 안내 및 다운로드 유도 ---
 QR_AVAILABLE = True
 try:
     from pyzbar.pyzbar import decode
@@ -125,26 +124,28 @@ except Exception as e:
     QR_AVAILABLE = False
     print(f"\n⚠️ [경고] 컴퓨터에 C++ 기본 라이브러리가 부족하여 QR 스캐너 모듈이 고장났습니다.")
     
-    # [새롭게 추가된 로직] Windows 환경일 경우 C++ 공식 재배포 패키지 자동 다운로드 및 설치
     if platform.system() == "Windows":
-        print("🚀 C++ 기본 라이브러리(vcredist_x64) 자동 설치를 시작합니다...")
-        url = "https://aka.ms/vs/17/release/vc_redist.x64.exe"
-        exe_path = os.path.join(tempfile.gettempdir(), "vc_redist.x64.exe")
-        try:
-            print("   - 마이크로소프트 공식 서버에서 다운로드 중... (약 24MB, 잠시만 기다려주세요)")
-            urllib.request.urlretrieve(url, exe_path)
+        def ask_cpp_install():
+            root = tk.Tk()
+            root.withdraw()
+            root.attributes('-topmost', True)
+            result = messagebox.askyesno(
+                "QR 스캐너 복구 (선택)",
+                "컴퓨터에 C++ 기본 뼈대(vcredist)가 부족하여 QR 자동 출석 기능이 비활성화되었습니다.\n\n"
+                "마이크로소프트 공식 링크를 열어 C++ 설치 파일을 다운로드하시겠습니까?\n\n"
+                "(※ 직접 설치 완료 후, 반드시 컴퓨터를 재부팅하셔야 QR 기능이 정상 작동합니다!)"
+            )
+            root.destroy()
+            return result
             
-            print("   - 다운로드 완료! 설치를 진행합니다. (※ 화면에 '권한 요청(UAC)' 창이 뜨면 '예(Y)'를 눌러주세요!)")
-            # /quiet (조용히 설치), /norestart (컴퓨터 재부팅 방지) 옵션 적용
-            subprocess.run([exe_path, "/install", "/quiet", "/norestart"], check=True)
-            
-            print("✅ C++ 라이브러리 자동 설치 성공!")
-            print("🔄 새 엔진을 파이썬에 적용하기 위해 봇을 종료합니다. 다시 한 번 실행해 주세요!")
+        if ask_cpp_install():
+            print("🌐 브라우저를 열어 공식 C++ 설치 파일을 다운로드합니다...")
+            webbrowser.open("https://aka.ms/vs/17/release/vc_redist.x64.exe")
+            print("💡 안내: 다운로드된 파일을 더블클릭하여 설치하신 후, 반드시 PC를 재부팅해주세요!")
             time.sleep(3)
-            sys.exit(0) # [추가] 설치 직후 강제 종료하여 봇 재실행(새로고침)을 유도
-        except Exception as ex:
-            print(f"❌ 자동 설치 실패. 수동으로 설치해주세요. 에러: {ex}")
-            print("   강의실 자동 입장은 정상적으로 진행되지만, QR 자동 출석은 보류됩니다.")
+            sys.exit(0) # 설치를 위해 매크로 종료
+        else:
+            print("❌ 다운로드를 건너뛰셨습니다. QR 기능을 끈 채로 강의실 자동 입장만 진행합니다.")
     else:
         print(f"   강의실 자동 입장은 정상적으로 진행되지만, QR 자동 출석은 작동하지 않습니다.")
 # -------------------------------------------------------------------------
