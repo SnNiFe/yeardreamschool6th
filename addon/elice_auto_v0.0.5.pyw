@@ -9,15 +9,17 @@ from tkinter import messagebox
 import platform 
 import logging
 import warnings
-import threading # [추가] GUI가 멈추지 않게 백그라운드 작업을 돌리는 모듈
+import threading 
 
-# --- [신규] 터미널을 깨끗하게 유지하기 위한 설정 ---
+# --- 터미널을 깨끗하게 유지하기 위한 설정 ---
 logging.getLogger().setLevel(logging.ERROR) 
 warnings.filterwarnings("ignore") 
-# --------------------------------------------------
+
+# --- [신규 추가] 봇 제어용 전역 변수 (신호등 역할) ---
+is_running = False 
+# ----------------------------------------------------
 
 def check_and_install_packages():
-    """파이썬 외부 라이브러리 스마트 자동 설치 (일괄 설치 및 에러 추적)"""
     print("🔍 필수 라이브러리를 점검합니다...")
     packages = {
         "selenium": "selenium",
@@ -122,7 +124,6 @@ import pyautogui
 from PIL import Image
 import webbrowser
 
-# --- [핵심 수정] QR 엔진 구동 실패 시 2013 버전 C++ 설치 유도 ---
 QR_AVAILABLE = True
 try:
     from pyzbar.pyzbar import decode
@@ -155,7 +156,6 @@ except Exception as e:
             print("❌ 다운로드를 건너뛰셨습니다. QR 기능을 끈 채로 강의실 자동 입장만 진행합니다.")
     else:
         print(f"   강의실 자동 입장은 정상적으로 진행되지만, QR 자동 출석은 작동하지 않습니다.")
-# -------------------------------------------------------------------------
 
 current_folder = os.getcwd()
 driver = None
@@ -236,8 +236,8 @@ def get_today_str():
     weekdays = ["(월)", "(화)", "(수)", "(목)", "(금)", "(토)", "(일)"]
     return f"{now.month}/{now.day}{weekdays[now.weekday()]}"
 
-# --- [핵심 수정] QR 감시에 제한 시간(타임아웃) 추가 (기본 30분) ---
 def scan_screen_for_qr(timeout_minutes=30):
+    global is_running # 제어 신호 확인
     if not QR_AVAILABLE:
         print("\n❌ QR 감시 모듈이 비활성화 되어있습니다.")
         return None
@@ -245,8 +245,8 @@ def scan_screen_for_qr(timeout_minutes=30):
     print(f"👀 [QR 감시 모드] 화면에서 QR 코드를 찾는 중... (최대 {timeout_minutes}분 동안만 감시)")
     start_time = datetime.datetime.now()
 
-    while True:
-        # 경과 시간 체크
+    # --- [핵심 수정] 무한루프 대신 is_running이 True일 때만 감시 ---
+    while is_running:
         current_time = datetime.datetime.now()
         elapsed_minutes = (current_time - start_time).total_seconds() / 60.0
         
@@ -266,32 +266,35 @@ def scan_screen_for_qr(timeout_minutes=30):
         except Exception:
             pass 
         time.sleep(2) 
+        
+    print("🛑 QR 감시가 강제로 중지되었습니다.")
+    return None
 
 def run_bot():
-    global driver
+    global driver, is_running
+    
+    # 봇이 중지 상태라면 실행하지 않음
+    if not is_running: 
+        return
+        
     print(f"\n🚀 [{datetime.datetime.now().strftime('%H:%M:%S')}] 예약된 자동 입장을 시작합니다!")
     
-    # --- [핵심 추가] 기존에 봇이 켜둔 창이 살아있는지, 이미 강의실인지 확인(표식 역할) ---
     if driver is not None:
         try:
-            # 1. 창이 살아있는지 찔러보기 (사용자가 X를 눌러 껐다면 여기서 에러가 나서 넘어감)
             current_url = driver.current_url 
             print("✅ 봇이 열어둔 기존 브라우저가 살아있습니다. 현재 상태를 체크합니다.")
             
-            # 2. 현재 화면에 '라이브 강의실' 글자가 떠 있는지(최종 목적지인지) 확인
             is_in_live_room = len(driver.find_elements(By.XPATH, "//*[contains(text(), '라이브 강의실')]")) > 0
             
             if is_in_live_room:
                 print("🎯 이미 최종 목적지(강의실)에 입장해 있습니다! 앞의 로그인/탐색 과정을 모두 건너뛰고 바로 QR 감시를 시작합니다.")
                 
-                # 로그인 건너뛰고 QR 스캔만 바로 실행
                 found_url = scan_screen_for_qr(timeout_minutes=30)
-                if found_url:
+                if found_url and is_running: # 중지되지 않았다면 링크 열기
                     print("🌐 출석 링크를 새 탭으로 엽니다!")
                     original_window = driver.current_window_handle 
                     driver.execute_script(f"window.open('{found_url}', '_blank');")
                     
-                    # 새 탭 오버랩 팝업 치우기 로직 (동일)
                     time.sleep(1)
                     for window_handle in driver.window_handles:
                         if window_handle != original_window:
@@ -310,13 +313,12 @@ def run_bot():
                     except Exception:
                         pass
                         
-                return # <--- [중요] 여기서 함수를 종료시킴! (아래쪽의 엉뚱한 처음 로그인 코드가 실행되지 않음)
+                return 
             else:
                 print("창은 열려있지만 최종 강의실 화면이 아닙니다. 처음부터 입장을 시도합니다.")
         except Exception:
             print("⚠️ 기존 창이 사용자에 의해 닫혔거나 연결이 끊어졌습니다. 새로 엽니다.")
-            driver = None # 창이 죽었으면 초기화해서 다시 켜도록 유도
-    # ---------------------------------------------------------------------------------
+            driver = None 
 
     if driver is None:
         driver = get_browser_driver()
@@ -324,11 +326,9 @@ def run_bot():
             return 
     
     url = "https://yeardream2026.elice.io/my/lecturerooms?page=1"
-    driver.get(url)
-    
-    # ... (아래부터는 기존의 로그인 -> 대기실 탐색 -> 입장 로직 그대로 유지) ...
     
     try:
+        driver.get(url)
         login_wait = WebDriverWait(driver, 5) 
         login_button = login_wait.until(EC.presence_of_element_located((By.XPATH, "//button[contains(., '로그인')]")))
         
@@ -349,15 +349,16 @@ def run_bot():
         login_button = login_wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(., '로그인')]")))
         driver.execute_script("arguments[0].click();", login_button)
         
-        # --- [핵심 수정] 무조건 5초 대기(time.sleep) 삭제 & '라이브 강의실' 텍스트로 목록 로딩 확인 ---
         print("로그인 처리 중! '라이브 강의실' 목록이 로딩될 때까지 스마트하게 기다립니다...")
         list_wait = WebDriverWait(driver, 30)
         list_wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '라이브 강의실')]")))
         print("✅ 강의실 목록 로딩 완벽 확인!")
-        # ---------------------------------------------------------------------------------
         
     except Exception:
-        print("로그인 화면이 감지되지 않았습니다. (진행)")
+        if is_running:
+            print("로그인 화면이 감지되지 않았습니다. (진행)")
+
+    if not is_running: return # 중지 확인
 
     remaining_login_buttons = driver.find_elements(By.XPATH, "//button[contains(., '로그인')]")
     if remaining_login_buttons and remaining_login_buttons[0].is_displayed():
@@ -366,7 +367,6 @@ def run_bot():
         return 
     
     print("✅ 로그인 확인됨. 강의실 탐색 시작.")
-
     today_text = get_today_str()
     print(f"오늘 날짜 타겟: {today_text}")
 
@@ -392,6 +392,8 @@ def run_bot():
 
         print("오버랩 팝업 및 입장 버튼 대기 중...")
         time.sleep(5) 
+        
+        if not is_running: return # 중지 확인
         
         click_success = False
         try:
@@ -427,32 +429,25 @@ def run_bot():
                     
         if click_success:
             print("🎉 강의실 입장 버튼 클릭 완료! 페이지 로딩을 기다립니다...")
-            
-            # [원상 복구] 아까 잘못 짚었던 스트리밍 내부 로딩 확인 로직은 지우고 5초 여유 대기로 복구
             time.sleep(5) 
 
-            # [수정] 30분 동안만 스캔하도록 설정 (숫자를 바꾸면 감시 시간을 조절할 수 있습니다)
-            found_url = scan_screen_for_qr(timeout_minutes=30)
-            
-            if found_url:
+            found_url = scan_screen_for_qr()
+            if found_url and is_running:
                 print("🌐 출석 링크를 새 탭으로 엽니다!")
                 
                 original_window = driver.current_window_handle 
                 driver.execute_script(f"window.open('{found_url}', '_blank');")
                 
-                # --- [핵심 수정] 새 탭으로 넘어가서 오버랩되는 '입장하기' 팝업 치우기 ---
-                time.sleep(1) # 새 탭 열릴 시간 대기
+                time.sleep(1) 
                 
-                # 1. 봇의 제어 시선을 새로 열린 탭(출석 탭)으로 이동
                 for window_handle in driver.window_handles:
                     if window_handle != original_window:
                         driver.switch_to.window(window_handle)
                         break
                         
                 print("👀 출석 화면을 덮는 '강의실 입장' 팝업 대기 중...")
-                time.sleep(4) # 엘리스 오버랩 팝업이 뜰 때까지 넉넉히 대기
+                time.sleep(4) 
                 
-                # 2. 오버랩된 팝업의 '입장하기' 버튼을 찾아 클릭해버림
                 try:
                     overlap_buttons = driver.find_elements(By.XPATH, "//*[normalize-space()='입장하기']")
                     for btn in overlap_buttons:
@@ -462,32 +457,33 @@ def run_bot():
                             break
                 except Exception:
                     print("팝업 치우기 생략 (팝업이 없거나 이미 치워짐)")
-                # --------------------------------------------------------------------------
                 
         else:
             print("입장 버튼 클릭 실패.")
 
     except Exception as e:
-        print(f"작동 중 에러 발생: {e}")
+        # 강제 종료에 의한 에러는 무시
+        if is_running:
+            print(f"작동 중 에러 발생: {e}")
 
 # ==============================================================================
-# --- [신규 추가] 터미널 글씨를 GUI 창으로 가로채는 클래스 ---
+# --- 터미널 글씨를 GUI 창으로 가로채는 클래스 ---
 class PrintLogger:
     def __init__(self, text_widget):
         self.text_widget = text_widget
         
     def write(self, message):
-        # GUI가 멈추지 않게 안전하게 글씨를 추가
         self.text_widget.after(0, self._append, message)
         
     def _append(self, message):
         self.text_widget.insert(tk.END, message)
-        self.text_widget.see(tk.END) # 항상 맨 아래로 스크롤
+        self.text_widget.see(tk.END) 
         
     def flush(self):
         pass
 
 def run_scheduler_loop():
+    global is_running
     target_days = ["monday", "tuesday", "wednesday", "thursday", "friday"]
     target_times = ["09:05", "09:10", "16:25", "16:30"]
     
@@ -506,50 +502,81 @@ def run_scheduler_loop():
     print("\n✅ 스케줄러가 백그라운드에서 감시를 시작했습니다.")
     print("이 창을 끄지 마시고 최소화해 두시면 제시간에 알아서 움직입니다!")
     
-    while True:
+    # --- [핵심 수정] is_running이 True일 때만 루프 유지 ---
+    while is_running:
         schedule.run_pending()
-        time.sleep(1) # 터미널 렉 방지용 (1초마다 시계 확인)
+        time.sleep(1) 
+    print("🛑 스케줄러 대기 상태가 종료되었습니다.")
 
 def create_gui():
     root = tk.Tk()
     root.title("엘리스 자동 출석 비서")
-    root.geometry("600x500")
+    root.geometry("600x550") # 높이 살짝 증가
     root.configure(bg="#f4f4f4")
     
-    # 상단 설명 라벨
     title_lbl = tk.Label(root, text="🚀 엘리스 LXP 출석 자동화 봇", font=("Helvetica", 16, "bold"), bg="#f4f4f4")
     title_lbl.pack(pady=15)
     
     def start_mode_1():
+        global is_running
+        is_running = True
         btn1.config(state=tk.DISABLED, text="실행 중...")
         btn2.config(state=tk.DISABLED)
-        # 백그라운드 스레드에서 봇 실행 (창 멈춤 방지)
+        btn_stop.config(state=tk.NORMAL) # 중지 버튼 활성화
         threading.Thread(target=run_bot, daemon=True).start()
 
     def start_mode_2():
+        global is_running
+        is_running = True
         btn1.config(state=tk.DISABLED)
         btn2.config(state=tk.DISABLED, text="타이머 작동 중...")
+        btn_stop.config(state=tk.NORMAL) # 중지 버튼 활성화
         threading.Thread(target=run_scheduler_loop, daemon=True).start()
 
-    # 버튼 영역
+    # --- [신규 추가] 중지 및 초기화 함수 ---
+    def stop_bot():
+        global is_running, driver
+        print("\n🛑 강제 중지 명령을 실행합니다... 잠시만 대기해주세요.")
+        
+        # 1. 신호등을 꺼서 루프들 탈출 유도
+        is_running = False
+        
+        # 2. 스케줄러 초기화
+        schedule.clear()
+        
+        # 3. 켜져있는 브라우저 강제 종료 (작업 흐름 끊기)
+        if driver is not None:
+            try:
+                driver.quit()
+            except Exception:
+                pass
+            driver = None
+
+        # 4. 버튼 상태 원래대로 복구
+        btn1.config(state=tk.NORMAL, text="▶️ 1번: 지금 바로 입장 (테스트용)")
+        btn2.config(state=tk.NORMAL, text="⏰ 2번: 내장 타이머 켜두기 (실전용)")
+        btn_stop.config(state=tk.DISABLED)
+        print("✅ 봇이 완전히 중지되고 초기화되었습니다. 상단 버튼을 눌러 다시 시작할 수 있습니다.\n")
+    # ----------------------------------------
+
     frame = tk.Frame(root, bg="#f4f4f4")
-    frame.pack(pady=10)
+    frame.pack(pady=5)
 
     btn1 = tk.Button(frame, text="▶️ 1번: 지금 바로 입장 (테스트용)", font=("Helvetica", 11), 
                      width=35, height=2, command=start_mode_1)
     btn1.pack(pady=5)
-    tk.Label(frame, text="버튼을 누르면 즉시 강의실을 찾아 들어가고 최대 30분간 QR을 찾습니다.", 
-             bg="#f4f4f4", fg="#666666", font=("Helvetica", 9)).pack()
 
     btn2 = tk.Button(frame, text="⏰ 2번: 내장 타이머 켜두기 (실전용)", font=("Helvetica", 11), 
                      width=35, height=2, command=start_mode_2)
-    btn2.pack(pady=15)
-    tk.Label(frame, text="정해진 시간(09:05, 16:25 등)이 될 때까지 조용히 대기하다가 알아서 작동합니다.", 
-             bg="#f4f4f4", fg="#666666", font=("Helvetica", 9)).pack()
+    btn2.pack(pady=5)
+    
+    # 중지 버튼 생성
+    btn_stop = tk.Button(frame, text="⏹️ 작동 중지 및 초기화", font=("Helvetica", 11, "bold"), 
+                         width=35, height=2, command=stop_bot, fg="red", state=tk.DISABLED)
+    btn_stop.pack(pady=10)
 
-    # 로그 출력 영역
     log_frame = tk.Frame(root)
-    log_frame.pack(padx=20, pady=10, fill=tk.BOTH, expand=True)
+    log_frame.pack(padx=20, pady=5, fill=tk.BOTH, expand=True)
     
     scrollbar = tk.Scrollbar(log_frame)
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
@@ -559,7 +586,6 @@ def create_gui():
     log_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
     scrollbar.config(command=log_text.yview)
 
-    # 파이썬의 터미널 출력을 GUI 창으로 가로채기
     sys.stdout = PrintLogger(log_text)
     sys.stderr = PrintLogger(log_text)
 
