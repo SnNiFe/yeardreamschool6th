@@ -272,21 +272,18 @@ def scan_screen_for_qr(timeout_minutes=30):
 def run_bot():
     global driver, is_running
     
-    # 봇이 중지 상태라면 실행하지 않음
     if not is_running: 
         return
         
-    print(f"\n🚀 [{datetime.datetime.now().strftime('%H:%M:%S')}] 예약된 자동 입장을 시작합니다!")
+    print(f"\n🚀 [{datetime.datetime.now().strftime('%H:%M:%S')}] 자동 입장을 시작/확인 합니다!")
     
-    # --- [핵심 수정] 기존 창을 바로 닫지 않고 임시로 보존해둡니다 ---
     old_driver = driver 
     if old_driver is not None:
         print("💡 기존 창이 켜져 있습니다. 새 창에서 입장이 완료될 때까지 기존 창을 유지합니다.")
-    # --------------------------------------------------------
 
     driver = get_browser_driver()
     if driver is None:
-        driver = old_driver # 새 브라우저 열기 실패 시 다시 기존 창으로 제어권 복구
+        driver = old_driver 
         return 
     
     url = "https://yeardream2026.elice.io/my/lecturerooms?page=1"
@@ -322,7 +319,7 @@ def run_bot():
         if is_running:
             print("로그인 화면이 감지되지 않았습니다. (진행)")
 
-    if not is_running: return # 중지 확인
+    if not is_running: return 
 
     remaining_login_buttons = driver.find_elements(By.XPATH, "//button[contains(., '로그인')]")
     if remaining_login_buttons and remaining_login_buttons[0].is_displayed():
@@ -351,13 +348,14 @@ def run_bot():
                 continue
         
         if not target_found:
-            print("오늘 날짜의 강의실을 찾지 못했습니다.")
-            return
+            print("⚠️ 현재 열려있는 '오늘 날짜의 강의실'을 찾지 못했습니다.")
+            print("👉 (아직 수업 전이거나 수업이 끝났습니다. 창을 유지하며 타이머 모드로 진입합니다.)")
+            return # 방이 없으면 여기서 깔끔하게 리턴(종료)하여 다음 타이머를 기다림
 
         print("오버랩 팝업 및 입장 버튼 대기 중...")
         time.sleep(5) 
         
-        if not is_running: return # 중지 확인
+        if not is_running: return 
         
         click_success = False
         try:
@@ -395,7 +393,6 @@ def run_bot():
             print("🎉 강의실 입장 버튼 클릭 완료! 페이지 로딩을 기다립니다...")
             time.sleep(5) 
 
-            # --- [핵심 수정] 새 창 입장이 완벽히 끝났으므로 기존 창을 닫습니다 ---
             if old_driver is not None:
                 print("🧹 새 창에서 강의실 입장이 확인되었습니다. 이전 시간의 창을 닫습니다.")
                 try:
@@ -403,7 +400,6 @@ def run_bot():
                 except Exception:
                     pass
                 old_driver = None
-            # ---------------------------------------------------------------
 
             found_url = scan_screen_for_qr()
             if found_url and is_running:
@@ -472,9 +468,17 @@ def run_scheduler_loop():
                 getattr(schedule.every(), day).at(t).do(run_bot)
                 print(f" - [{day.capitalize()}] {t}에 실행 예약 완료")
                 
-    print("\n✅ 스케줄러가 백그라운드에서 감시를 시작했습니다.")
-    print("이 창을 끄지 마시고 최소화해 두시면 제시간에 알아서 움직입니다!")
+    print("\n✅ 예약 타이머 설정 완료! 백그라운드 감시를 시작합니다.")
+    print("💡 [통합 기능] 현재 시점으로 접속 가능한 강의가 있는지 즉시 1회 검사를 진행합니다...")
     
+    # --- [핵심 수정] 루프 진입 전 무조건 즉시 1회 실행 ---
+    if is_running:
+        run_bot()
+    # ---------------------------------------------------
+    
+    if is_running:
+        print("\n⏳ 1회 검사가 종료되었습니다. 예약된 다음 강의 시간을 기다리는 중입니다... (창을 최소화해 두세요)")
+
     while is_running:
         schedule.run_pending()
         time.sleep(1) 
@@ -483,25 +487,16 @@ def run_scheduler_loop():
 def create_gui():
     root = tk.Tk()
     root.title("엘리스 자동 출석 비서")
-    root.geometry("600x550") 
+    root.geometry("600x500") 
     root.configure(bg="#f4f4f4")
     
     title_lbl = tk.Label(root, text="🚀 엘리스 LXP 출석 자동화 봇", font=("Helvetica", 16, "bold"), bg="#f4f4f4")
     title_lbl.pack(pady=15)
     
-    def start_mode_1():
+    def start_integrated_mode():
         global is_running
         is_running = True
-        btn1.config(state=tk.DISABLED, text="실행 중...")
-        btn2.config(state=tk.DISABLED)
-        btn_stop.config(state=tk.NORMAL) 
-        threading.Thread(target=run_bot, daemon=True).start()
-
-    def start_mode_2():
-        global is_running
-        is_running = True
-        btn1.config(state=tk.DISABLED)
-        btn2.config(state=tk.DISABLED, text="타이머 작동 중...")
+        btn_start.config(state=tk.DISABLED, text="감시 및 타이머 작동 중...")
         btn_stop.config(state=tk.NORMAL) 
         threading.Thread(target=run_scheduler_loop, daemon=True).start()
 
@@ -519,25 +514,24 @@ def create_gui():
                 pass
             driver = None
 
-        btn1.config(state=tk.NORMAL, text="▶️ 1번: 지금 바로 입장 (테스트용)")
-        btn2.config(state=tk.NORMAL, text="⏰ 2번: 내장 타이머 켜두기 (실전용)")
+        btn_start.config(state=tk.NORMAL, text="▶️ 통합 자동 시작 (즉시 1회 실행 + 예약 타이머)")
         btn_stop.config(state=tk.DISABLED)
         print("✅ 봇이 완전히 중지되고 초기화되었습니다. 상단 버튼을 눌러 다시 시작할 수 있습니다.\n")
 
     frame = tk.Frame(root, bg="#f4f4f4")
     frame.pack(pady=5)
 
-    btn1 = tk.Button(frame, text="▶️ 1번: 지금 바로 입장 (테스트용)", font=("Helvetica", 11), 
-                     width=35, height=2, command=start_mode_1)
-    btn1.pack(pady=5)
-
-    btn2 = tk.Button(frame, text="⏰ 2번: 내장 타이머 켜두기 (실전용)", font=("Helvetica", 11), 
-                     width=35, height=2, command=start_mode_2)
-    btn2.pack(pady=5)
+    # --- [핵심 수정] 버튼 2개를 통합하여 UI 직관성 극대화 ---
+    btn_start = tk.Button(frame, text="▶️ 통합 자동 시작 (즉시 1회 실행 + 예약 타이머)", font=("Helvetica", 11, "bold"), 
+                     width=40, height=2, command=start_integrated_mode, bg="#4CAF50", fg="black")
+    btn_start.pack(pady=5)
+    tk.Label(frame, text="클릭 시 현재 강의실을 찾아 즉시 입장하며, 이후 정해진 시간에 알아서 작동합니다.", 
+             bg="#f4f4f4", fg="#666666", font=("Helvetica", 9)).pack()
     
     btn_stop = tk.Button(frame, text="⏹️ 작동 중지 및 초기화", font=("Helvetica", 11, "bold"), 
-                         width=35, height=2, command=stop_bot, fg="red", state=tk.DISABLED)
-    btn_stop.pack(pady=10)
+                         width=40, height=2, command=stop_bot, fg="red", state=tk.DISABLED)
+    btn_stop.pack(pady=15)
+    # ---------------------------------------------------------
 
     log_frame = tk.Frame(root)
     log_frame.pack(padx=20, pady=5, fill=tk.BOTH, expand=True)
