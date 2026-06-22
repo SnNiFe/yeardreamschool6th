@@ -1,0 +1,83 @@
+[작업형 제3유형 - 제10회]
+
+[문제 1] - 한 글로벌 IT 기업의 HR 부서는 최근 이직률 증가로 인한 인력 손실과 채용 비용 부담이 커지고 있습니다. 현재 연간 이직률은 약 16%로 산업 평균(12%)보다 높으며, 특히 핵심 인재의 이직이 프로젝트 지연과 생산성 저하로 이어지고 있습니다. HR 팀은 데이터 기반 의사결정을 통해 이직 위험이 높은 직원을 사전에 파악하고 효과적인 인재 유지 전략을 수립하고자 합니다. 1,470명의 직원 데이터를 활용하여 이직 예측 모델을 개발하고, 이직에 영향을 미치는 주요 요인을 분석하는 것이 목표입니다.
+
+[데이터]
+- 파일명: 10_3_1.csv
+- 출처: IBM HR Analytics Employee Attrition & Performance Dataset
+- 다운로드 : https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset
+- 데이터 크기: 1,470명의 직원 데이터, 35개 변수
+
+[Data Description]
+※ `10_3_1.csv`는 IBM에서 생성한 가상의 인사 데이터셋으로, 직원의 이직(Attrition) 여부와 관련된 다양한 개인적·직무적 특성을 포함합니다. HR 분석에서 직원 이탈 예측 및 주요 영향 요인 파악을 위해 설계되었으며, 전 세계적으로 HR 분석 교육 및 연구에 널리 사용되는 표준 데이터셋입니다.
+
+[컬럼 설명]
+- Age: 나이 (18~60세)
+- Gender: 성별 - Male, Female
+- Education: 교육 수준 (1~5) - 1: Below College, 2: College, 3: Bachelor, 4: Master, 5: Doctor
+- MonthlyIncome: 월 급여 (1,009~19,999 USD)
+- OverTime: 초과 근무 여부 - Yes, No
+- DistanceFromHome: 집에서 회사까지 거리 (1~29 miles)
+- YearsAtCompany: 현 회사 근무 연수 (0~40년)
+- Attrition: 이직 여부 (종속변수) - Yes(이직), No(잔류)
+
+[문항]
+(1) 모든 독립변수를 사용하여 이직 여부를 예측하는 로지스틱 회귀모형을 적합하고, 유의한 변수(유의확률 0.05 미만)의 회귀계수를 소수점 셋째 자리까지 반올림하여 제출하시오. (단, 절편 제외)
+
+(2) 위 (1)번에서 적합한 모형에서 Education이 1단계 증가할 때의 이직 오즈비(Odds Ratio)를 소수점 셋째 자리까지 반올림하여 제출하시오.
+
+(3) 다음 조건을 가진 직원의 이직 확률을 위 (1)번 모형으로 예측하여 소수점 셋째 자리까지 반올림하여 제출하시오
+다음 조건(아래 컬럼 모두 포함)에 대해 이직 확률을 예측하시오.
+- Age: 40세
+- Gender: Male
+- Education: 3 (Bachelor)
+- MonthlyIncome: 3,000
+- OverTime: Yes
+- DistanceFromHome: 10
+- YearsAtCompany: 2
+
+-------------------------------------------------
+
+[작업형 제3유형 - 제10회]
+
+[문제 2] - 한 부동산 컨설팅 회사는 주택 가격 예측 시스템을 개발하여 고객에게 적정 매매가를 제시하고자 합니다. 아이오와주 에임스(Ames) 지역의 과거 주택 거래 데이터를 활용하여 주택의 물리적 특성과 품질이 가격에 미치는 영향을 분석하고, 새로운 매물의 예상 가격을 산정하는 모델을 구축하는 것이 목표입니다.당신은 데이터 분석가로서 다중선형회귀 모델을 활용하여 주택 가격 예측 시스템을 개발하게 되었습니다. 제공된 데이터를 활용하여 아래 문제를 풀이하시오.
+
+[데이터]
+- 파일명: 10_3_2.csv
+- 출처: https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/data
+
+[Data Description]
+※ `10_3_2.csv`는 아이오와주 에임스 지역의 2006-2010년 주택 거래 데이터로, 주택의 물리적 특성, 품질, 위치 등 다양한 속성과 실제 판매 가격을 포함합니다. 부동산 가격 예측 및 회귀 분석 연구에 널리 사용되는 표준 데이터셋입니다.
+
+
+[컬럼 설명]
+- OverallQual: 전반적인 자재 및 마감 품질 (1~10점) - 10: Very Excellent, 5: Average, 1: Very Poor
+- OverallCond: 전반적인 주택 상태 (1~10점) - 10: Very Excellent, 5: Average, 1: Very Poor
+- GrLivArea: 지상층 거주 면적 (square feet)
+- TotalBsmtSF: 지하실 총 면적 (square feet)
+- 1stFlrSF: 1층 면적 (square feet)
+- GarageArea: 차고 면적 (square feet)
+- FullBath: 지상층 전체 욕실 개수
+- BedroomAbvGr: 지상층 침실 개수
+- TotRmsAbvGrd: 지상층 총 방 개수 (욕실 제외)
+- YearBuilt: 건축 연도 (1872~2010)
+- SalePrice: 주택 판매 가격 (USD)
+
+[문항]
+(1) SalePrice를 종속변수로 하고, 다음 10개 독립 변수를 독립변수로 하는 다중선형회귀모형을 적합하시오. 유의수준 0.05에서 통계적으로 유의한 변수들의 회귀계수 합을 소수점 둘째 자리까지 반올림하여 제출하시오. (단, 절편은 제외)
+
+(2) 위 (1)번에서 유의한 변수(p < 0.05)만을 독립변수로 사용하여 다중선형회귀모형을 다시 적합하시오. 이 모형의 **결정계수(R²)**를 소수점 셋째 자리까지 반올림하여 제출하시오.
+
+(3) 다음 조건을 가진 주택의 가격을 위 (2)번 모형(유의한 변수만 사용)으로 예측하여 소수점 둘째 자리까지 반올림하여 제출하시오
+- (2)번에서 선택된 유의한 변수에 해당하는 값만 사용하여 예측하세요. 유의하지 않은 변수의 조건은 무시하세요.
+- 예시 
+    + OverallQual = 7
+    + OverallCond = 5
+    + GrLivArea = 1,500
+    + TotalBsmtSF = 1,000
+    + 1stFlrSF = 1,000
+    + GarageArea = 500
+    + FullBath = 2
+    + BedroomAbvGr = 3
+    + TotRmsAbvGrd = 7
+    + YearBuilt = 2000

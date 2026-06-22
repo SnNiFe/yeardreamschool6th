@@ -1,0 +1,241 @@
+employee_id,productivity,hours_worked,age,experience,department,day,quarter,education,designation
+922,0.268214286,5040,22.53,0,sweing,Tuesday,Quarter4,Bachelor,Junior
+322,0.800358775,4380,11.41,50,sweing,Monday,Quarter3,Master,Senior
+102,0.681060606,1440,2.9,0,finishing,Tuesday,Quarter1,Master,Senior
+921,0.325,960,3.9,0,finishing,Tuesday,Quarter4,Master,Junior
+59,0.667604167,960,2.9,0,finishing,Sunday,Quarter1,Master,Lead
+791,0.800980392,0,30.1,0,sweing,Monday,Quarter3,High School,Senior
+949,0.768847222,3360,3.94,0,finishing,Thursday,Quarter4,High School,Senior
+970,0.768847222,3360,3.94,0,finishing,Saturday,Quarter4,Bachelor,Senior
+411,0.650416734,10170,22.52,26,sweing,Saturday,Quarter4,High School,Junior
+1080,0.750395513,6240,18.79,45,sweing,Thursday,Quarter1,High School,Junior
+573,0.700398148,6480,20.55,60,sweing,Monday,Quarter1,Master,Junior
+45,0.861679012,6600,3.94,0,finishing,Sunday,Quarter1,High School,Lead
+50,0.800318644,7080,26.16,63,sweing,Sunday,Quarter1,Bachelor,Lead
+845,0.81640625,2880,5.13,0,finishing,Thursday,Quarter3,Master,Senior
+241,0.900144811,10170,25.9,70,sweing,Wednesday,Quarter2,High School,Junior
+171,0.93532197,1440,4.15,0,finishing,Sunday,Quarter2,Bachelor,Junior
+733,1.000344928,0,22.52,113,sweing,Thursday,Quarter2,Bachelor,Lead
+762,0.600447507,2280,11.41,23,sweing,Saturday,Quarter2,High School,Junior
+724,0.714410494,4560,30.1,30,sweing,Wednesday,Quarter2,High School,Senior
+423,0.900321106,10260,22.52,94,sweing,Sunday,Quarter4,High School,Senior
+715,1.000065789,0,22.52,113,sweing,Wednesday,Quarter2,Bachelor,Senior
+594,0.700184577,4020,18.79,30,sweing,Tuesday,Quarter1,Master,Lead
+661,0.893066667,1200,3.94,0,finishing,Sunday,Quarter2,Master,Junior
+874,0.727349537,2880,3.94,0,finishing,Sunday,Quarter4,Master,Junior
+110,0.83,2700,4.15,0,finishing,Wednesday,Quarter1,Bachelor,Senior
+278,0.499998888,9810,22.94,23,sweing,Thursday,Quarter3,Master,Lead
+716,0.994375,1440,4.15,0,finishing,Wednesday,Quarter2,Bachelor,Senior
+769,1.000230409,6840,22.52,113,sweing,Sunday,Quarter3,High School,Senior
+880,0.456875,6000,21.25,0,sweing,Sunday,Quarter4,Bachelor,Senior
+597,0.5375,1440,4.3,0,finishing,Tuesday,Quarter1,Master,Junior
+533,0.920236905,6720,22.52,93,sweing,Saturday,Quarter5,Master,Lead
+889,0.800401961,4080,15.26,63,sweing,Monday,Quarter4,High School,Junior
+717,0.912037037,2160,3.94,0,finishing,Wednesday,Quarter2,Bachelor,Lead
+514,0.634666667,1080,4.08,0,finishing,Thursday,Quarter5,High School,Senior
+362,0.750344828,10440,20.4,50,sweing,Wednesday,Quarter3,Master,Senior
+595,0.586465465,6660,24.26,0,sweing,Tuesday,Quarter1,High School,Lead
+712,1.033155556,1800,4.15,0,finishing,Wednesday,Quarter2,Bachelor,Junior
+71,0.800318644,7080,26.16,63,sweing,Monday,Quarter1,Master,Senior
+830,0.800401961,4080,15.26,63,sweing,Wednesday,Quarter3,Bachelor,Junior
+840,0.549791667,960,3.94,0,finishing,Wednesday,Quarter3,High School,Lead
+378,0.750162367,12180,22.94,63,sweing,Thursday,Quarter4,High School,Junior
+108,0.850502311,10620,26.16,75,sweing,Wednesday,Quarter1,Master,Lead
+1064,0.592083333,960,4.6,0,finishing,Wednesday,Quarter1,Master,Senior
+355,0.900556277,10080,22.52,94,sweing,Wednesday,Quarter3,High School,Lead
+873,0.75065101,3960,18.79,45,sweing,Sunday,Quarter4,High School,Senior
+1010,0.800401961,4080,15.26,63,sweing,Monday,Quarter1,Master,Senior
+943,0.410833333,960,2.9,0,finishing,Wednesday,Quarter4,Bachelor,Lead
+24,0.902916667,960,3.94,0,finishing,Saturday,Quarter1,Bachelor,Junior
+44,0.879714482,6975,11.61,50,sweing,Sunday,Quarter1,High School,Senior
+244,0.858143939,1440,3.94,0,finishing,Wednesday,Quarter2,Bachelor,Senior
+1054,0.800701754,0,11.41,38,sweing,Wednesday,Quarter1,High School,Junior
+1133,0.850426891,7140,26.82,65,sweing,Monday,Quarter2,Master,Junior
+812,0.749166667,960,2.9,0,finishing,Tuesday,Quarter3,Bachelor,Senior
+164,0.8,10530,28.08,63,sweing,Saturday,Quarter2,Bachelor,Lead
+866,0.8319375,960,2.9,0,finishing,Sunday,Quarter4,Master,Senior
+332,0.650066445,8280,20.4,35,sweing,Monday,Quarter3,High School,Lead
+984,0.376597222,3360,4.6,0,finishing,Saturday,Quarter4,High School,Junior
+971,0.750716981,4440,29.4,45,sweing,Saturday,Quarter4,Master,Senior
+491,0.722638889,1440,4.3,0,finishing,Wednesday,Quarter4,Bachelor,Junior
+1092,0.80575,2400,3.94,0,finishing,Saturday,Quarter1,Bachelor,Lead
+309,0.692045455,1440,2.9,0,finishing,Sunday,Quarter3,Master,Senior
+156,0.846950758,1440,3.94,0,finishing,Saturday,Quarter2,Master,Junior
+211,0.650040783,8460,20.79,0,sweing,Monday,Quarter2,High School,Senior
+87,0.888686869,2700,4.15,0,finishing,Tuesday,Quarter1,Master,Junior
+169,0.388007813,7680,20.79,0,sweing,Saturday,Quarter2,High School,Lead
+598,0.495416667,960,2.9,0,finishing,Tuesday,Quarter1,High School,Junior
+52,0.800030199,6975,11.61,50,sweing,Sunday,Quarter1,High School,Junior
+353,0.978525641,6000,4.3,0,finishing,Wednesday,Quarter3,Master,Lead
+746,0.497885057,6960,29.12,0,sweing,Thursday,Quarter2,Master,Junior
+653,0.545657673,7500,30.1,0,sweing,Saturday,Quarter1,Bachelor,Senior
+425,0.800909609,10530,22.94,75,sweing,Sunday,Quarter4,High School,Junior
+136,0.821354167,3840,4.15,0,finishing,Thursday,Quarter2,Master,Lead
+1189,0.700556897,6960,26.82,30,sweing,Wednesday,Quarter2,Master,Lead
+55,0.750348457,6480,19.31,45,sweing,Sunday,Quarter1,Bachelor,Junior
+79,0.7504,7020,28.08,45,sweing,Monday,Quarter1,Master,Lead
+334,0.549969429,10170,22.94,30,sweing,Monday,Quarter3,Master,Lead
+185,0.690182815,6420,19.87,0,sweing,Sunday,Quarter2,High School,Senior
+57,0.699965217,6900,28.08,40,sweing,Sunday,Quarter1,Master,Junior
+463,0.861875,1440,3.94,0,finishing,Tuesday,Quarter4,High School,Senior
+846,0.800711494,1080,15.26,38,sweing,Thursday,Quarter3,Bachelor,Lead
+1161,0.800034503,3420,11.41,50,sweing,Tuesday,Quarter2,Master,Senior
+219,0.912766667,5400,3.94,0,finishing,Tuesday,Quarter2,High School,Junior
+536,0.850362069,6960,22.94,81,sweing,Saturday,Quarter5,Bachelor,Junior
+114,0.804640152,1440,2.9,0,finishing,Wednesday,Quarter1,Master,Senior
+345,0.750031898,10260,22.94,50,sweing,Tuesday,Quarter3,High School,Lead
+1014,0.800115819,7080,30.1,0,sweing,Monday,Quarter1,Bachelor,Junior
+539,0.650148148,6480,20.1,49,sweing,Saturday,Quarter5,Bachelor,Senior
+175,0.858143939,1440,3.94,0,finishing,Sunday,Quarter2,Master,Junior
+562,1.000602279,7020,22.94,113,sweing,Monday,Quarter1,Bachelor,Lead
+614,0.700135088,6840,29.12,0,sweing,Wednesday,Quarter1,Master,Lead
+980,0.550349708,6840,26.66,30,sweing,Saturday,Quarter4,Master,Lead
+923,0.970816667,6240,18.79,56,sweing,Wednesday,Quarter4,Bachelor,Junior
+287,0.800128721,10170,25.9,50,sweing,Saturday,Quarter3,High School,Junior
+381,0.700250784,10440,20.4,40,sweing,Thursday,Quarter4,Bachelor,Junior
+867,0.8300625,4800,5.13,0,finishing,Sunday,Quarter4,High School,Senior
+668,0.750027778,3240,10.05,45,sweing,Sunday,Quarter2,Master,Lead
+725,0.700588406,5940,30.1,40,sweing,Wednesday,Quarter2,High School,Junior
+483,0.850532143,6720,22.52,60,sweing,Wednesday,Quarter4,Bachelor,Senior
+1019,0.750254867,6780,26.66,55,sweing,Monday,Quarter1,Bachelor,Junior
+124,0.666515152,1800,2.9,0,finishing,Wednesday,Quarter1,Master,Lead
+1160,0.800071839,6960,30.1,63,sweing,Tuesday,Quarter2,High School,Junior
+141,0.8,10530,28.08,69,sweing,Thursday,Quarter2,Master,Lead
+520,1.000230409,6840,22.52,113,sweing,Saturday,Quarter5,Master,Senior
+82,0.664583333,960,2.9,0,finishing,Monday,Quarter1,High School,Lead
+877,0.672140805,3480,11.41,0,sweing,Sunday,Quarter4,High School,Senior
+737,0.750799435,7080,30.1,56,sweing,Thursday,Quarter2,Master,Senior
+1191,0.700246491,4560,23.41,40,sweing,Wednesday,Quarter2,High School,Junior
+904,0.902222222,1800,2.9,0,finishing,Tuesday,Quarter4,High School,Senior
+931,0.75065101,3960,18.79,45,sweing,Wednesday,Quarter4,Master,Senior
+1012,0.800309211,0,11.61,50,sweing,Monday,Quarter1,Bachelor,Senior
+406,0.80035194,10260,22.52,69,sweing,Saturday,Quarter4,Master,Junior
+459,0.979527778,1440,3.94,0,finishing,Tuesday,Quarter4,Bachelor,Senior
+157,0.817424242,1440,4.15,0,finishing,Saturday,Quarter2,Master,Lead
+622,0.999924242,2640,3.94,0,finishing,Thursday,Quarter1,Bachelor,Junior
+799,0.621971751,7080,30.1,27,sweing,Monday,Quarter3,Master,Junior
+763,0.557252451,4080,18.79,0,sweing,Saturday,Quarter2,High School,Lead
+245,0.850502311,10620,26.16,75,sweing,Wednesday,Quarter2,High School,Senior
+159,0.801028213,10440,28.08,63,sweing,Saturday,Quarter2,High School,Senior
+472,0.700164706,4080,15.26,40,sweing,Tuesday,Quarter4,Bachelor,Lead
+193,0.452979626,7980,20.79,0,sweing,Sunday,Quarter2,High School,Senior
+651,0.662270115,6960,24.26,0,sweing,Saturday,Quarter1,Master,Lead
+568,0.809236111,1440,4.3,0,finishing,Monday,Quarter1,High School,Lead
+909,0.791458333,960,4.6,0,finishing,Tuesday,Quarter4,Bachelor,Junior
+940,0.581130952,5040,22.53,0,sweing,Wednesday,Quarter4,High School,Senior
+1164,0.750395513,6240,18.79,45,sweing,Tuesday,Quarter2,Master,Senior
+343,0.750057359,10080,22.52,63,sweing,Tuesday,Quarter3,Master,Lead
+695,0.90063244,0,22.52,88,sweing,Tuesday,Quarter2,High School,Senior
+129,0.900215716,10620,26.16,88,sweing,Thursday,Quarter2,Master,Senior
+808,0.800401961,4080,15.26,38,sweing,Tuesday,Quarter3,Bachelor,Junior
+629,0.799963218,6960,29.12,50,sweing,Thursday,Quarter1,High School,Lead
+275,0.606912879,1440,2.9,0,finishing,Thursday,Quarter3,High School,Senior
+1145,0.650962281,4560,23.41,35,sweing,Monday,Quarter2,Bachelor,Junior
+433,0.650407524,10440,29.12,26,sweing,Sunday,Quarter4,High School,Junior
+234,0.601278409,1440,4.15,0,finishing,Tuesday,Quarter2,Bachelor,Junior
+856,0.7,6240,29.4,0,sweing,Thursday,Quarter3,Bachelor,Lead
+615,0.687555556,1080,4.08,0,finishing,Wednesday,Quarter1,Master,Junior
+559,0.466821212,6600,24.26,0,sweing,Sunday,Quarter1,Master,Junior
+434,0.618181818,1620,4.08,0,finishing,Sunday,Quarter4,Bachelor,Junior
+436,0.500061916,720,15.09,23,sweing,Sunday,Quarter4,Bachelor,Senior
+468,0.800263218,6960,22.94,55,sweing,Tuesday,Quarter4,Bachelor,Senior
+847,0.800470513,3840,22.52,63,sweing,Thursday,Quarter3,Master,Senior
+1091,0.825444444,6000,4.6,0,finishing,Saturday,Quarter1,Master,Junior
+680,0.888125,960,2.9,0,finishing,Monday,Quarter2,Bachelor,Junior
+773,0.722568627,7140,30.1,0,sweing,Sunday,Quarter3,High School,Junior
+994,0.700236601,5640,21.82,30,sweing,Sunday,Quarter1,Master,Senior
+448,0.800023511,10440,22.94,60,sweing,Monday,Quarter4,Master,Senior
+542,0.286984568,6480,23.54,0,sweing,Saturday,Quarter5,Bachelor,Lead
+529,0.971866667,1200,3.94,0,finishing,Saturday,Quarter5,Bachelor,Senior
+674,0.353259649,6840,24.26,0,sweing,Sunday,Quarter2,Bachelor,Senior
+368,0.520237649,4140,54.56,29,sweing,Wednesday,Quarter3,Master,Junior
+925,0.900833333,2400,4.6,0,finishing,Wednesday,Quarter4,Master,Lead
+299,0.313852814,1260,4.15,0,finishing,Saturday,Quarter3,Bachelor,Senior
+324,0.800117103,10620,26.16,63,sweing,Monday,Quarter3,Master,Senior
+210,0.688557555,6930,50.48,45,sweing,Monday,Quarter2,High School,Senior
+1008,0.806879167,960,3.94,0,finishing,Monday,Quarter1,Bachelor,Senior
+307,0.7005417,10170,22.52,50,sweing,Sunday,Quarter3,High School,Junior
+328,0.750062751,10170,22.52,50,sweing,Monday,Quarter3,Bachelor,Senior
+261,0.953110048,3420,3.94,0,finishing,Thursday,Quarter3,High School,Senior
+583,0.999995238,6720,22.52,90,sweing,Tuesday,Quarter1,Master,Lead
+439,0.997792208,3780,3.94,0,finishing,Monday,Quarter4,Master,Junior
+412,0.600125217,6660,29.12,23,sweing,Saturday,Quarter4,Bachelor,Lead
+333,0.576460393,10260,48.84,30,sweing,Monday,Quarter3,High School,Senior
+950,0.75065101,3960,18.79,45,sweing,Thursday,Quarter4,Bachelor,Junior
+271,0.700060345,10440,20.79,0,sweing,Thursday,Quarter3,High School,Lead
+290,0.77011398,6570,22.94,23,sweing,Saturday,Quarter3,Master,Lead
+817,0.653431373,7140,30.1,0,sweing,Tuesday,Quarter3,Master,Junior
+97,0.800128721,10170,25.9,38,sweing,Tuesday,Quarter1,High School,Senior
+431,0.70043672,6120,15.26,40,sweing,Sunday,Quarter4,Master,Junior
+814,0.700614035,3420,11.41,30,sweing,Tuesday,Quarter3,Master,Lead
+32,0.800125,6720,25.9,38,sweing,Saturday,Quarter1,Master,Senior
+579,0.280333333,1200,2.9,0,finishing,Monday,Quarter1,High School,Lead
+849,0.799982853,600,30.1,63,sweing,Thursday,Quarter3,High School,Lead
+356,0.850410511,5760,11.61,75,sweing,Wednesday,Quarter3,Master,Lead
+993,0.707446429,6720,27.48,38,sweing,Sunday,Quarter1,Bachelor,Junior
+200,0.850502311,10620,26.16,75,sweing,Monday,Quarter2,High School,Lead
+1030,0.800401961,4080,15.26,50,sweing,Tuesday,Quarter1,High School,Lead
+179,0.828295455,1440,3.94,0,finishing,Sunday,Quarter2,High School,Senior
+295,0.600291767,10170,22.52,30,sweing,Saturday,Quarter3,High School,Lead
+89,0.850502311,10620,26.16,75,sweing,Tuesday,Quarter1,Bachelor,Senior
+694,0.966759259,2160,3.94,0,finishing,Tuesday,Quarter2,Master,Junior
+722,0.800144144,3240,29.12,50,sweing,Wednesday,Quarter2,Master,Junior
+1110,0.890604167,960,3.94,0,finishing,Sunday,Quarter2,High School,Senior
+209,0.725,1440,2.9,0,finishing,Monday,Quarter2,High School,Lead
+1037,0.702777778,3360,4.6,0,finishing,Tuesday,Quarter1,High School,Lead
+1129,0.960625,0,2.9,960,finishing,Monday,Quarter2,High School,Junior
+297,0.465757576,900,2.9,0,finishing,Saturday,Quarter3,Bachelor,Junior
+999,0.664583333,3360,2.9,0,finishing,Sunday,Quarter1,Master,Senior
+320,0.964106061,1800,3.94,0,finishing,Monday,Quarter3,Bachelor,Junior
+429,0.749188312,2520,3.94,0,finishing,Sunday,Quarter4,Bachelor,Senior
+938,0.658541667,960,4.6,0,finishing,Wednesday,Quarter4,Master,Lead
+430,0.7005417,10170,22.52,40,sweing,Sunday,Quarter4,Master,Lead
+515,0.60059761,4320,20.1,46,sweing,Thursday,Quarter5,High School,Lead
+11,0.721126957,6900,28.08,44,sweing,Thursday,Quarter1,Master,Junior
+719,0.850364583,0,22.52,75,sweing,Wednesday,Quarter2,High School,Senior
+395,0.937242424,1800,3.94,0,finishing,Saturday,Quarter4,High School,Senior
+199,0.850522167,8220,26.16,75,sweing,Monday,Quarter2,Bachelor,Senior
+60,0.603432184,6960,45.67,26,sweing,Sunday,Quarter1,Master,Lead
+479,1.000230409,6840,22.52,113,sweing,Wednesday,Quarter4,High School,Junior
+364,0.700170388,10260,14.89,50,sweing,Wednesday,Quarter3,Bachelor,Lead
+276,0.600291767,10170,22.52,23,sweing,Thursday,Quarter3,High School,Lead
+728,0.54175,960,3.94,0,finishing,Wednesday,Quarter2,High School,Lead
+1088,0.868888889,1080,4.6,0,finishing,Saturday,Quarter1,High School,Lead
+655,0.365318713,6840,24.26,0,sweing,Saturday,Quarter1,Master,Junior
+552,0.85011396,7020,22.52,60,sweing,Sunday,Quarter1,High School,Lead
+985,0.271875,3360,2.9,0,finishing,Saturday,Quarter4,High School,Lead
+221,0.858143939,1440,3.94,0,finishing,Tuesday,Quarter2,High School,Senior
+784,0.287041667,2400,4.15,0,finishing,Sunday,Quarter3,Bachelor,Senior
+899,0.417916667,6000,21.25,0,sweing,Monday,Quarter4,Bachelor,Lead
+701,0.800401961,4080,15.26,50,sweing,Tuesday,Quarter2,Master,Senior
+329,0.750057359,10080,22.52,63,sweing,Monday,Quarter3,High School,Junior
+1121,0.700422,6000,21.82,30,sweing,Sunday,Quarter2,Bachelor,Senior
+826,0.919125,1440,5.13,0,finishing,Wednesday,Quarter3,Master,Lead
+821,0.5814,1800,5.13,0,finishing,Tuesday,Quarter3,High School,Lead
+894,0.750293939,2820,11.41,0,sweing,Monday,Quarter4,Bachelor,Lead
+291,0.7005417,10170,22.52,50,sweing,Saturday,Quarter3,Bachelor,Senior
+266,0.850415628,8970,25.9,60,sweing,Thursday,Quarter3,Bachelor,Senior
+630,0.771583333,960,3.94,0,finishing,Thursday,Quarter1,Bachelor,Senior
+248,0.820833333,1440,4.15,0,finishing,Wednesday,Quarter2,Master,Junior
+713,1.02,1080,4.08,0,finishing,Wednesday,Quarter2,High School,Senior
+1118,0.800034503,3420,11.41,50,sweing,Sunday,Quarter2,Master,Senior
+991,0.750473684,6840,29.4,45,sweing,Sunday,Quarter1,Bachelor,Senior
+924,0.902962963,1080,4.6,0,finishing,Wednesday,Quarter4,Bachelor,Lead
+1079,0.750651724,6960,26.82,50,sweing,Thursday,Quarter1,Bachelor,Senior
+765,0.483333333,960,2.9,0,finishing,Saturday,Quarter2,High School,Lead
+377,0.800020563,10080,22.52,55,sweing,Thursday,Quarter4,High School,Senior
+885,0.955791667,2400,3.94,0,finishing,Monday,Quarter4,Bachelor,Senior
+524,0.971866667,1200,3.94,0,finishing,Saturday,Quarter5,Master,Junior
+84,0.966781346,4440,3.94,0,finishing,Tuesday,Quarter1,High School,Senior
+232,0.681060606,1440,2.9,0,finishing,Tuesday,Quarter2,High School,Senior
+619,1.000446018,6780,22.52,113,sweing,Thursday,Quarter1,Bachelor,Lead
+1148,0.500610909,6600,30.48,0,sweing,Monday,Quarter2,Master,Senior
+130,0.891723485,1440,3.94,0,finishing,Thursday,Quarter2,Bachelor,Junior
+891,0.800137255,7140,30.1,38,sweing,Monday,Quarter4,High School,Lead
+421,0.955151515,3420,3.94,0,finishing,Sunday,Quarter4,Master,Senior
+1106,0.408960345,6960,27.48,24,sweing,Saturday,Quarter1,Master,Senior
+382,0.700170388,10260,14.89,50,sweing,Thursday,Quarter4,Master,Junior
+530,0.971866667,960,3.94,0,finishing,Saturday,Quarter5,High School,Junior
+1070,0.950625,960,3.9,0,finishing,Thursday,Quarter1,Bachelor,Junior
+650,0.715766667,1200,3.94,0,finishing,Saturday,Quarter1,Master,Lead
+870,0.80000295,5820,30.1,63,sweing,Sunday,Quarter4,Master,Lead

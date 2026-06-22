@@ -236,6 +236,21 @@ def get_today_str():
     weekdays = ["(월)", "(화)", "(수)", "(목)", "(금)", "(토)", "(일)"]
     return f"{now.month}/{now.day}{weekdays[now.weekday()]}"
 
+# --- [신규 추가] 화면을 가리는 방해 팝업을 찾아 닫아주는 함수 ---
+def close_annoying_popups(driver):
+    try:
+        popup_texts = ["오늘 그만 보기", "오늘 하루 보지 않기", "다시 보지 않기", "닫기", "오늘 하루 열지 않음"]
+        for text in popup_texts:
+            btns = driver.find_elements(By.XPATH, f"//*[contains(text(), '{text}')]")
+            for btn in btns:
+                if btn.is_displayed():
+                    driver.execute_script("arguments[0].click();", btn)
+                    print(f"🛡️ 방해 팝업 치움: '{text}' 버튼 클릭")
+                    time.sleep(0.5)
+    except Exception:
+        pass
+# ----------------------------------------------------------------
+
 def scan_screen_for_qr(timeout_minutes=30):
     global is_running 
     if not QR_AVAILABLE:
@@ -277,13 +292,18 @@ def run_bot():
         
     print(f"\n🚀 [{datetime.datetime.now().strftime('%H:%M:%S')}] 자동 입장을 시작/확인 합니다!")
     
-    old_driver = driver 
-    if old_driver is not None:
-        print("💡 기존 창이 켜져 있습니다. 새 창에서 입장이 완료될 때까지 기존 창을 유지합니다.")
+    # --- [핵심 수정] 크롬 프로필 잠금 충돌을 막기 위해 기존 창은 무조건 먼저 닫습니다 ---
+    if driver is not None:
+        print("🧹 크롬 프로필 충돌(빈 화면 현상) 방지를 위해 기존 창을 완전히 닫고 새 창을 준비합니다.")
+        try:
+            driver.quit()
+        except Exception:
+            pass
+        driver = None
+    # --------------------------------------------------------------------------------------
 
     driver = get_browser_driver()
     if driver is None:
-        driver = old_driver 
         return 
     
     url = "https://yeardream2026.elice.io/my/lecturerooms?page=1"
@@ -314,6 +334,9 @@ def run_bot():
         list_wait = WebDriverWait(driver, 30)
         list_wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '라이브 강의실')]")))
         print("✅ 강의실 목록 로딩 완벽 확인!")
+        
+        # [신규 적용] 로그인 직후 대시보드에서 뜨는 팝업들 닫기
+        close_annoying_popups(driver)
         
     except Exception:
         if is_running:
@@ -350,7 +373,7 @@ def run_bot():
         if not target_found:
             print("⚠️ 현재 열려있는 '오늘 날짜의 강의실'을 찾지 못했습니다.")
             print("👉 (아직 수업 전이거나 수업이 끝났습니다. 창을 유지하며 타이머 모드로 진입합니다.)")
-            return # 방이 없으면 여기서 깔끔하게 리턴(종료)하여 다음 타이머를 기다림
+            return 
 
         print("오버랩 팝업 및 입장 버튼 대기 중...")
         time.sleep(5) 
@@ -393,13 +416,8 @@ def run_bot():
             print("🎉 강의실 입장 버튼 클릭 완료! 페이지 로딩을 기다립니다...")
             time.sleep(5) 
 
-            if old_driver is not None:
-                print("🧹 새 창에서 강의실 입장이 확인되었습니다. 이전 시간의 창을 닫습니다.")
-                try:
-                    old_driver.quit()
-                except Exception:
-                    pass
-                old_driver = None
+            # [신규 적용] 강의실 입장 후 화면을 가리는 팝업이 있다면 한 번 더 청소
+            close_annoying_popups(driver)
 
             found_url = scan_screen_for_qr()
             if found_url and is_running:
@@ -454,7 +472,7 @@ class PrintLogger:
 def run_scheduler_loop():
     global is_running
     target_days = ["monday", "tuesday", "wednesday", "thursday", "friday"]
-    target_times = ["09:05", "09:10", "16:20", "16:25", "16:30"]
+    target_times = ["09:05", "09:10", "16:25", "16:30"]
     
     print("\n⏳ 내장 타이머 설정 중...")
     
@@ -471,10 +489,8 @@ def run_scheduler_loop():
     print("\n✅ 예약 타이머 설정 완료! 백그라운드 감시를 시작합니다.")
     print("💡 [통합 기능] 현재 시점으로 접속 가능한 강의가 있는지 즉시 1회 검사를 진행합니다...")
     
-    # --- [핵심 수정] 루프 진입 전 무조건 즉시 1회 실행 ---
     if is_running:
         run_bot()
-    # ---------------------------------------------------
     
     if is_running:
         print("\n⏳ 1회 검사가 종료되었습니다. 예약된 다음 강의 시간을 기다리는 중입니다... (창을 최소화해 두세요)")
@@ -521,7 +537,6 @@ def create_gui():
     frame = tk.Frame(root, bg="#f4f4f4")
     frame.pack(pady=5)
 
-    # --- [핵심 수정] 버튼 2개를 통합하여 UI 직관성 극대화 ---
     btn_start = tk.Button(frame, text="▶️ 통합 자동 시작 (즉시 1회 실행 + 예약 타이머)", font=("Helvetica", 11, "bold"), 
                      width=40, height=2, command=start_integrated_mode, bg="#4CAF50", fg="black")
     btn_start.pack(pady=5)
@@ -531,7 +546,6 @@ def create_gui():
     btn_stop = tk.Button(frame, text="⏹️ 작동 중지 및 초기화", font=("Helvetica", 11, "bold"), 
                          width=40, height=2, command=stop_bot, fg="red", state=tk.DISABLED)
     btn_stop.pack(pady=15)
-    # ---------------------------------------------------------
 
     log_frame = tk.Frame(root)
     log_frame.pack(padx=20, pady=5, fill=tk.BOTH, expand=True)
