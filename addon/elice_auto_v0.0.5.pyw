@@ -15,7 +15,7 @@ import threading
 logging.getLogger().setLevel(logging.ERROR) 
 warnings.filterwarnings("ignore") 
 
-# --- [신규 추가] 봇 제어용 전역 변수 (신호등 역할) ---
+# --- 봇 제어용 전역 변수 (신호등 역할) ---
 is_running = False 
 # ----------------------------------------------------
 
@@ -237,7 +237,7 @@ def get_today_str():
     return f"{now.month}/{now.day}{weekdays[now.weekday()]}"
 
 def scan_screen_for_qr(timeout_minutes=30):
-    global is_running # 제어 신호 확인
+    global is_running 
     if not QR_AVAILABLE:
         print("\n❌ QR 감시 모듈이 비활성화 되어있습니다.")
         return None
@@ -245,7 +245,6 @@ def scan_screen_for_qr(timeout_minutes=30):
     print(f"👀 [QR 감시 모드] 화면에서 QR 코드를 찾는 중... (최대 {timeout_minutes}분 동안만 감시)")
     start_time = datetime.datetime.now()
 
-    # --- [핵심 수정] 무한루프 대신 is_running이 True일 때만 감시 ---
     while is_running:
         current_time = datetime.datetime.now()
         elapsed_minutes = (current_time - start_time).total_seconds() / 60.0
@@ -279,51 +278,19 @@ def run_bot():
         
     print(f"\n🚀 [{datetime.datetime.now().strftime('%H:%M:%S')}] 예약된 자동 입장을 시작합니다!")
     
+    # --- [핵심 수정] 무조건 기존 창 닫고 새 창 열기 (가장 안정적인 방식) ---
     if driver is not None:
+        print("🧹 이전 작업 창을 감지했습니다. 깔끔한 실행을 위해 기존 창을 닫고 새로 시작합니다.")
         try:
-            current_url = driver.current_url 
-            print("✅ 봇이 열어둔 기존 브라우저가 살아있습니다. 현재 상태를 체크합니다.")
-            
-            is_in_live_room = len(driver.find_elements(By.XPATH, "//*[contains(text(), '라이브 강의실')]")) > 0
-            
-            if is_in_live_room:
-                print("🎯 이미 최종 목적지(강의실)에 입장해 있습니다! 앞의 로그인/탐색 과정을 모두 건너뛰고 바로 QR 감시를 시작합니다.")
-                
-                found_url = scan_screen_for_qr(timeout_minutes=30)
-                if found_url and is_running: # 중지되지 않았다면 링크 열기
-                    print("🌐 출석 링크를 새 탭으로 엽니다!")
-                    original_window = driver.current_window_handle 
-                    driver.execute_script(f"window.open('{found_url}', '_blank');")
-                    
-                    time.sleep(1)
-                    for window_handle in driver.window_handles:
-                        if window_handle != original_window:
-                            driver.switch_to.window(window_handle)
-                            break
-                            
-                    print("👀 출석 화면을 덮는 '강의실 입장' 팝업 대기 중...")
-                    time.sleep(4)
-                    try:
-                        overlap_buttons = driver.find_elements(By.XPATH, "//*[normalize-space()='입장하기']")
-                        for btn in overlap_buttons:
-                            if btn.is_displayed():
-                                driver.execute_script("arguments[0].click();", btn)
-                                print("✅ 출석 화면을 가리던 팝업을 치웠습니다!")
-                                break
-                    except Exception:
-                        pass
-                        
-                return 
-            else:
-                print("창은 열려있지만 최종 강의실 화면이 아닙니다. 처음부터 입장을 시도합니다.")
+            driver.quit()
         except Exception:
-            print("⚠️ 기존 창이 사용자에 의해 닫혔거나 연결이 끊어졌습니다. 새로 엽니다.")
-            driver = None 
+            pass
+        driver = None 
+    # ------------------------------------------------------------------------
 
+    driver = get_browser_driver()
     if driver is None:
-        driver = get_browser_driver()
-        if driver is None:
-            return 
+        return 
     
     url = "https://yeardream2026.elice.io/my/lecturerooms?page=1"
     
@@ -462,7 +429,6 @@ def run_bot():
             print("입장 버튼 클릭 실패.")
 
     except Exception as e:
-        # 강제 종료에 의한 에러는 무시
         if is_running:
             print(f"작동 중 에러 발생: {e}")
 
@@ -502,7 +468,6 @@ def run_scheduler_loop():
     print("\n✅ 스케줄러가 백그라운드에서 감시를 시작했습니다.")
     print("이 창을 끄지 마시고 최소화해 두시면 제시간에 알아서 움직입니다!")
     
-    # --- [핵심 수정] is_running이 True일 때만 루프 유지 ---
     while is_running:
         schedule.run_pending()
         time.sleep(1) 
@@ -511,7 +476,7 @@ def run_scheduler_loop():
 def create_gui():
     root = tk.Tk()
     root.title("엘리스 자동 출석 비서")
-    root.geometry("600x550") # 높이 살짝 증가
+    root.geometry("600x550") 
     root.configure(bg="#f4f4f4")
     
     title_lbl = tk.Label(root, text="🚀 엘리스 LXP 출석 자동화 봇", font=("Helvetica", 16, "bold"), bg="#f4f4f4")
@@ -522,7 +487,7 @@ def create_gui():
         is_running = True
         btn1.config(state=tk.DISABLED, text="실행 중...")
         btn2.config(state=tk.DISABLED)
-        btn_stop.config(state=tk.NORMAL) # 중지 버튼 활성화
+        btn_stop.config(state=tk.NORMAL) 
         threading.Thread(target=run_bot, daemon=True).start()
 
     def start_mode_2():
@@ -530,21 +495,16 @@ def create_gui():
         is_running = True
         btn1.config(state=tk.DISABLED)
         btn2.config(state=tk.DISABLED, text="타이머 작동 중...")
-        btn_stop.config(state=tk.NORMAL) # 중지 버튼 활성화
+        btn_stop.config(state=tk.NORMAL) 
         threading.Thread(target=run_scheduler_loop, daemon=True).start()
 
-    # --- [신규 추가] 중지 및 초기화 함수 ---
     def stop_bot():
         global is_running, driver
         print("\n🛑 강제 중지 명령을 실행합니다... 잠시만 대기해주세요.")
         
-        # 1. 신호등을 꺼서 루프들 탈출 유도
         is_running = False
-        
-        # 2. 스케줄러 초기화
         schedule.clear()
         
-        # 3. 켜져있는 브라우저 강제 종료 (작업 흐름 끊기)
         if driver is not None:
             try:
                 driver.quit()
@@ -552,12 +512,10 @@ def create_gui():
                 pass
             driver = None
 
-        # 4. 버튼 상태 원래대로 복구
         btn1.config(state=tk.NORMAL, text="▶️ 1번: 지금 바로 입장 (테스트용)")
         btn2.config(state=tk.NORMAL, text="⏰ 2번: 내장 타이머 켜두기 (실전용)")
         btn_stop.config(state=tk.DISABLED)
         print("✅ 봇이 완전히 중지되고 초기화되었습니다. 상단 버튼을 눌러 다시 시작할 수 있습니다.\n")
-    # ----------------------------------------
 
     frame = tk.Frame(root, bg="#f4f4f4")
     frame.pack(pady=5)
@@ -570,7 +528,6 @@ def create_gui():
                      width=35, height=2, command=start_mode_2)
     btn2.pack(pady=5)
     
-    # 중지 버튼 생성
     btn_stop = tk.Button(frame, text="⏹️ 작동 중지 및 초기화", font=("Helvetica", 11, "bold"), 
                          width=35, height=2, command=stop_bot, fg="red", state=tk.DISABLED)
     btn_stop.pack(pady=10)
