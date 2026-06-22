@@ -278,18 +278,15 @@ def run_bot():
         
     print(f"\n🚀 [{datetime.datetime.now().strftime('%H:%M:%S')}] 예약된 자동 입장을 시작합니다!")
     
-    # --- [핵심 수정] 무조건 기존 창 닫고 새 창 열기 (가장 안정적인 방식) ---
-    if driver is not None:
-        print("🧹 이전 작업 창을 감지했습니다. 깔끔한 실행을 위해 기존 창을 닫고 새로 시작합니다.")
-        try:
-            driver.quit()
-        except Exception:
-            pass
-        driver = None 
-    # ------------------------------------------------------------------------
+    # --- [핵심 수정] 기존 창을 바로 닫지 않고 임시로 보존해둡니다 ---
+    old_driver = driver 
+    if old_driver is not None:
+        print("💡 기존 창이 켜져 있습니다. 새 창에서 입장이 완료될 때까지 기존 창을 유지합니다.")
+    # --------------------------------------------------------
 
     driver = get_browser_driver()
     if driver is None:
+        driver = old_driver # 새 브라우저 열기 실패 시 다시 기존 창으로 제어권 복구
         return 
     
     url = "https://yeardream2026.elice.io/my/lecturerooms?page=1"
@@ -397,6 +394,16 @@ def run_bot():
         if click_success:
             print("🎉 강의실 입장 버튼 클릭 완료! 페이지 로딩을 기다립니다...")
             time.sleep(5) 
+
+            # --- [핵심 수정] 새 창 입장이 완벽히 끝났으므로 기존 창을 닫습니다 ---
+            if old_driver is not None:
+                print("🧹 새 창에서 강의실 입장이 확인되었습니다. 이전 시간의 창을 닫습니다.")
+                try:
+                    old_driver.quit()
+                except Exception:
+                    pass
+                old_driver = None
+            # ---------------------------------------------------------------
 
             found_url = scan_screen_for_qr()
             if found_url and is_running:
