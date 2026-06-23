@@ -279,7 +279,7 @@ def scan_screen_for_qr(timeout_minutes=30):
             pass 
         time.sleep(2) 
         
-    print("🛑 QR 감시가 강제로 중지되었습니다.")
+    print("🛑 QR 감시 로직이 종료되었습니다.")
     return None
 
 def run_bot():
@@ -420,9 +420,8 @@ def run_bot():
                 original_window = driver.current_window_handle 
                 driver.execute_script(f"window.open('{found_url}', '_blank');")
                 
-                time.sleep(2) # 새 탭이 열릴 시간을 조금 더 넉넉히 줍니다.
+                time.sleep(2) 
                 
-                # 시선을 새로 열린 출석 탭으로 이동
                 for window_handle in driver.window_handles:
                     if window_handle != original_window:
                         driver.switch_to.window(window_handle)
@@ -431,10 +430,8 @@ def run_bot():
                 print("👀 출석 화면을 덮는 iframe 오버레이 대기 중...")
                 time.sleep(4) 
                 
-                # --- [핵심 수정] 새 탭(출석)에서 '입장하기'가 아닌 '닫기'를 누르도록 변경 및 iframe 탐색 추가 ---
                 closed_overlay = False
                 
-                # 1. 기본 화면에서 '닫기' 버튼 탐색
                 try:
                     close_buttons = driver.find_elements(By.XPATH, "//*[normalize-space()='닫기']")
                     for btn in close_buttons:
@@ -446,7 +443,6 @@ def run_bot():
                 except Exception:
                     pass
                 
-                # 2. 기본 화면에 없다면 iframe(액자) 내부로 침투하여 '닫기' 탐색
                 if not closed_overlay:
                     try:
                         iframes = driver.find_elements(By.TAG_NAME, "iframe")
@@ -463,7 +459,7 @@ def run_bot():
                             except Exception:
                                 pass
                             finally:
-                                driver.switch_to.default_content() # 원래 화면으로 복귀
+                                driver.switch_to.default_content()
                             
                             if closed_overlay:
                                 break
@@ -472,7 +468,6 @@ def run_bot():
 
                 if not closed_overlay:
                     print("⚠️ '닫기' 버튼을 찾지 못했습니다. (팝업이 없거나 이미 치워짐)")
-                # ------------------------------------------------------------------------------------------
                 
         else:
             print("입장 버튼 클릭 실패.")
@@ -531,8 +526,11 @@ def run_scheduler_loop():
 def create_gui():
     root = tk.Tk()
     root.title("엘리스 자동 출석 비서")
-    root.geometry("600x500") 
+    root.geometry("600x550") 
     root.configure(bg="#f4f4f4")
+    
+    # --- [신규 추가] 종료 시 브라우저 닫기 옵션 변수 ---
+    close_browser_var = tk.BooleanVar(value=True) # 기본값: 체크됨(True)
     
     title_lbl = tk.Label(root, text="🚀 엘리스 LXP 출석 자동화 봇", font=("Helvetica", 16, "bold"), bg="#f4f4f4")
     title_lbl.pack(pady=15)
@@ -551,16 +549,23 @@ def create_gui():
         is_running = False
         schedule.clear()
         
-        if driver is not None:
+        # --- [핵심 수정] 체크박스 상태에 따라 브라우저 닫기 유무 결정 ---
+        if close_browser_var.get() and driver is not None:
             try:
                 driver.quit()
             except Exception:
                 pass
             driver = None
+            print("✅ 봇이 완전히 중지되고 브라우저가 함께 닫혔습니다.")
+        else:
+            print("✅ 봇 작동만 중지되었습니다. (강의 화면 유지를 위해 브라우저는 닫지 않습니다)")
+            # 창은 냅두지만, 나중에 '시작'을 다시 누를 때 빈화면 충돌이 나지 않도록
+            # 코드 상단의 run_bot()에서 driver 변수를 인식해 미리 치우도록 driver 변수를 놔둡니다.
+        # ------------------------------------------------------------------
 
         btn_start.config(state=tk.NORMAL, text="▶️ 통합 자동 시작 (즉시 1회 실행 + 예약 타이머)")
         btn_stop.config(state=tk.DISABLED)
-        print("✅ 봇이 완전히 중지되고 초기화되었습니다. 상단 버튼을 눌러 다시 시작할 수 정 있습니다.\n")
+        print("💡 상단 버튼을 눌러 언제든 다시 시작할 수 있습니다.\n")
 
     frame = tk.Frame(root, bg="#f4f4f4")
     frame.pack(pady=5)
@@ -574,6 +579,17 @@ def create_gui():
     btn_stop = tk.Button(frame, text="⏹️ 작동 중지 및 초기화", font=("Helvetica", 11, "bold"), 
                          width=40, height=2, command=stop_bot, fg="red", state=tk.DISABLED)
     btn_stop.pack(pady=15)
+
+    # --- [신규 추가] 체크박스 UI 화면에 배치 ---
+    chk_close = tk.Checkbutton(frame, text="프로그램 중지/종료 시 브라우저 같이 닫기", 
+                               variable=close_browser_var, bg="#f4f4f4", font=("Helvetica", 9))
+    chk_close.pack(pady=0)
+    
+    # --- [신규 추가] 체크박스 관련 주의사항 라벨 ---
+    warning_lbl = tk.Label(frame, text="💡 주의: 창을 남겨두더라도, 나중에 봇을 [다시 시작]하면 충돌 방지를 위해 기존 창을 닫고 시작합니다.", 
+                           bg="#f4f4f4", fg="#888888", font=("Helvetica", 8))
+    warning_lbl.pack(pady=(0, 5))
+    # -------------------------------------------
 
     log_frame = tk.Frame(root)
     log_frame.pack(padx=20, pady=5, fill=tk.BOTH, expand=True)
@@ -591,6 +607,21 @@ def create_gui():
 
     print("환영합니다! 필수 환경 로딩이 끝났습니다.")
     print("원하시는 모드의 버튼을 클릭해주세요.")
+
+    # --- [신규 추가] 창의 우측 상단 'X' 버튼을 눌러서 강제로 끌 때도 체크박스 룰 적용 ---
+    def on_closing():
+        global is_running, driver
+        is_running = False
+        if close_browser_var.get() and driver is not None:
+            try:
+                driver.quit()
+            except Exception:
+                pass
+        root.destroy()
+        sys.exit(0)
+        
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    # ----------------------------------------------------------------------------------
 
     root.mainloop()
 
