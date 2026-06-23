@@ -236,7 +236,6 @@ def get_today_str():
     weekdays = ["(월)", "(화)", "(수)", "(목)", "(금)", "(토)", "(일)"]
     return f"{now.month}/{now.day}{weekdays[now.weekday()]}"
 
-# --- [신규 추가] 화면을 가리는 방해 팝업을 찾아 닫아주는 함수 ---
 def close_annoying_popups(driver):
     try:
         popup_texts = ["오늘 그만 보기", "오늘 하루 보지 않기", "다시 보지 않기", "닫기", "오늘 하루 열지 않음"]
@@ -249,7 +248,6 @@ def close_annoying_popups(driver):
                     time.sleep(0.5)
     except Exception:
         pass
-# ----------------------------------------------------------------
 
 def scan_screen_for_qr(timeout_minutes=30):
     global is_running 
@@ -292,7 +290,6 @@ def run_bot():
         
     print(f"\n🚀 [{datetime.datetime.now().strftime('%H:%M:%S')}] 자동 입장을 시작/확인 합니다!")
     
-    # --- [핵심 수정] 크롬 프로필 잠금 충돌을 막기 위해 기존 창은 무조건 먼저 닫습니다 ---
     if driver is not None:
         print("🧹 크롬 프로필 충돌(빈 화면 현상) 방지를 위해 기존 창을 완전히 닫고 새 창을 준비합니다.")
         try:
@@ -300,7 +297,6 @@ def run_bot():
         except Exception:
             pass
         driver = None
-    # --------------------------------------------------------------------------------------
 
     driver = get_browser_driver()
     if driver is None:
@@ -335,7 +331,6 @@ def run_bot():
         list_wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '라이브 강의실')]")))
         print("✅ 강의실 목록 로딩 완벽 확인!")
         
-        # [신규 적용] 로그인 직후 대시보드에서 뜨는 팝업들 닫기
         close_annoying_popups(driver)
         
     except Exception:
@@ -416,7 +411,6 @@ def run_bot():
             print("🎉 강의실 입장 버튼 클릭 완료! 페이지 로딩을 기다립니다...")
             time.sleep(5) 
 
-            # [신규 적용] 강의실 입장 후 화면을 가리는 팝업이 있다면 한 번 더 청소
             close_annoying_popups(driver)
 
             found_url = scan_screen_for_qr()
@@ -426,25 +420,59 @@ def run_bot():
                 original_window = driver.current_window_handle 
                 driver.execute_script(f"window.open('{found_url}', '_blank');")
                 
-                time.sleep(1) 
+                time.sleep(2) # 새 탭이 열릴 시간을 조금 더 넉넉히 줍니다.
                 
+                # 시선을 새로 열린 출석 탭으로 이동
                 for window_handle in driver.window_handles:
                     if window_handle != original_window:
                         driver.switch_to.window(window_handle)
                         break
                         
-                print("👀 출석 화면을 덮는 '강의실 입장' 팝업 대기 중...")
+                print("👀 출석 화면을 덮는 iframe 오버레이 대기 중...")
                 time.sleep(4) 
                 
+                # --- [핵심 수정] 새 탭(출석)에서 '입장하기'가 아닌 '닫기'를 누르도록 변경 및 iframe 탐색 추가 ---
+                closed_overlay = False
+                
+                # 1. 기본 화면에서 '닫기' 버튼 탐색
                 try:
-                    overlap_buttons = driver.find_elements(By.XPATH, "//*[normalize-space()='입장하기']")
-                    for btn in overlap_buttons:
+                    close_buttons = driver.find_elements(By.XPATH, "//*[normalize-space()='닫기']")
+                    for btn in close_buttons:
                         if btn.is_displayed():
                             driver.execute_script("arguments[0].click();", btn)
-                            print("✅ 출석 화면을 가리던 팝업을 치웠습니다! 이제 깔끔하게 출석하세요.")
+                            print("✅ 출석 화면 기본 창에서 '닫기' 버튼을 치웠습니다!")
+                            closed_overlay = True
                             break
                 except Exception:
-                    print("팝업 치우기 생략 (팝업이 없거나 이미 치워짐)")
+                    pass
+                
+                # 2. 기본 화면에 없다면 iframe(액자) 내부로 침투하여 '닫기' 탐색
+                if not closed_overlay:
+                    try:
+                        iframes = driver.find_elements(By.TAG_NAME, "iframe")
+                        for iframe in iframes:
+                            try:
+                                driver.switch_to.frame(iframe)
+                                close_buttons = driver.find_elements(By.XPATH, "//*[normalize-space()='닫기']")
+                                for btn in close_buttons:
+                                    if btn.is_displayed():
+                                        driver.execute_script("arguments[0].click();", btn)
+                                        print("✅ 출석 화면 iframe 안에서 '닫기' 버튼을 찾아 치웠습니다!")
+                                        closed_overlay = True
+                                        break
+                            except Exception:
+                                pass
+                            finally:
+                                driver.switch_to.default_content() # 원래 화면으로 복귀
+                            
+                            if closed_overlay:
+                                break
+                    except Exception:
+                        driver.switch_to.default_content()
+
+                if not closed_overlay:
+                    print("⚠️ '닫기' 버튼을 찾지 못했습니다. (팝업이 없거나 이미 치워짐)")
+                # ------------------------------------------------------------------------------------------
                 
         else:
             print("입장 버튼 클릭 실패.")
@@ -532,7 +560,7 @@ def create_gui():
 
         btn_start.config(state=tk.NORMAL, text="▶️ 통합 자동 시작 (즉시 1회 실행 + 예약 타이머)")
         btn_stop.config(state=tk.DISABLED)
-        print("✅ 봇이 완전히 중지되고 초기화되었습니다. 상단 버튼을 눌러 다시 시작할 수 있습니다.\n")
+        print("✅ 봇이 완전히 중지되고 초기화되었습니다. 상단 버튼을 눌러 다시 시작할 수 정 있습니다.\n")
 
     frame = tk.Frame(root, bg="#f4f4f4")
     frame.pack(pady=5)
