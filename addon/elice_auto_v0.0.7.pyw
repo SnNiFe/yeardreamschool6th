@@ -166,15 +166,52 @@ def get_today_date_str():
 def close_annoying_popups(driver):
     try:
         popup_texts = ["오늘 그만 보기", "오늘 하루 보지 않기", "다시 보지 않기", "닫기", "오늘 하루 열지 않음"]
+        closed = False
+        
+        # 1. 기본 창에서 닫기 버튼(By.XPATH) 찾기 (치명적 오타 수정 완료!)
         for text in popup_texts:
-            btns = driver.find_elements(By.開PATH, f"//*[contains(text(), '{text}')]")
+            btns = driver.find_elements(By.XPATH, f"//*[contains(text(), '{text}')]")
             for btn in btns:
                 if btn.is_displayed():
                     driver.execute_script("arguments[0].click();", btn)
                     print(f"🛡️ 방해 팝업 치움: '{text}' 버튼 클릭")
                     time.sleep(0.5)
+                    closed = True
+                    break
+            if closed: break
+
+        # 2. 버튼 못 찾았으면 iframe(액자) 내부 침투해서 탐색
+        if not closed:
+            iframes = driver.find_elements(By.TAG_NAME, "iframe")
+            for iframe in iframes:
+                try:
+                    driver.switch_to.frame(iframe)
+                    for text in popup_texts:
+                        btns = driver.find_elements(By.XPATH, f"//*[contains(text(), '{text}')]")
+                        for btn in btns:
+                            if btn.is_displayed():
+                                driver.execute_script("arguments[0].click();", btn)
+                                print(f"🛡️ 방해 팝업(iframe 내부) 치움: '{text}' 버튼 클릭")
+                                time.sleep(0.5)
+                                closed = True
+                                break
+                        if closed: break
+                except Exception:
+                    pass
+                finally:
+                    driver.switch_to.default_content() # 원래 화면으로 복귀
+                if closed: break
+
+        # 3. 사용자님 아이디어 적용: 다 못 찾았으면 '회색 배경'을 강제로 찌르기!
+        if not closed:
+            # 웹페이지의 좌측 상단 여백(x:10, y:10) 위치를 자바스크립트로 강제 클릭 (회색 오버레이 타격)
+            driver.execute_script("var el = document.elementFromPoint(10, 10); if(el) el.click();")
+            
+            # 혹시 몰라서 웹 팝업 닫기의 표준인 'ESC 키'도 한 번 눌러줌
+            driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
+            
     except Exception:
-        pass
+        pass # 에러가 나도 조용히 넘어가서 본래 출석 로직에 방해되지 않도록 함
 
 def scan_screen_for_qr(timeout_minutes=30):
     global is_running 
