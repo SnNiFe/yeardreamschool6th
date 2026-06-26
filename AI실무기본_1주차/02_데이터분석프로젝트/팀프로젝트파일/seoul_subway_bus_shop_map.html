@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_8b494677065b53e81ea4ff777973508e {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_8b494677065b53e81ea4ff777973508e" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_8b494677065b53e81ea4ff777973508e = L.map(
+                "map_8b494677065b53e81ea4ff777973508e",
+                {
+                    center: [37.5502, 126.982],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 12,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_dc7e6d2e44f46e3f8d94d0d0467c47c5 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_dc7e6d2e44f46e3f8d94d0d0467c47c5.addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+            var circle_marker_2b35b2cd722cea9b886ab2ee254b565d = L.circleMarker(
+                [37.5479431112122, 126.922936675568],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25.0, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_ec0ae598f8a00799752aeedda948a81b = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_323d9ba8ce3297ecc5983b7defbfd762 = $(`<div id="html_323d9ba8ce3297ecc5983b7defbfd762" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: green;'>                 <b>상수역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🟢 가성비 최고 (숨은 꿀역)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 953개<br>             <b>지하철 하차 인구:</b> 392,562명<br>             <b>주변 버스 하차 인구:</b> 220,296명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>612,858명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>15.55</span>         </div>         </div>`)[0];
+                popup_ec0ae598f8a00799752aeedda948a81b.setContent(html_323d9ba8ce3297ecc5983b7defbfd762);
+            
+        
+
+        circle_marker_2b35b2cd722cea9b886ab2ee254b565d.bindPopup(popup_ec0ae598f8a00799752aeedda948a81b)
+        ;
+
+        
+    
+    
+            var circle_marker_c9ea261f5882fd366e54be3c0e81bcd2 = L.circleMarker(
+                [37.5109644736819, 127.112736059519],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 21.3, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_b4ba05221262e01f91b86cf523dd6f76 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_d2e30a9c68ee9955aaf0fa9c5d4d008c = $(`<div id="html_d2e30a9c68ee9955aaf0fa9c5d4d008c" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: green;'>                 <b>송파나루역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🟢 가성비 최고 (숨은 꿀역)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 710개<br>             <b>지하철 하차 인구:</b> 190,172명<br>             <b>주변 버스 하차 인구:</b> 295,324명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>485,496명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>14.62</span>         </div>         </div>`)[0];
+                popup_b4ba05221262e01f91b86cf523dd6f76.setContent(html_d2e30a9c68ee9955aaf0fa9c5d4d008c);
+            
+        
+
+        circle_marker_c9ea261f5882fd366e54be3c0e81bcd2.bindPopup(popup_b4ba05221262e01f91b86cf523dd6f76)
+        ;
+
+        
+    
+    
+            var circle_marker_10222ca53b84680f9da175a2c6ca81d7 = L.circleMarker(
+                [37.4893988, 126.9271473],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 21.689999999999998, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_44b65726648f34aa84d56dd29f175ee7 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_dd7e5aa78d705ec458ae3415e0cab250 = $(`<div id="html_dd7e5aa78d705ec458ae3415e0cab250" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: green;'>                 <b>당곡역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🟢 가성비 최고 (숨은 꿀역)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 723개<br>             <b>지하철 하차 인구:</b> 138,721명<br>             <b>주변 버스 하차 인구:</b> 451,142명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>589,863명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>12.26</span>         </div>         </div>`)[0];
+                popup_44b65726648f34aa84d56dd29f175ee7.setContent(html_dd7e5aa78d705ec458ae3415e0cab250);
+            
+        
+
+        circle_marker_10222ca53b84680f9da175a2c6ca81d7.bindPopup(popup_44b65726648f34aa84d56dd29f175ee7)
+        ;
+
+        
+    
+    
+            var circle_marker_5aeb5d5c4ec07dd9922df247727945d3 = L.circleMarker(
+                [37.4982671093405, 127.125637604057],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.389999999999999, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_83f36493933b1263cd1f66715b242b5d = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_67a7fdff696e45568000d68e979e331c = $(`<div id="html_67a7fdff696e45568000d68e979e331c" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: green;'>                 <b>경찰병원역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🟢 가성비 최고 (숨은 꿀역)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 313개<br>             <b>지하철 하차 인구:</b> 215,629명<br>             <b>주변 버스 하차 인구:</b> 59,098명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>274,727명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>11.39</span>         </div>         </div>`)[0];
+                popup_83f36493933b1263cd1f66715b242b5d.setContent(html_67a7fdff696e45568000d68e979e331c);
+            
+        
+
+        circle_marker_5aeb5d5c4ec07dd9922df247727945d3.bindPopup(popup_83f36493933b1263cd1f66715b242b5d)
+        ;
+
+        
+    
+    
+            var circle_marker_45d4983116973e22f6f3ac9af7de822b = L.circleMarker(
+                [37.560348595358, 127.013871322197],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 10.62, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_29be4af6594c322732e58db540b24a71 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_6581aa0c4e089f1d8b76a6d2ebe2fa5f = $(`<div id="html_6581aa0c4e089f1d8b76a6d2ebe2fa5f" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: green;'>                 <b>청구역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🟢 가성비 최고 (숨은 꿀역)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 354개<br>             <b>지하철 하차 인구:</b> 208,708명<br>             <b>주변 버스 하차 인구:</b> 111,937명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>320,645명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>11.04</span>         </div>         </div>`)[0];
+                popup_29be4af6594c322732e58db540b24a71.setContent(html_6581aa0c4e089f1d8b76a6d2ebe2fa5f);
+            
+        
+
+        circle_marker_45d4983116973e22f6f3ac9af7de822b.bindPopup(popup_29be4af6594c322732e58db540b24a71)
+        ;
+
+        
+    
+    
+            var circle_marker_a69ddb5e496355b87ea7f9bede274575 = L.circleMarker(
+                [37.5075032615458, 127.034253976201],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 15.809999999999999, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_76f4ff597aa2cd776e120788990ca511 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_0080e1e8c5fda867605b7e8c56d9029c = $(`<div id="html_0080e1e8c5fda867605b7e8c56d9029c" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: green;'>                 <b>언주역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🟢 가성비 최고 (숨은 꿀역)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 527개<br>             <b>지하철 하차 인구:</b> 319,748명<br>             <b>주변 버스 하차 인구:</b> 167,624명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>487,372명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>10.81</span>         </div>         </div>`)[0];
+                popup_76f4ff597aa2cd776e120788990ca511.setContent(html_0080e1e8c5fda867605b7e8c56d9029c);
+            
+        
+
+        circle_marker_a69ddb5e496355b87ea7f9bede274575.bindPopup(popup_76f4ff597aa2cd776e120788990ca511)
+        ;
+
+        
+    
+    
+            var circle_marker_2008d9caf5c7ec1612b5d47b442fe2ea = L.circleMarker(
+                [37.5171401104498, 126.930129249915],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 19.77, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_8f4ea27e8ad3083cebdbdd6bac529c49 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_7af676fb237f4184d68a175712bf9ee6 = $(`<div id="html_7af676fb237f4184d68a175712bf9ee6" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: green;'>                 <b>샛강역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🟢 가성비 최고 (숨은 꿀역)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 659개<br>             <b>지하철 하차 인구:</b> 282,629명<br>             <b>주변 버스 하차 인구:</b> 341,788명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>624,417명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>10.55</span>         </div>         </div>`)[0];
+                popup_8f4ea27e8ad3083cebdbdd6bac529c49.setContent(html_7af676fb237f4184d68a175712bf9ee6);
+            
+        
+
+        circle_marker_2008d9caf5c7ec1612b5d47b442fe2ea.bindPopup(popup_8f4ea27e8ad3083cebdbdd6bac529c49)
+        ;
+
+        
+    
+    
+            var circle_marker_7ad45a9bc50b8f7b0f2f40e88c42b1d8 = L.circleMarker(
+                [37.5031910142167, 127.096946685767],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.85, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_37438bc2e1bdd43d2f9d3f5bf5296cb7 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_e0babcddeb663b05a5d5ee045f951b06 = $(`<div id="html_e0babcddeb663b05a5d5ee045f951b06" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: green;'>                 <b>석촌고분역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🟢 가성비 최고 (숨은 꿀역)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 395개<br>             <b>지하철 하차 인구:</b> 215,090명<br>             <b>주변 버스 하차 인구:</b> 167,489명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>382,579명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>10.32</span>         </div>         </div>`)[0];
+                popup_37438bc2e1bdd43d2f9d3f5bf5296cb7.setContent(html_e0babcddeb663b05a5d5ee045f951b06);
+            
+        
+
+        circle_marker_7ad45a9bc50b8f7b0f2f40e88c42b1d8.bindPopup(popup_37438bc2e1bdd43d2f9d3f5bf5296cb7)
+        ;
+
+        
+    
+    
+            var circle_marker_4f16d41868fd56058a4bd112bb6e3c21 = L.circleMarker(
+                [37.5080339296967, 127.12545355497],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 9.48, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_cedfa5ff4fa354301f2c0534ca5b7b8e = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_4ed6cc66b8fe01aae66906ead3994e6f = $(`<div id="html_4ed6cc66b8fe01aae66906ead3994e6f" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: green;'>                 <b>방이역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🟢 가성비 최고 (숨은 꿀역)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 316개<br>             <b>지하철 하차 인구:</b> 233,557명<br>             <b>주변 버스 하차 인구:</b> 110,304명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>343,861명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>9.19</span>         </div>         </div>`)[0];
+                popup_cedfa5ff4fa354301f2c0534ca5b7b8e.setContent(html_4ed6cc66b8fe01aae66906ead3994e6f);
+            
+        
+
+        circle_marker_4f16d41868fd56058a4bd112bb6e3c21.bindPopup(popup_cedfa5ff4fa354301f2c0534ca5b7b8e)
+        ;
+
+        
+    
+    
+            var circle_marker_ef2ae255d3e9ac8983167c6541320dab = L.circleMarker(
+                [37.5805696334116, 126.895838644026],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13.469999999999999, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_bd05617f27046d0ae6bdfa6150e22af7 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_fa73ce8c1481496cabc5ab2bde9c5946 = $(`<div id="html_fa73ce8c1481496cabc5ab2bde9c5946" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: green;'>                 <b>수색역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🟢 가성비 최고 (숨은 꿀역)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 449개<br>             <b>지하철 하차 인구:</b> 94,964명<br>             <b>주변 버스 하차 인구:</b> 407,066명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>502,030명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>8.94</span>         </div>         </div>`)[0];
+                popup_bd05617f27046d0ae6bdfa6150e22af7.setContent(html_fa73ce8c1481496cabc5ab2bde9c5946);
+            
+        
+
+        circle_marker_ef2ae255d3e9ac8983167c6541320dab.bindPopup(popup_bd05617f27046d0ae6bdfa6150e22af7)
+        ;
+
+        
+    
+    
+            var circle_marker_daf3c988bf1fd77eb587b643fed67242 = L.circleMarker(
+                [37.5568904093718, 126.923674307594],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25.0, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_54e9b2fac54bc13772c3d18bf46563a6 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ec9394a6a06ffc02f9ebdbdb2f37f091 = $(`<div id="html_ec9394a6a06ffc02f9ebdbdb2f37f091" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: red;'>                 <b>홍대입구역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🔴 교통 헬게이트 (대형 핫플)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 1,365개<br>             <b>지하철 하차 인구:</b> 3,204,078명<br>             <b>주변 버스 하차 인구:</b> 5,379,502명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>8,583,580명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>1.59</span>         </div>         </div>`)[0];
+                popup_54e9b2fac54bc13772c3d18bf46563a6.setContent(html_ec9394a6a06ffc02f9ebdbdb2f37f091);
+            
+        
+
+        circle_marker_daf3c988bf1fd77eb587b643fed67242.bindPopup(popup_54e9b2fac54bc13772c3d18bf46563a6)
+        ;
+
+        
+    
+    
+            var circle_marker_3bc279e98989f39e2d0241782b7cde4d = L.circleMarker(
+                [37.4854463023684, 126.900861931696],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 19.68, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_6fdf44c1f90617b0906ffa91a4c05569 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_e1e7270f40ef0ad7a1259643504fb90c = $(`<div id="html_e1e7270f40ef0ad7a1259643504fb90c" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: red;'>                 <b>구로디지털단지역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🔴 교통 헬게이트 (대형 핫플)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 656개<br>             <b>지하철 하차 인구:</b> 1,605,247명<br>             <b>주변 버스 하차 인구:</b> 4,534,472명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>6,139,719명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>1.07</span>         </div>         </div>`)[0];
+                popup_6fdf44c1f90617b0906ffa91a4c05569.setContent(html_e1e7270f40ef0ad7a1259643504fb90c);
+            
+        
+
+        circle_marker_3bc279e98989f39e2d0241782b7cde4d.bindPopup(popup_6fdf44c1f90617b0906ffa91a4c05569)
+        ;
+
+        
+    
+    
+            var circle_marker_7c60b4eccfddbde88caacafe7298d197 = L.circleMarker(
+                [37.5569027906782, 126.972559906677],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17.849999999999998, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_b587f304b753c4c09e045cf3be1f1210 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_f73e8f78d9bf921867b2a710af6a6702 = $(`<div id="html_f73e8f78d9bf921867b2a710af6a6702" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: red;'>                 <b>서울역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🔴 교통 헬게이트 (대형 핫플)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 595개<br>             <b>지하철 하차 인구:</b> 3,693,464명<br>             <b>주변 버스 하차 인구:</b> 2,414,006명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>6,107,470명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>0.97</span>         </div>         </div>`)[0];
+                popup_b587f304b753c4c09e045cf3be1f1210.setContent(html_f73e8f78d9bf921867b2a710af6a6702);
+            
+        
+
+        circle_marker_7c60b4eccfddbde88caacafe7298d197.bindPopup(popup_b587f304b753c4c09e045cf3be1f1210)
+        ;
+
+        
+    
+    
+            var circle_marker_52ac7598f15d40680a1a1824305168a1 = L.circleMarker(
+                [37.514062738295, 127.102052316075],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.94, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_61e84a80cb0a2701a8273b675f40d340 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_bf7a1e1d6a9fdd6491f11c5c7c545e83 = $(`<div id="html_bf7a1e1d6a9fdd6491f11c5c7c545e83" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: red;'>                 <b>잠실역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🔴 교통 헬게이트 (대형 핫플)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 498개<br>             <b>지하철 하차 인구:</b> 3,193,402명<br>             <b>주변 버스 하차 인구:</b> 1,076,723명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>4,270,125명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>1.17</span>         </div>         </div>`)[0];
+                popup_61e84a80cb0a2701a8273b675f40d340.setContent(html_bf7a1e1d6a9fdd6491f11c5c7c545e83);
+            
+        
+
+        circle_marker_52ac7598f15d40680a1a1824305168a1.bindPopup(popup_61e84a80cb0a2701a8273b675f40d340)
+        ;
+
+        
+    
+    
+            var circle_marker_4ba46f025698dfdcb0a7cabaa8b15a4e = L.circleMarker(
+                [37.5087389965473, 126.891109048536],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 12.48, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_fe7846d7de2e82bb74337c7a8fa81e33 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_298f5131c4f596776e6c2340683fef12 = $(`<div id="html_298f5131c4f596776e6c2340683fef12" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: red;'>                 <b>신도림역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🔴 교통 헬게이트 (대형 핫플)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 416개<br>             <b>지하철 하차 인구:</b> 1,577,496명<br>             <b>주변 버스 하차 인구:</b> 2,413,086명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>3,990,582명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>1.04</span>         </div>         </div>`)[0];
+                popup_fe7846d7de2e82bb74337c7a8fa81e33.setContent(html_298f5131c4f596776e6c2340683fef12);
+            
+        
+
+        circle_marker_4ba46f025698dfdcb0a7cabaa8b15a4e.bindPopup(popup_fe7846d7de2e82bb74337c7a8fa81e33)
+        ;
+
+        
+    
+    
+            var circle_marker_99f9398560cdb07b5753e887af21f494 = L.circleMarker(
+                [37.5576877320082, 126.976719543256],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 19.08, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_256a82a78e9449d9b53b1e449d0ee658 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_e7c3720ca999c8fdb3575a0595859417 = $(`<div id="html_e7c3720ca999c8fdb3575a0595859417" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: red;'>                 <b>회현역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🔴 교통 헬게이트 (대형 핫플)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 636개<br>             <b>지하철 하차 인구:</b> 932,726명<br>             <b>주변 버스 하차 인구:</b> 3,054,071명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>3,986,797명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>1.60</span>         </div>         </div>`)[0];
+                popup_256a82a78e9449d9b53b1e449d0ee658.setContent(html_e7c3720ca999c8fdb3575a0595859417);
+            
+        
+
+        circle_marker_99f9398560cdb07b5753e887af21f494.bindPopup(popup_256a82a78e9449d9b53b1e449d0ee658)
+        ;
+
+        
+    
+    
+            var circle_marker_db6d0a8dbbcadeecf6b8636609774f88 = L.circleMarker(
+                [37.6398219485414, 127.027222545302],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 25.0, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_28b64eb7174466d1845f91d9701267e3 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_4404abcd7384b1dc659e4339f7f98268 = $(`<div id="html_4404abcd7384b1dc659e4339f7f98268" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: red;'>                 <b>수유역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🔴 교통 헬게이트 (대형 핫플)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 891개<br>             <b>지하철 하차 인구:</b> 1,056,561명<br>             <b>주변 버스 하차 인구:</b> 2,888,976명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>3,945,537명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>2.26</span>         </div>         </div>`)[0];
+                popup_28b64eb7174466d1845f91d9701267e3.setContent(html_4404abcd7384b1dc659e4339f7f98268);
+            
+        
+
+        circle_marker_db6d0a8dbbcadeecf6b8636609774f88.bindPopup(popup_28b64eb7174466d1845f91d9701267e3)
+        ;
+
+        
+    
+    
+            var circle_marker_12540d3bda67331e81025e1e788cc671 = L.circleMarker(
+                [37.5048497116637, 127.00487538273],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 11.219999999999999, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_76604654f2fd2948b32d5d31b31c0670 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_33c5a0d147ade0db719f0335c486ddb8 = $(`<div id="html_33c5a0d147ade0db719f0335c486ddb8" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: red;'>                 <b>고속터미널역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🔴 교통 헬게이트 (대형 핫플)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 374개<br>             <b>지하철 하차 인구:</b> 2,864,281명<br>             <b>주변 버스 하차 인구:</b> 996,251명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>3,860,532명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>0.97</span>         </div>         </div>`)[0];
+                popup_76604654f2fd2948b32d5d31b31c0670.setContent(html_33c5a0d147ade0db719f0335c486ddb8);
+            
+        
+
+        circle_marker_12540d3bda67331e81025e1e788cc671.bindPopup(popup_76604654f2fd2948b32d5d31b31c0670)
+        ;
+
+        
+    
+    
+            var circle_marker_4e68e2e2eb7234c3c1aeab2314e903d3 = L.circleMarker(
+                [37.5809773543627, 127.046992372032],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 13.17, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_bf44c66abdd13aa16a865c33712343a1 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_11aa7f30d2c7ade007c74998c86f1656 = $(`<div id="html_11aa7f30d2c7ade007c74998c86f1656" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: red;'>                 <b>청량리역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🔴 교통 헬게이트 (대형 핫플)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 439개<br>             <b>지하철 하차 인구:</b> 1,371,511명<br>             <b>주변 버스 하차 인구:</b> 2,065,675명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>3,437,186명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>1.28</span>         </div>         </div>`)[0];
+                popup_bf44c66abdd13aa16a865c33712343a1.setContent(html_11aa7f30d2c7ade007c74998c86f1656);
+            
+        
+
+        circle_marker_4e68e2e2eb7234c3c1aeab2314e903d3.bindPopup(popup_bf44c66abdd13aa16a865c33712343a1)
+        ;
+
+        
+    
+    
+            var circle_marker_de5ded8633694484291ff984ef6089a7 = L.circleMarker(
+                [37.6149930490815, 127.030033187155],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 14.91, "stroke": true, "weight": 3}
+            ).addTo(map_8b494677065b53e81ea4ff777973508e);
+        
+    
+        var popup_7609d981e0d01f7b9a734c0f6cf80f3c = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c7197c1f26a98f55676984e67c6c3487 = $(`<div id="html_c7197c1f26a98f55676984e67c6c3487" style="width: 100.0%; height: 100.0%;">         <div style='width:220px; font-family: sans-serif; line-height: 1.5;'>             <h4 style='margin: 0 0 5px 0; color: red;'>                 <b>미아사거리역</b>             </h4>             <span style='font-size: 11px; color: gray;'>🔴 교통 헬게이트 (대형 핫플)</span>             <hr style='margin: 8px 0; border: 0; border-top: 1px solid #eee;'>             <b>주변 음식점 수:</b> 497개<br>             <b>지하철 하차 인구:</b> 790,241명<br>             <b>주변 버스 하차 인구:</b> 2,614,477명<br>             <b>총 유입 인구(혼잡):</b> <span style='font-weight: bold;'>3,404,718명</span><br>             <b>혼잡 가성비 지수 (C/P):</b> <span style='font-weight: bold; color: blue;'>1.46</span>         </div>         </div>`)[0];
+                popup_7609d981e0d01f7b9a734c0f6cf80f3c.setContent(html_c7197c1f26a98f55676984e67c6c3487);
+            
+        
+
+        circle_marker_de5ded8633694484291ff984ef6089a7.bindPopup(popup_7609d981e0d01f7b9a734c0f6cf80f3c)
+        ;
+
+        
+    
+</script>
+</html>
