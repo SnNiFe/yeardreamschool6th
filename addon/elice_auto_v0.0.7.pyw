@@ -213,7 +213,7 @@ def close_annoying_popups(driver):
     except Exception:
         pass # 에러가 나도 조용히 넘어가서 본래 출석 로직에 방해되지 않도록 함
 
-def scan_screen_for_qr(timeout_minutes=30):
+def scan_screen_for_qr(timeout_minutes=5):
     global is_running 
     if not QR_AVAILABLE:
         print("\\n❌ QR 감시 모듈이 비활성화 되어있습니다.")
@@ -422,6 +422,17 @@ def run_bot():
                                 break
                     except Exception:
                         driver.switch_to.default_content()
+                # --- [출석 완료 확인 후 탭 닫기 추가] ---
+                print("👀 출석 완료 텍스트 대기 중...")
+                try:
+                    # 화면에 '출석'이라는 단어가 뜰 때까지 최대 10초 대기
+                    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '출석')]")))
+                    print("✅ 출석 완료 글씨 확인! 탭을 닫고 원래 강의실로 복귀합니다.")
+                    driver.close() # 새 탭(현재 탭)만 살짝 닫기
+                    driver.switch_to.window(original_window) # 원래 강의실 창으로 제어권 복귀
+                except Exception:
+                    print("⚠️ '출석' 글씨를 찾지 못했습니다. 탭을 그대로 둡니다.")
+                # ----------------------------------------
         else:
             print("입장 버튼 클릭 실패.")
     except Exception as e:
