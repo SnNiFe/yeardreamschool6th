@@ -12,6 +12,7 @@ import logging
 import warnings
 import threading 
 import webbrowser # C++ 다운로드 링크 연결용
+import json # 👈 [추가됨] 세이브 파일을 읽고 쓰기 위한 부품
 
 # =====================================================================
 # [1] 시스템 기본 설정 및 전역 변수
@@ -557,7 +558,6 @@ def run_scheduler_loop():
     print("🛑 스케줄러 대기 상태가 종료되었습니다.")
 
 def create_gui():
-    """설정용 체크박스와 버튼들이 있는 GUI 프로그램 창을 생성합니다."""
     global url_entry, morning_vars, afternoon_vars
     
     root = tk.Tk()
@@ -565,24 +565,55 @@ def create_gui():
     root.geometry("640x700") 
     root.configure(bg="#f4f4f4")
     
-    close_browser_var = tk.BooleanVar(value=True) 
+    # --- [신규 추가] 세이브 파일(Config) 불러오기 로직 ---
+    config_file = os.path.join(current_folder, "bot_config.json")
+    def load_config():
+        try:
+            with open(config_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            # 세이브 파일이 없거나 에러가 나면 기본값 반환
+            return {
+                "url": "https://yeardream2026.elice.io/my/lecturerooms?page=1",
+                "morning": ["09:05", "09:10"],
+                "afternoon": ["16:25", "16:30"],
+                "close_browser": True
+            }
+            
+    def save_config():
+        saved_data = {
+            "url": url_entry.get().strip(),
+            "morning": [t for t, var in morning_vars.items() if var.get()],
+            "afternoon": [t for t, var in afternoon_vars.items() if var.get()],
+            "close_browser": close_browser_var.get()
+        }
+        try:
+            with open(config_file, 'w', encoding='utf-8') as f:
+                json.dump(saved_data, f, ensure_ascii=False, indent=4)
+        except Exception:
+            pass
+
+    # 프로그램 켜지자마자 세이브 데이터 장착
+    saved_config = load_config()
+    # --------------------------------------------------
+    
+    # 세이브된 값으로 브라우저 닫기 옵션 설정
+    close_browser_var = tk.BooleanVar(value=saved_config.get("close_browser", True)) 
     
     title_lbl = tk.Label(root, text="🚀 엘리스 LXP 통합 출석 자동화 시스템", font=("Helvetica", 14, "bold"), bg="#f4f4f4")
     title_lbl.pack(pady=10)
     
-    # URL 커스텀 입력 창
     url_frame = tk.LabelFrame(root, text="🌐 엘리스 강의실 대시보드 URL 주소 설정", font=("Helvetica", 9, "bold"), bg="#f4f4f4", padx=10, pady=5)
     url_frame.pack(padx=20, pady=5, fill=tk.X)
     
     url_entry = tk.Entry(url_frame, font=("Consolas", 10))
-    url_entry.insert(0, "https://yeardream2026.elice.io/my/lecturerooms?page=1")
+    # 세이브된 주소 넣기
+    url_entry.insert(0, saved_config.get("url", "https://yeardream2026.elice.io/my/lecturerooms?page=1"))
     url_entry.pack(fill=tk.X, expand=True, pady=2)
     
-    # 타이머 5분 간격 세부 선택 체크박스 레이아웃
     time_frame = tk.LabelFrame(root, text="⏰ 타이머 실행 시간 선택 (5분 간격)", font=("Helvetica", 9, "bold"), bg="#f4f4f4", padx=10, pady=5)
     time_frame.pack(padx=20, pady=5, fill=tk.X)
     
-    # 1) 오전 시간대
     m_lbl = tk.Label(time_frame, text="오전 타겟 (09:00 ~ 09:30):", font=("Helvetica", 9, "bold"), bg="#f4f4f4")
     m_lbl.pack(anchor=tk.W, pady=2)
     
@@ -591,15 +622,15 @@ def create_gui():
     
     morning_slots = ["09:00", "09:05", "09:10", "09:15", "09:20", "09:25", "09:30"]
     morning_vars = {}
-    default_active = ["09:05", "09:10", "16:25", "16:30"]
+    # 세이브된 오전 체크박스 설정 가져오기
+    active_morning = saved_config.get("morning", ["09:05", "09:10"])
     
     for slot in morning_slots:
-        is_chk = slot in default_active
+        is_chk = slot in active_morning
         morning_vars[slot] = tk.BooleanVar(value=is_chk)
         cb = tk.Checkbutton(m_chk_frame, text=slot.split(":")[1]+"분", variable=morning_vars[slot], bg="#f4f4f4", font=("Helvetica", 9))
         cb.pack(side=tk.LEFT, padx=4)
         
-    # 2) 오후 시간대
     a_lbl = tk.Label(time_frame, text="오후 타겟 (16:20 ~ 17:00):", font=("Helvetica", 9, "bold"), bg="#f4f4f4")
     a_lbl.pack(anchor=tk.W, pady=2)
     
@@ -608,31 +639,30 @@ def create_gui():
     
     afternoon_slots = ["16:20", "16:25", "16:30", "16:35", "16:40", "16:45", "16:50", "16:55", "17:00"]
     afternoon_vars = {}
+    # 세이브된 오후 체크박스 설정 가져오기
+    active_afternoon = saved_config.get("afternoon", ["16:25", "16:30"])
     
     for idx, slot in enumerate(afternoon_slots):
-        is_chk = slot in default_active
+        is_chk = slot in active_afternoon
         afternoon_vars[slot] = tk.BooleanVar(value=is_chk)
-        target_parent = a_chk_frame1
-        cb = tk.Checkbutton(target_parent, text=slot.split(":")[1]+"분" if "16" in slot else "17:00", variable=afternoon_vars[slot], bg="#f4f4f4", font=("Helvetica", 9))
+        cb = tk.Checkbutton(a_chk_frame1, text=slot.split(":")[1]+"분" if "16" in slot else "17:00", variable=afternoon_vars[slot], bg="#f4f4f4", font=("Helvetica", 9))
         cb.pack(side=tk.LEFT, padx=3)
 
     def start_integrated_mode():
-        """가동 시작 버튼을 눌렀을 때의 동작입니다."""
         global is_running
         is_running = True
+        save_config() # [추가됨] 가동 시작 버튼을 누를 때 현재 상태 저장!
         btn_start.config(state=tk.DISABLED, text="시스템 실시간 가동 중...")
         btn_stop.config(state=tk.NORMAL) 
         url_entry.config(state=tk.DISABLED)
         threading.Thread(target=run_scheduler_loop, daemon=True).start()
 
     def stop_bot():
-        """중지 버튼을 눌렀을 때의 동작입니다."""
         global is_running, driver
         print("\n🛑 시스템 중지 요청 수신. 안전하게 프로세스를 정지합니다...")
         is_running = False
         schedule.clear()
         
-        # 브라우저 같이 닫기 옵션 체크 여부에 따른 분기 처리
         if close_browser_var.get() and driver is not None:
             try:
                 driver.quit()
@@ -678,17 +708,16 @@ def create_gui():
     log_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
     scrollbar.config(command=log_text.yview)
 
-    # 출력물을 터미널이 아닌 GUI 검은 화면으로 연결
     sys.stdout = PrintLogger(log_text)
     sys.stderr = PrintLogger(log_text)
 
-    print("환영합니다! 시스템 핵심 환경 구성이 모두 완벽히 정렬되었습니다.")
-    print("주소와 타이머 시간(5분 간격 체크박스)을 조율하신 후 상단 가동 버튼을 눌러주세요.")
+    print("환영합니다! 세이브 데이터(체크박스, 주소)를 성공적으로 불러왔습니다.")
+    print("가동 버튼을 누르거나 프로그램을 끄면 현재 설정이 자동으로 영구 저장됩니다.")
 
     def on_closing():
-        """창 우측 상단의 'X' 버튼을 눌러서 프로그램을 아예 끌 때 호출됩니다."""
         global is_running, driver
         is_running = False
+        save_config() # [추가됨] X 버튼으로 프로그램을 끌 때 최종 상태를 한 번 더 저장!
         if close_browser_var.get() and driver is not None:
             try:
                 driver.quit()
@@ -699,6 +728,5 @@ def create_gui():
         
     root.protocol("WM_DELETE_WINDOW", on_closing)
     root.mainloop()
-
 if __name__ == "__main__":
     create_gui()
