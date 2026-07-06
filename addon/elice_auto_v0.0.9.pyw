@@ -436,47 +436,42 @@ def run_bot():
             time.sleep(5) 
             close_annoying_popups(driver)
 
-            # === 💬 라이브 강의실 채팅창 열기 로직 ===
-            print("💬 '채팅' 아이콘 버튼을 속성까지 샅샅이 탐색합니다...")
+            # === 💬 라이브 강의실 채팅창 열기 로직 (바깥 껍데기 이름표 타겟팅) ===
+            print("💬 '라이브 강의실 채팅' 이름표를 찾아 타격합니다...")
+            time.sleep(5) # 화면 로딩 넉넉히 대기
             chat_clicked = False
+            
+            # 💡 핵심 수정: aria-label이 '라이브 강의실 채팅'인 껍데기(span) 안쪽에 있는 button을 정확히 저격
+            MY_XPATH = "//span[@aria-label='라이브 강의실 채팅']//button"
+            
             try:
-                # 텍스트뿐만 아니라 툴팁(title, alt) 및 접근성(aria-label) 속성까지 뒤지는 강력한 XPATH
-                xpath_query = "//*[contains(@title, '채팅') or contains(@aria-label, '채팅') or contains(@alt, '채팅') or contains(text(), '채팅')]"
-                
-                # 1단계: 기본 화면에서 버튼 검색 및 클릭
-                chat_btns = driver.find_elements(By.XPATH, xpath_query)
-                for btn in chat_btns:
-                    if btn.is_displayed():
-                        driver.execute_script("arguments[0].click();", btn)
-                        print("✅ 기본 화면에서 아이콘 버튼을 찾아 채팅창 열기 성공!")
-                        chat_clicked = True
-                        break
-                
-                # 2단계: 기본 화면에 없으면 iframe 내부로 진입해서 탐색
+                # 1. 기본 화면에서 탐색 및 클릭
+                try:
+                    btn = driver.find_element(By.XPATH, MY_XPATH)
+                    driver.execute_script("arguments[0].click();", btn)
+                    chat_clicked = True
+                    print("✅ 저격 성공! 기본 화면에서 채팅창을 열었습니다.")
+                except:
+                    pass
+                    
+                # 2. iframe(액자) 내부에 숨겨져 있을 경우 탐색 및 클릭
                 if not chat_clicked:
                     iframes = driver.find_elements(By.TAG_NAME, "iframe")
                     for iframe in iframes:
                         try:
                             driver.switch_to.frame(iframe)
-                            chat_btns = driver.find_elements(By.XPATH, xpath_query)
-                            for btn in chat_btns:
-                                if btn.is_displayed():
-                                    driver.execute_script("arguments[0].click();", btn)
-                                    print("✅ iframe 내부에서 아이콘 버튼을 찾아 채팅창 열기 성공!")
-                                    chat_clicked = True
-                                    break
-                        except Exception:
+                            btn = driver.find_element(By.XPATH, MY_XPATH)
+                            driver.execute_script("arguments[0].click();", btn)
+                            chat_clicked = True
+                            print("✅ 저격 성공! iframe 내부에서 채팅창을 열었습니다.")
+                        except:
                             pass
                         finally:
                             driver.switch_to.default_content() # 원래 화면으로 복귀
                         if chat_clicked: break
                         
-                if not chat_clicked:
-                    print("⚠️ '채팅' 아이콘/버튼을 속성까지 뒤졌으나 찾지 못했습니다.")
-                else:
-                    time.sleep(2) # 채팅창이 완전히 열릴 때까지 잠시 대기
-            except Exception as ce:
-                print(f"⚠️ 채팅창을 여는 중 오류 발생: {ce}")
+            except Exception as e:
+                print(f"⚠️ 버튼 타격 중 에러 발생: {e}")
             # =============================================
 
             found_url = scan_screen_for_qr()
