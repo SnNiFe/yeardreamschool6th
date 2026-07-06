@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# ADDON
+bot_profile_chrome/
+bot_profile_edge/
+build/
+build_env/
