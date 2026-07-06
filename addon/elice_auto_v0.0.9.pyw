@@ -437,15 +437,18 @@ def run_bot():
             close_annoying_popups(driver)
 
             # === 💬 라이브 강의실 채팅창 열기 로직 ===
-            print("💬 '라이브 강의실 채팅' 버튼을 탐색합니다...")
+            print("💬 '채팅' 아이콘 버튼을 속성까지 샅샅이 탐색합니다...")
             chat_clicked = False
             try:
+                # 텍스트뿐만 아니라 툴팁(title, alt) 및 접근성(aria-label) 속성까지 뒤지는 강력한 XPATH
+                xpath_query = "//*[contains(@title, '채팅') or contains(@aria-label, '채팅') or contains(@alt, '채팅') or contains(text(), '채팅')]"
+                
                 # 1단계: 기본 화면에서 버튼 검색 및 클릭
-                chat_btns = driver.find_elements(By.XPATH, "//*[contains(text(), '라이브 강의실 채팅')]")
+                chat_btns = driver.find_elements(By.XPATH, xpath_query)
                 for btn in chat_btns:
                     if btn.is_displayed():
                         driver.execute_script("arguments[0].click();", btn)
-                        print("✅ 기본 화면에서 채팅창 열기 성공!")
+                        print("✅ 기본 화면에서 아이콘 버튼을 찾아 채팅창 열기 성공!")
                         chat_clicked = True
                         break
                 
@@ -455,11 +458,11 @@ def run_bot():
                     for iframe in iframes:
                         try:
                             driver.switch_to.frame(iframe)
-                            chat_btns = driver.find_elements(By.XPATH, "//*[contains(text(), '라이브 강의실 채팅')]")
+                            chat_btns = driver.find_elements(By.XPATH, xpath_query)
                             for btn in chat_btns:
                                 if btn.is_displayed():
                                     driver.execute_script("arguments[0].click();", btn)
-                                    print("✅ iframe 내부에서 채팅창 열기 성공!")
+                                    print("✅ iframe 내부에서 아이콘 버튼을 찾아 채팅창 열기 성공!")
                                     chat_clicked = True
                                     break
                         except Exception:
@@ -469,7 +472,7 @@ def run_bot():
                         if chat_clicked: break
                         
                 if not chat_clicked:
-                    print("⚠️ '라이브 강의실 채팅' 버튼을 시각적으로 찾지 못했습니다.")
+                    print("⚠️ '채팅' 아이콘/버튼을 속성까지 뒤졌으나 찾지 못했습니다.")
                 else:
                     time.sleep(2) # 채팅창이 완전히 열릴 때까지 잠시 대기
             except Exception as ce:
