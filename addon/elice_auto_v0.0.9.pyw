@@ -366,10 +366,25 @@ def run_bot():
         show_login_warning()
         return 
     
+    # === 🛡️ 패스키 및 안내 팝업 우회 (나중에 하기) ===
+    print("🛡️ 팝업 방어 로직을 가동합니다...")
+    time.sleep(3) # 팝업이 뜰 수도 있으니 3초만 잠깐 대기
+            
+    try:
+        # 화면 전체를 뒤져서 '나중에 하기' 글자가 있는 요소를 낚아챔
+        bypass_btn = driver.find_element(By.XPATH, "//*[contains(text(), '나중에 하기')]")
+        driver.execute_script("arguments[0].click();", bypass_btn)
+        print("✅ '나중에 하기' 팝업을 성공적으로 치웠습니다!")
+    except:
+        # 3초 기다렸는데도 요소가 안 찾아지면(에러가 나면) 팝업이 안 뜬 것이므로 쿨하게 무시
+        print("✅ 팝업이 없습니다. 정상적으로 다음 단계를 진행합니다.")
+    # =================================================
+
+
     print("✅ 로그인 확인됨. 강의실 탐색 시작.")
     today_date = get_today_date_str()
     print(f"오늘 날짜 타겟 접두사: {today_date}")
-
+    
     try:
         # 1. 화면에 있는 글자 중 오늘 날짜(예: 6/25)가 포함된 요소를 모두 수집
         wait = WebDriverWait(driver, 20)
