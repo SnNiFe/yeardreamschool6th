@@ -13,8 +13,8 @@ import warnings
 import threading 
 import webbrowser 
 import json 
-import ctypes      # 윈도우 창 최상단 고정용
-import traceback   # 에러 상세 추적용
+import ctypes      
+import traceback   
 
 
 # =====================================================================
@@ -284,7 +284,6 @@ def run_bot():
     if not is_running: 
         return
         
-    # UI에서 설정한 횟수와 대기 시간 가져오기
     try:
         max_retry_val = int(retry_var.get())
         wait_time_val = int(wait_var.get())
@@ -294,10 +293,10 @@ def run_bot():
         
     retry_count = 0
     
-    # 🛡️ 1. 에러 시 처음부터 다시 시도하는 무적 루프
+    # 🛡️ 1. 에러 시 처음부터 다시 시도하는 무적 루프 (강의실 입장 실패 시에만 발동)
     while retry_count < max_retry_val and is_running:
         try:
-            print(f"\n🚀 [{datetime.datetime.now().strftime('%H:%M:%S')}] 시도 {retry_count + 1}/{max_retry_val}: 자동 입장을 시작/확인 합니다!")
+            print(f"\n🚀 [{datetime.datetime.now().strftime('%H:%M:%S')}] 시도 {retry_count + 1}/{max_retry_val}: 자동 입장을 시작합니다!")
             
             if driver is not None:
                 try: driver.quit()
@@ -308,71 +307,70 @@ def run_bot():
             if driver is None:
                 raise Exception("브라우저 연결 실패")
             
-            # 🛡️ 2. 창 최대화 및 무조건 최상단(맨 앞) 강제 고정
             driver.maximize_window()
             time.sleep(1)
             if platform.system() == "Windows":
                 try:
                     hwnd = ctypes.windll.user32.GetForegroundWindow()
                     ctypes.windll.user32.SetWindowPos(hwnd, -1, 0, 0, 0, 0, 3) 
-                    print("✅ 창을 최상단으로 고정했습니다. (QR 인식 방어 완료)")
-                except Exception as e:
-                    print(f"⚠️ 최상단 고정 실패 (무시됨): {e}")
+                    print("✅ 창을 최상단으로 고정했습니다.")
+                except:
+                    pass
             
             url = url_entry.get().strip()
             if not url:
                 url = "https://yeardream2026.elice.io/my/lecturerooms?page=1"
             
-            # 로그인 시도
             driver.get(url)
-            login_wait = WebDriverWait(driver, 5) 
-            login_button = login_wait.until(EC.presence_of_element_located((By.XPATH, "//button[contains(., '로그인')]")))
             
-            print("로그인 화면 감지됨! 자동완성 적용 대기 중...")
-            time.sleep(3) 
-            
-            pw_inputs = driver.find_elements(By.CSS_SELECTOR, "input[type='password']")
-            if pw_inputs:
-                pw_input = pw_inputs[0]
-                pw_input.click() 
-                time.sleep(1.5) 
-                pw_input.send_keys(Keys.SPACE)
-                pw_input.send_keys(Keys.BACKSPACE)
-                time.sleep(1) 
-                pw_input.send_keys(Keys.TAB) 
-                time.sleep(1.5) 
-            
-            login_button = login_wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(., '로그인')]")))
-            driver.execute_script("arguments[0].click();", login_button)
-            
-            print("로그인 처리 중! '라이브 강의실' 목록이 로딩될 때까지 기다립니다...")
+            # --- [수정됨] 로그인 버튼 탐색 (없으면 세션 유지로 간주하고 무시) ---
+            try:
+                login_wait = WebDriverWait(driver, 5) 
+                login_button = login_wait.until(EC.presence_of_element_located((By.XPATH, "//button[contains(., '로그인')]")))
+                
+                print("로그인 화면 감지됨! 자동완성 적용 대기 중...")
+                time.sleep(3) 
+                
+                pw_inputs = driver.find_elements(By.CSS_SELECTOR, "input[type='password']")
+                if pw_inputs:
+                    pw_input = pw_inputs[0]
+                    pw_input.click() 
+                    time.sleep(1.5) 
+                    pw_input.send_keys(Keys.SPACE)
+                    pw_input.send_keys(Keys.BACKSPACE)
+                    time.sleep(1) 
+                    pw_input.send_keys(Keys.TAB) 
+                    time.sleep(1.5) 
+                
+                login_button = login_wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(., '로그인')]")))
+                driver.execute_script("arguments[0].click();", login_button)
+            except:
+                print("💡 로그인 버튼이 없습니다. 이미 로그인된 상태로 간주하고 진입합니다.")
+            # ----------------------------------------------------------------
+
+            print("강의실 목록 로딩 대기 중...")
             list_wait = WebDriverWait(driver, 30)
             list_wait.until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '강의실')]")))
-            print("✅ 강의실 목록 로딩 완벽 확인!")
             
             close_annoying_popups(driver) 
 
-            # 로그인 실패 여부 재확인
             remaining_login_buttons = driver.find_elements(By.XPATH, "//button[contains(., '로그인')]")
             if remaining_login_buttons and remaining_login_buttons[0].is_displayed():
                 print("❌ 로그인이 완료되지 않았습니다. 팝업을 띄웁니다.")
                 show_login_warning()
                 return 
             
-            # === 🛡️ 패스키 및 안내 팝업 우회 (나중에 하기) ===
-            print("🛡️ 팝업 방어 로직을 가동합니다...")
+            print("🛡️ 방해 팝업(나중에 하기) 탐색 중...")
             time.sleep(3) 
             try:
                 bypass_btn = driver.find_element(By.XPATH, "//*[contains(text(), '나중에 하기')]")
                 driver.execute_script("arguments[0].click();", bypass_btn)
-                print("✅ '나중에 하기' 팝업을 성공적으로 치웠습니다!")
+                print("✅ '나중에 하기' 팝업을 치웠습니다!")
             except:
-                print("✅ 팝업이 없습니다. 정상적으로 다음 단계를 진행합니다.")
-            # =================================================
+                pass
 
-            print("✅ 로그인 확인됨. 강의실 탐색 시작.")
+            print("✅ 강의실 탐색 시작.")
             today_date = get_today_date_str()
-            print(f"오늘 날짜 타겟 접두사: {today_date}")
             
             wait = WebDriverWait(driver, 20)
             elements = wait.until(EC.presence_of_all_elements_located((By.XPATH, f"//*[contains(text(), '{today_date}')]")))
@@ -382,7 +380,7 @@ def run_bot():
                 try:
                     text = elem.text
                     if len(text) > 0 and len(text) < 100 and "강의실" in text:
-                        print(f"🎯 매칭되는 강의실 발견: {text}")
+                        print(f"🎯 강의실 발견: {text}")
                         driver.execute_script("arguments[0].click();", elem)
                         target_found = True
                         break
@@ -390,9 +388,10 @@ def run_bot():
                     continue
             
             if not target_found:
-                raise Exception("⚠️ 현재 열려있는 오늘 날짜 기반의 강의실을 찾지 못했습니다.")
+                # 여기서 에러를 내야 창을 껐다 켜는 루프로 던져집니다.
+                raise Exception("⚠️ 오늘 날짜 기반의 강의실을 찾지 못했습니다.")
 
-            print("오버랩 팝업 및 입장 버튼 대기 중...")
+            print("입장 버튼 클릭 대기 중...")
             time.sleep(5) 
             if not is_running: return 
             
@@ -404,8 +403,7 @@ def run_bot():
                         driver.execute_script("arguments[0].click();", btn)
                         time.sleep(1.5) 
                         click_success = True
-                        print("기본 화면에서 입장 클릭 성공!")
-            except Exception:
+            except:
                 pass
 
             if not click_success:
@@ -419,54 +417,54 @@ def run_bot():
                                 driver.execute_script("arguments[0].click();", btn)
                                 time.sleep(1.5) 
                                 click_success = True
-                                print("iframe 내부에서 입장 클릭 성공!")
                                 break 
-                    except Exception:
+                    except:
                         pass
                     finally:
                         driver.switch_to.default_content() 
                     if click_success:
                         break 
                         
-            if click_success:
-                print("🎉 강의실 입장 완료! 페이지 로딩을 기다립니다...")
-                time.sleep(5) 
-                close_annoying_popups(driver)
+            if not click_success:
+                 raise Exception("⚠️ 강의실 입장 버튼을 클릭하지 못했습니다.")
 
-                # === 💬 라이브 강의실 채팅창 열기 로직 ===
-                print("💬 '라이브 강의실 채팅' 이름표를 찾아 타격합니다...")
-                time.sleep(5) 
+            # ====================================================================
+            # 🎉 [안전 구역] 여기까지 왔으면 강의실 입장에 성공한 것입니다!
+            # 이후 발생하는 채팅창 못 열림, QR 에러 등은 재시작하지 않고 무시합니다.
+            # ====================================================================
+            print("🎉 강의실 최종 입장 완료! (이후 부가 기능 오류는 재시작하지 않고 무시합니다.)")
+            time.sleep(5) 
+            close_annoying_popups(driver)
+
+            try:
+                print("💬 채팅창 열기 시도 중...")
                 chat_clicked = False
                 MY_XPATH = "//span[@aria-label='라이브 강의실 채팅']//button"
                 
                 try:
-                    try:
-                        btn = driver.find_element(By.XPATH, MY_XPATH)
-                        driver.execute_script("arguments[0].click();", btn)
-                        chat_clicked = True
-                        print("✅ 저격 성공! 기본 화면에서 채팅창을 열었습니다.")
-                    except:
-                        pass
-                        
-                    if not chat_clicked:
-                        iframes = driver.find_elements(By.TAG_NAME, "iframe")
-                        for iframe in iframes:
-                            try:
-                                driver.switch_to.frame(iframe)
-                                btn = driver.find_element(By.XPATH, MY_XPATH)
-                                driver.execute_script("arguments[0].click();", btn)
-                                chat_clicked = True
-                                print("✅ 저격 성공! iframe 내부에서 채팅창을 열었습니다.")
-                            except:
-                                pass
-                            finally:
-                                driver.switch_to.default_content() 
-                            if chat_clicked: break
-                except Exception as e:
-                    print(f"⚠️ 버튼 타격 중 에러 발생: {e}")
+                    btn = driver.find_element(By.XPATH, MY_XPATH)
+                    driver.execute_script("arguments[0].click();", btn)
+                    chat_clicked = True
+                    print("✅ 기본 화면에서 채팅창을 열었습니다.")
+                except:
+                    iframes = driver.find_elements(By.TAG_NAME, "iframe")
+                    for iframe in iframes:
+                        try:
+                            driver.switch_to.frame(iframe)
+                            btn = driver.find_element(By.XPATH, MY_XPATH)
+                            driver.execute_script("arguments[0].click();", btn)
+                            chat_clicked = True
+                            print("✅ iframe 내부에서 채팅창을 열었습니다.")
+                        except:
+                            pass
+                        finally:
+                            driver.switch_to.default_content() 
+                        if chat_clicked: break
+            except Exception as e:
+                print("⚠️ 채팅창을 열지 못했습니다. (무시하고 계속 진행)")
 
-                # QR 탐색 및 출석
-                found_url = scan_screen_for_qr()
+            try:
+                found_url = scan_screen_for_qr(timeout_minutes=2) # 스캔 2분 대기
                 if found_url and is_running:
                     print("🌐 출석 링크를 새 탭으로 엽니다!")
                     original_window = driver.current_window_handle 
@@ -478,19 +476,16 @@ def run_bot():
                             driver.switch_to.window(window_handle)
                             break
                             
-                    print("👀 출석 화면 오버레이 대기 중...")
                     time.sleep(4) 
-                    
                     closed_overlay = False
                     try:
                         close_buttons = driver.find_elements(By.XPATH, "//*[normalize-space()='닫기']")
                         for btn in close_buttons:
                             if btn.is_displayed():
                                 driver.execute_script("arguments[0].click();", btn)
-                                print("✅ 출석 화면 기본 창에서 '닫기' 버튼을 치웠습니다!")
                                 closed_overlay = True
                                 break
-                    except Exception:
+                    except:
                         pass
                     
                     if not closed_overlay:
@@ -503,60 +498,50 @@ def run_bot():
                                     for btn in close_buttons:
                                         if btn.is_displayed():
                                             driver.execute_script("arguments[0].click();", btn)
-                                            print("✅ 출석 화면 iframe 안에서 '닫기' 버튼을 치웠습니다!")
                                             closed_overlay = True
                                             break
-                                except Exception:
-                                    pass
-                                finally:
-                                    driver.switch_to.default_content()
+                                except: pass
+                                finally: driver.switch_to.default_content()
                                 if closed_overlay: break
-                        except Exception:
-                            driver.switch_to.default_content()
+                        except: driver.switch_to.default_content()
 
-                    print("👀 출석 완료 텍스트 대기 중...")
                     try:
                         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '출석')]")))
                         print("✅ 출석 완료 확인! 탭을 닫고 원래 강의실로 복귀합니다.")
                         driver.close() 
                         driver.switch_to.window(original_window) 
-                    except Exception:
-                        print("⚠️ '출석' 글씨를 찾지 못했습니다. 탭을 그대로 둡니다.")
-                        
-                print(f"🎉 모든 진입 성공! 설정된 대기 시간({wait_time_val}분) 만큼 화면을 유지합니다.")
-                
-                # ⏳ UI에서 설정한 분(Minute) 단위 로딩 대기 적용
-                time.sleep(wait_time_val * 60)
-                
-                print("✅ 1회차 성공 루프가 완료되었습니다. 대기 모드로 돌아갑니다.")
-                break # 에러 없이 모든 과정을 마쳤으므로 재시도 루프를 탈출함
-                
-            else:
-                raise Exception("입장 버튼 클릭 실패")
+                    except:
+                        print("⚠️ '출석' 글씨 확인 불가 (탭 유지)")
+            except Exception as e:
+                print("⚠️ QR 출석 진행 중 오류 발생 (무시하고 화면 유지)")
+                    
+            print(f"🎉 모든 필수 진입 성공! 설정된 대기 시간({wait_time_val}분) 만큼 화면을 안전하게 유지합니다.")
+            time.sleep(wait_time_val * 60)
+            
+            print("✅ 1회차 성공 루프가 완료되었습니다. 대기 모드로 돌아갑니다.")
+            break # 에러 없이 모든 필수 과정을 마쳤으므로 재시도 루프(while)를 탈출함
 
         except Exception as e:
-            # 🛡️ 에러 발생 시 처리 (블랙박스 및 프로세스 청소)
+            # 🛡️ 에러 발생 시 처리 (강의실 입장을 못했을 때만 이쪽으로 떨어짐)
             retry_count += 1
-            print(f"\n🚨 오류 발생! (실패 횟수: {retry_count}/{max_retry_val})")
-            print(f"상세 에러: {e}")
+            print(f"\n🚨 [오류 발생] 강의실 진입 실패! (실패 횟수: {retry_count}/{max_retry_val})")
+            print(f"상세 원인: {e}")
             
-            # 📸 블랙박스 가동
             try:
                 if driver:
                     now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
                     driver.save_screenshot(f"error_blackbox_{now}.png")
                     print(f"📸 블랙박스 저장 완료: error_blackbox_{now}.png")
             except:
-                print("⚠️ 블랙박스 캡처 실패 (브라우저가 이미 닫혔을 수 있음)")
+                pass
 
-            # 🧹 프로세스 완벽 정리
             try:
                 if driver: driver.quit()
                 time.sleep(1)
                 if platform.system() == "Windows":
                     os.system("taskkill /f /im chromedriver.exe /t >nul 2>&1")
                     os.system("taskkill /f /im msedgedriver.exe /t >nul 2>&1")
-                print("🧹 프로세스 찌꺼기 청소 완료.")
+                print("🧹 백그라운드 프로세스 청소 완료.")
             except:
                 pass
             
@@ -650,8 +635,7 @@ def create_gui():
         try:
             with open(config_file, 'w', encoding='utf-8') as f:
                 json.dump(saved_data, f, ensure_ascii=False, indent=4)
-        except Exception:
-            pass
+        except: pass
 
     saved_config = load_config()
     close_browser_var = tk.BooleanVar(value=saved_config.get("close_browser", True)) 
@@ -659,7 +643,6 @@ def create_gui():
     title_lbl = tk.Label(root, text="🚀 엘리스 LXP 통합 출석 자동화 시스템", font=("Helvetica", 14, "bold"), bg="#f4f4f4")
     title_lbl.pack(pady=10)
     
-    # ⚙️ [추가됨] 설정 UI 영역 (재시도 횟수, 로딩 대기시간)
     setting_frame = tk.Frame(root, bg="#f4f4f4")
     setting_frame.pack(padx=20, pady=5, fill=tk.X)
     
@@ -672,7 +655,6 @@ def create_gui():
     tk.Label(setting_frame, text="⏳ 초기 로딩/QR 대기 시간 (분):", bg="#f4f4f4", font=("Helvetica", 9, "bold")).pack(side=tk.LEFT, padx=(15,0))
     tk.Entry(setting_frame, textvariable=wait_var, width=5, justify="center").pack(side=tk.LEFT, padx=5)
 
-    # URL 프레임
     url_frame = tk.LabelFrame(root, text="🌐 엘리스 강의실 대시보드 URL 주소 설정", font=("Helvetica", 9, "bold"), bg="#f4f4f4", padx=10, pady=5)
     url_frame.pack(padx=20, pady=5, fill=tk.X)
     
@@ -680,7 +662,6 @@ def create_gui():
     url_entry.insert(0, saved_config.get("url", "https://yeardream2026.elice.io/my/lecturerooms?page=1"))
     url_entry.pack(fill=tk.X, expand=True, pady=2)
     
-    # 타이머 프레임
     time_frame = tk.LabelFrame(root, text="⏰ 타이머 실행 시간 선택 (5분 간격)", font=("Helvetica", 9, "bold"), bg="#f4f4f4", padx=10, pady=5)
     time_frame.pack(padx=20, pady=5, fill=tk.X)
     
@@ -731,7 +712,7 @@ def create_gui():
             try: driver.quit()
             except: pass
             driver = None
-            print("✅ 봇 중지 및 열려있던 크롬 브라우저를 종료했습니다.")
+            print("✅ 봇 중지 및 브라우저 종료 완료.")
         else:
             print("✅ 봇 엔진만 정지되었습니다.")
 
@@ -767,9 +748,6 @@ def create_gui():
 
     sys.stdout = PrintLogger(log_text)
     sys.stderr = PrintLogger(log_text)
-
-    print("환영합니다! 세이브 데이터(체크박스, 주소, 설정값)를 성공적으로 불러왔습니다.")
-    print("가동 버튼을 누르거나 프로그램을 끄면 현재 설정이 자동으로 영구 저장됩니다.")
 
     def on_closing():
         global is_running, driver
