@@ -503,12 +503,18 @@ def run_bot():
             except Exception as e:
                 print(f"⚠️ QR 출석 진행 중 오류 발생 (무시하고 화면 유지): {e}")
             finally:
-                # [수정] 무조건 원래 강의실 창으로 포커스 복귀 (제일 중요!)
+                # [완벽 방어] 메인 강의실 창을 제외한 모든 찌꺼기 탭 강제 청소
                 try:
+                    for handle in driver.window_handles:
+                        if handle != original_window:
+                            driver.switch_to.window(handle)
+                            driver.close() # 메인창이 아니면 자비 없이 전부 닫음
+                    
+                    # 찌꺼기 청소 후, 마지막 시선을 안전하게 메인 창으로 꽉 고정
                     driver.switch_to.window(original_window)
-                    print("✅ 기존 강의실 화면으로 시점 복귀 완료.")
-                except:
-                    pass
+                    print("✅ 기존 강의실 화면으로 시점 복귀 및 잔여 탭 정리 완료.")
+                except Exception as e:
+                    print("⚠️ 탭 복귀 중 예외 발생 (브라우저가 수동 종료되었을 수 있음)")
             # ====================================================================
 
             print(f"🎉 모든 필수 진입 성공! 설정된 대기 시간({wait_time_val}분) 만큼 화면을 안전하게 유지합니다.")
