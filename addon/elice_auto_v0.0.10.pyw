@@ -354,11 +354,11 @@ def run_bot():
                 elements = wait.until(EC.presence_of_all_elements_located((By.XPATH, f"//*[contains(text(), '{today_date}')]")))
                 for elem in elements:
                     text = elem.text
-                    #if len(text) > 0 and len(text) < 100 and "강의실" in text:
-                    #    print(f"🎯 [플랜 A 성공] 날짜 매칭 강의실 발견: {text}")
-                    #    driver.execute_script("arguments[0].click();", elem)
-                    #    target_found = True
-                    #    break
+                    if len(text) > 0 and len(text) < 100 and "강의실" in text:
+                        print(f"🎯 [플랜 A 성공] 날짜 매칭 강의실 발견: {text}")
+                        driver.execute_script("arguments[0].click();", elem)
+                        target_found = True
+                        break
             except:
                 pass
 
