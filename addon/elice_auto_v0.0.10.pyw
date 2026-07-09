@@ -513,20 +513,22 @@ def run_bot():
                     # 1. 마지막 시선을 안전하게 메인 창으로 복귀
                     driver.switch_to.window(original_window)
                     
-                    # 2. 👈 [핵심 추가] 돌아온 창이 아까 그 강의실이 맞는지 URL 검증
+                    # 2. 돌아온 창이 아까 그 강의실이 맞는지 URL 검증
                     current_url = driver.current_url
-                    
-                    # 주소 뒤에 붙는 자잘한 세션 꼬리표(? 뒷부분)를 떼어내고 순수 주소만 비교
                     base_expected = expected_url.split("?")[0]
                     base_current = current_url.split("?")[0]
                     
                     if base_expected in base_current or "elice.io" in base_current:
                         print("✅ 기존 강의실 화면 복귀 및 주소(URL) 일치 검증 완료.")
                     else:
-                        print(f"⚠️ 경고: 복귀한 탭이 기존 강의실을 이탈한 것 같습니다! (현재 주소: {current_url})")
+                        # 👈 [수정됨] 경고만 띄우지 않고 에러를 터뜨려 재시작 루프로 던짐!
+                        raise Exception(f"강의실 화면 이탈 감지됨 (현재 주소: {current_url})")
 
                 except Exception as e:
-                    print("⚠️ 탭 복귀 중 예외 발생 (브라우저가 수동 종료되었을 수 있음)")
+                    print(f"⚠️ 탭 복귀 실패! 원인: {e}")
+                    # 👈 [수정됨] 여기서 에러를 발생시키면 가장 바깥의 except(에러 처리기)로 날아가서 
+                    # 블랙박스를 찍고 프로세스를 청소한 뒤 자동으로 재진입을 시도합니다.
+                    raise Exception("강의실 탭 복귀/검증 실패로 인해 처음부터 다시 진입합니다.")
             # ====================================================================
 
             print(f"🎉 모든 필수 진입 성공! 설정된 대기 시간({wait_time_val}분) 만큼 화면을 안전하게 유지합니다.")

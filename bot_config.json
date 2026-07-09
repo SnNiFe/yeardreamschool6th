@@ -11,6 +11,6 @@
         "16:35"
     ],
     "close_browser": true,
-    "retry_count": "3",
+    "retry_count": "2",
     "wait_time": "2"
 }
