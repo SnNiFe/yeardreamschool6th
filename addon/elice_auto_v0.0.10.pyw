@@ -342,24 +342,55 @@ def run_bot():
                 print("✅ '나중에 하기' 팝업을 치웠습니다!")
             except: pass
 
-            print("✅ 강의실 탐색 시작.")
+            # ====================================================================
+            # 🔍 강의실 탐색 로직 (플랜 A -> 플랜 B)
+            # ====================================================================
+            print("✅ 강의실 탐색 시작 (플랜 A: 날짜 기반 검색).")
             today_date = get_today_date_str()
             wait = WebDriverWait(driver, 20)
-            elements = wait.until(EC.presence_of_all_elements_located((By.XPATH, f"//*[contains(text(), '{today_date}')]")))
-
             target_found = False
-            for elem in elements:
-                try:
-                    text = elem.text
-                    if len(text) > 0 and len(text) < 100 and "강의실" in text:
-                        print(f"🎯 강의실 발견: {text}")
-                        driver.execute_script("arguments[0].click();", elem)
-                        target_found = True
-                        break
-                except: continue
             
+            try:
+                elements = wait.until(EC.presence_of_all_elements_located((By.XPATH, f"//*[contains(text(), '{today_date}')]")))
+                for elem in elements:
+                    text = elem.text
+                    #if len(text) > 0 and len(text) < 100 and "강의실" in text:
+                    #    print(f"🎯 [플랜 A 성공] 날짜 매칭 강의실 발견: {text}")
+                    #    driver.execute_script("arguments[0].click();", elem)
+                    #    target_found = True
+                    #    break
+            except:
+                pass
+
+            # 💡 [플랜 B 가동] 날짜로 못 찾았다면, 특강이라고 간주하고 인원수로 탐색!
             if not target_found:
-                raise Exception(f"⚠️ 오늘 날짜({today_date}) 기반의 강의실을 찾지 못했습니다.")
+                print("⚠️ 오늘 날짜 강의실이 없습니다. [플랜 B: 10명 이상 참여 방 탐색]을 시작합니다.")
+                import re 
+                try:
+                    # 1. '명'이라는 글자가 들어간 <b> 태그를 찾고, 그 부모 요소(/..)를 통째로 낚아챔
+                    participant_elements = driver.find_elements(By.XPATH, "//b[contains(text(), '명')]/..")
+                    
+                    for elem in participant_elements:
+                        # 2. 껍데기 안에 있는 모든 글자를 하나로 합쳐서 가져옴 (예: "55명 참여")
+                        text = elem.text.replace("\n", " ").strip() 
+                        
+                        if "참여" in text:
+                            # 3. 정규식으로 숫자만 깔끔하게 발라냄
+                            match = re.search(r'(\d+)\s*명\s*참여', text)
+                            if match:
+                                count = int(match.group(1))
+                                if count >= 10: 
+                                    print(f"🎯 [플랜 B 성공] 특강/활성화된 방 발견! (현재 인원: {count}명)")
+                                    driver.execute_script("arguments[0].click();", elem)
+                                    target_found = True
+                                    break
+                except Exception as e:
+                    print(f"⚠️ 플랜 B 탐색 중 오류 발생: {e}")
+
+            # 플랜 A와 플랜 B가 모두 실패했을 때만 진짜 에러를 내고 재시작 루프로 던짐
+            if not target_found:
+                raise Exception(f"⚠️ 정규 강의({today_date}) 및 활성화된 특강(10명 이상) 방을 모두 찾지 못했습니다.")
+            # ====================================================================
 
             print("입장 버튼 클릭 대기 중...")
             time.sleep(5) 
