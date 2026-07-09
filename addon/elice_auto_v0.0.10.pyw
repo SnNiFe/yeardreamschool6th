@@ -494,7 +494,14 @@ def run_bot():
             except Exception as e:
                 print(f"⚠️ QR 출석 진행 중 오류 발생 (무시하고 화면 유지): {e}")
             finally:
+                # [여기서부터 복사해서 덮어쓰세요]
                 try:
+                    # [추가 방어 0] 혹시 모를 웹사이트 자체 경고창(세션 만료 등) 강제 무시
+                    try:
+                        alert = driver.switch_to.alert
+                        alert.accept()
+                    except: pass
+
                     # [완벽 방어 1] 찌꺼기 탭 정리
                     for handle in driver.window_handles:
                         if handle != original_window:
@@ -510,7 +517,6 @@ def run_bot():
                     if base_expected in base_current or "elice.io" in base_current:
                         print("✅ 기존 강의실 화면 복귀 및 주소(URL) 일치 검증 완료.")
                         
-                        # [완벽 방어 3] 윈도우 최상단 고정 강제 해제
                         if platform.system() == "Windows":
                             try:
                                 hwnd = ctypes.windll.user32.GetForegroundWindow()
@@ -518,15 +524,16 @@ def run_bot():
                                 print("🔓 창 최상단 고정을 해제하여 컴퓨터 사용을 자유롭게 합니다.")
                             except: pass
                     else:
-                        raise Exception(f"강의실 화면 이탈 감지됨 (현재 주소: {current_url})")
+                        print(f"⚠️ 강의실 화면 이탈 감지됨 (현재 주소: {current_url})")
+                        print("💡 [안전 방어] 이탈이 감지되었으나, 강의 시청을 위해 창을 강제로 끄지 않고 유지합니다.")
 
                 except Exception as e:
-                    print(f"⚠️ 탭 복귀 실패! 원인: {e}")
-                    raise Exception("강의실 탭 복귀/검증 실패로 인해 처음부터 다시 진입합니다.")
+                    print(f"⚠️ 탭 복귀 중 에러 발생: {e}")
+                    print("💡 [안전 방어] 에러가 났지만 강의실 내부이므로 창을 강제로 끄지 않고 유지합니다.")
             # ====================================================================
 
             # [완벽 방어 4] 스케줄러가 장기 대기(sleep) 때문에 뻗지 않도록 짧게 쉬고 빠져나옴
-            print("🎉 출석 사이클 성공! 봇 엔진은 다음 스케줄을 감시하기 위해 대기 모드로 돌아갑니다.")
+            print("🎉 출석/대기 사이클 완료! 봇 엔진은 다음 스케줄을 감시하기 위해 돌아갑니다.")
             time.sleep(10)
             break 
 
