@@ -510,31 +510,35 @@ def run_bot():
                             driver.switch_to.window(handle)
                             driver.close() 
                     
-                    # 1. 마지막 시선을 안전하게 메인 창으로 복귀
                     driver.switch_to.window(original_window)
                     
-                    # 2. 돌아온 창이 아까 그 강의실이 맞는지 URL 검증
+                    # URL 검증... (기존 코드와 동일)
                     current_url = driver.current_url
                     base_expected = expected_url.split("?")[0]
                     base_current = current_url.split("?")[0]
                     
                     if base_expected in base_current or "elice.io" in base_current:
                         print("✅ 기존 강의실 화면 복귀 및 주소(URL) 일치 검증 완료.")
+                        
+                        # 👈 [버그 방어 3번] 임무를 마쳤으니 윈도우 최상단 고정 강제 해제 (-2 옵션)
+                        if platform.system() == "Windows":
+                            try:
+                                hwnd = ctypes.windll.user32.GetForegroundWindow()
+                                ctypes.windll.user32.SetWindowPos(hwnd, -2, 0, 0, 0, 0, 3)
+                                print("🔓 창 최상단 고정을 해제하여 컴퓨터 사용을 자유롭게 합니다.")
+                            except: pass
+                            
                     else:
-                        # 👈 [수정됨] 경고만 띄우지 않고 에러를 터뜨려 재시작 루프로 던짐!
                         raise Exception(f"강의실 화면 이탈 감지됨 (현재 주소: {current_url})")
 
                 except Exception as e:
                     print(f"⚠️ 탭 복귀 실패! 원인: {e}")
-                    # 👈 [수정됨] 여기서 에러를 발생시키면 가장 바깥의 except(에러 처리기)로 날아가서 
-                    # 블랙박스를 찍고 프로세스를 청소한 뒤 자동으로 재진입을 시도합니다.
                     raise Exception("강의실 탭 복귀/검증 실패로 인해 처음부터 다시 진입합니다.")
             # ====================================================================
 
-            print(f"🎉 모든 필수 진입 성공! 설정된 대기 시간({wait_time_val}분) 만큼 화면을 안전하게 유지합니다.")
-            time.sleep(wait_time_val * 60)
-            
-            print("✅ 1회차 성공 루프가 완료되었습니다. 대기 모드로 돌아갑니다.")
+            # 👈 [버그 방어 1번] 스케줄러가 기절하지 않도록, 성공 후 장기 대기(sleep) 삭제.
+            # 어차피 브라우저는 꺼지지 않으므로, 엔진은 곧바로 다음 예약을 감시하러 돌아가면 됩니다.
+            print("🎉 출석 사이클 성공! 봇 엔진은 다음 스케줄을 감시하기 위해 대기 모드로 돌아갑니다.")
             break # 에러 없이 모든 필수 과정을 마쳤으므로 재시도 루프(while)를 탈출함
 
         except Exception as e:
