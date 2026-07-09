@@ -463,8 +463,10 @@ def run_bot():
 
             # === 📸 새 탭(QR 출석) 오버레이 및 복귀 철통 방어 로직 ===
             original_window = driver.current_window_handle 
+            expected_url = driver.current_url # 👈 [핵심 추가] 출발 전 현재 강의실 원본 주소를 기억함
+
             try:
-                # 👈 UI에서 입력받은 대기 시간(wait_time_val)을 그대로 사용하도록 수정!
+                # UI에서 설정한 대기 시간(wait_time_val) 적용
                 found_url = scan_screen_for_qr(timeout_minutes=wait_time_val) 
                 if found_url and is_running:
                     print("🌐 출석 링크를 새 탭으로 엽니다!")
@@ -479,10 +481,8 @@ def run_bot():
                             
                     time.sleep(4) 
                     print("👀 출석 화면 오버레이(팝업) 1차 제거 시도 중...")
-                    # [수정] 새 탭에서도 공통 팝업 제거기 가동!
                     close_annoying_popups(driver) 
                     
-                    # [수정] 혹시 남아있는 '닫기' 버튼 강제 타격 (입장하기는 누르지 않음)
                     try:
                         close_btns = driver.find_elements(By.XPATH, "//*[contains(text(), '닫기')]")
                         for btn in close_btns:
@@ -496,7 +496,7 @@ def run_bot():
                     try:
                         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '출석')]")))
                         print("✅ 출석 완료 확인! 탭을 닫습니다.")
-                        driver.close() # 성공 시 탭만 살짝 닫기
+                        driver.close() # 성공 시 새 탭 닫기
                     except:
                         print("⚠️ '출석' 글씨 확인 불가 (출석 탭은 유지하되, 시점은 기존 강의실로 복귀합니다)")
                         
@@ -508,11 +508,23 @@ def run_bot():
                     for handle in driver.window_handles:
                         if handle != original_window:
                             driver.switch_to.window(handle)
-                            driver.close() # 메인창이 아니면 자비 없이 전부 닫음
+                            driver.close() 
                     
-                    # 찌꺼기 청소 후, 마지막 시선을 안전하게 메인 창으로 꽉 고정
+                    # 1. 마지막 시선을 안전하게 메인 창으로 복귀
                     driver.switch_to.window(original_window)
-                    print("✅ 기존 강의실 화면으로 시점 복귀 및 잔여 탭 정리 완료.")
+                    
+                    # 2. 👈 [핵심 추가] 돌아온 창이 아까 그 강의실이 맞는지 URL 검증
+                    current_url = driver.current_url
+                    
+                    # 주소 뒤에 붙는 자잘한 세션 꼬리표(? 뒷부분)를 떼어내고 순수 주소만 비교
+                    base_expected = expected_url.split("?")[0]
+                    base_current = current_url.split("?")[0]
+                    
+                    if base_expected in base_current or "elice.io" in base_current:
+                        print("✅ 기존 강의실 화면 복귀 및 주소(URL) 일치 검증 완료.")
+                    else:
+                        print(f"⚠️ 경고: 복귀한 탭이 기존 강의실을 이탈한 것 같습니다! (현재 주소: {current_url})")
+
                 except Exception as e:
                     print("⚠️ 탭 복귀 중 예외 발생 (브라우저가 수동 종료되었을 수 있음)")
             # ====================================================================

@@ -2,13 +2,15 @@
     "url": "https://yeardream2026.elice.io/my/lecturerooms?page=1",
     "morning": [
         "09:00",
-        "09:05"
+        "09:05",
+        "09:10"
     ],
     "afternoon": [
-        "16:20",
-        "16:25"
+        "16:25",
+        "16:30",
+        "16:35"
     ],
     "close_browser": true,
     "retry_count": "3",
-    "wait_time": "1"
+    "wait_time": "2"
 }
