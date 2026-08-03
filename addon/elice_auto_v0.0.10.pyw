@@ -266,7 +266,7 @@ def scan_screen_for_qr(timeout_minutes=5):
 # [4] 엘리스 로그인 및 강의실 자동 입장 메인 로직 (🛡️ 무적 루프 적용)
 # =====================================================================
 def run_bot():
-    global driver, is_running
+    global driver, is_running, morning_done, afternoon_done, last_attendance_date
     if not is_running: 
         return
 
