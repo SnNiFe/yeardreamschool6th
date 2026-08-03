@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        var a = 20;
+        var b = 40;
+
+        // if(조건이 참일 경우) {실행}
+        if (a < b) {
+            console.log('a 는 b보다 작습니다.');
+        }
+
+        if (a > b) {
+            console.log('a 는 b 보다 큽니다.');
+        } else {
+            // if(a<=b){}
+            console.log('a 는 b 보다 작거나 같습니다.');
+        }
+
+
+
+        var item = prompt('원하는 음료를 고르세요'); // 요즘 잘 쓰지 않는 방식
+        console.log(item);
+        var menu = ['콜라','식혜','생수','아이스커피','에너지음료'];
+        var idx = menu.indexOf(item);
+        
+        console.log(idx);
+        if (idx < 0) {
+            alert('목록에 있는 메뉴를 선택하세요 : '+menu.join(','));
+        }else{
+            // back tic : f-string 과 같은 효과
+            alert(`${menu[idx]}가 나왔습니다.`);
+        }
+
+        // if(item == '콜라'){
+        //     console.log('콜라가 나왔습니다.');
+        // }else if(item == '식혜'){
+        //     console.log('식혜가 나왔습니다.');
+        // }else if(item == '생수'){
+        //     console.log('생수가 나왔습니다.');
+        // }else if(item == '아이스커피'){
+        //     console.log('아이스커피가 나왔습니다.');
+        // }else if(item == '에너지음료'){
+        //     console.log('에너지음료가 나왔습니다.');
+        // }else{
+        //     console.log('목록에 있는 메뉴를 선택하세요 : '+menu.join(','));
+        // }
+
+    </script>
+</html>

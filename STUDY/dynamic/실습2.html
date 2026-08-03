@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <title>CSS Transtion</title>
+  
+  <style>
+
+    .transition {
+        width: 100px;
+        height: 100px;
+        background-color: red;
+        /* 어떤 속성에 효과를 줄래? */
+        transition-property: width background-color;
+        /* 얼마동안에 진행할까? 1s == 1000ms */
+        transition-duration: 1000ms;
+        /* 어떤움직임? */
+        transition-timing-function: cubic-bezier(.12,.54,1,.1); 
+        /* 
+        ease : 기본값 - 천천히->빠르게->천천히
+        ease-in : 천천히->빠르게(가속)
+        ease-out : 빠르게->천천히(감속)
+        ease-in-out : 천천히->빠르게->천천히(출발, 도착이 더 강조)
+        linear : 일정한속도
+        cubic bezier : 베지에 곡선을 이용한 애니메이션
+        cubic-bezier(p1,p2,p3,p4)
+        */
+        transition-delay: 500ms;
+        /* transition: property duration timing-function delay; */
+    }
+    .transition:hover{
+        width: 500px;
+        background-color: yellow;
+    }
+
+  </style>
+  
+</head>
+<body>
+
+  <div class="transition"></div>
+
+</body>
+</html>

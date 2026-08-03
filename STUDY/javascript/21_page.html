@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+    </body>
+    <script>
+        // 메서드의 종류는 상위 객체나 클래스를 보면 대략 알 수 있다.
+        console.log(Math);
+        console.log(window); // window 내 Math 있음
+
+        // Math 하위의 메서드들
+        console.log('절대값 : ',Math.abs(-3));
+        console.log('올림 : ',Math.ceil(0.3));
+        console.log('내림 : ',Math.floor(10.9));
+        console.log('임의의 수 : ',Math.random()); // 0 ~ 0.9999
+        // 주사위 : 1,2,3,4,5,6 
+        // 0 * 6 = 0 + 1 => 1
+        // 0.9 * 6 = 5.4 + 1 => 6.4
+        var num = Math.floor(Math.random() * 6)+1;
+        console.log('주사위 : ', num);
+
+        // window 하위 객체(너무 당연한 최상위 이므로 생략 가능)
+        console.log(window.parseInt('20.6'));
+        console.log(window.parseFloat('20.6'));
+
+    </script>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <title>CSS Transform</title>
+  
+  <style>
+    .transform {
+       width: 100px;
+       height: 100px;
+       background-color: red;
+       margin: 100px 0 0 100px;
+       /* 같은 속성에 값을 변화하면 덮어쓴다. */
+       /* transform: rotate(45deg);
+       transform: scale(2,3); */
+       /* 연결해서 00 다음 00을 적용하도록 하면 된다. */
+       /* transform: rotate(45deg) scale(0.5,0.5); */
+       /* transform: translate(100px, 150px); */
+       transform: skew(10deg, 20deg); /*x축 기준, y축 기준 회전*/
+
+       /*구형 특정 브라우저에서 동작하게 하려면?*/
+       -moz-transform: skew(0deg, 0deg); /*F.F.*/
+       -webkit-transform: skew(0deg, 0deg); /*Chrome, Safari*/
+       -o-transform: skew(0deg, 0deg); /*Opera*/
+       -ms-transform: skew(0deg, 0deg); /*I.E.*/
+    }
+  </style>
+  
+</head>
+<body>
+
+  <div class="transform"></div>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>JavaScript 문법</title>
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+  <!-- 
+    action="보낼 서버 주소"
+    method="전송 방식(POST|GET)"
+    GET : 보내는 내용이 주소에 나타남(기본)
+    POST : 보내는 내용이 주소에 나타나지 않음 // 보안상 중요할때 사용
+  -->
+  <form id="login_form" action="" method="get">
+    <input type="text" name="id" placeholder="아이디"/>
+    <input type="password" name="pw" placeholder="비밀번호"/>
+    <!-- form 에 있는 내용을 서버로 전송 // 페이지 초기화, 서버 전송 -->
+    <input type="submit"/>
+  </form>
+</body>
+<script>
+  // id 나 pw 가 공백이면 서버로 전송하지 않는다.
+  var id = document.querySelector('input[name="id"]');
+  var pw = document.querySelector('input[name="pw"]');
+  var form = document.getElementById('login_form');
+
+  form.addEventListener('submit',function(evt){
+    if(id.value == '' || pw.value == ''){
+      alert('아이디 와 비밀번호를 입력 하세요!');
+      // 이벤트의 기본동작을 사전에 막는다.
+      evt.preventDefault();
+    }
+  });
+</script>
+</html>

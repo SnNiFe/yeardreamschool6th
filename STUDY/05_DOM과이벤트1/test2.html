@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>JavaScript 문법</title>
+  <link rel="icon" href="favicon.png">
+  <style>
+    .item div{
+      display: inline;
+    }
+    .item{
+      width: 80%;
+      height: 30px;
+      border: 1px solid lightgray;
+      margin-top: 5px;
+      padding: 10px 0 0 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .cnt{
+      float: right;
+      width: 20px;
+      height: 20px;
+      border: 1px solid lightgray;
+      margin-right: 10px;
+      text-align: center;
+      color: orange;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="item">
+    <div>A 아이템 구매 수</div>
+    <div class="cnt">0</div>
+  </div>
+  <div class="item">
+    <div>B 아이템 구매 수</div>
+    <div class="cnt">0</div>
+  </div>
+  <div class="item">
+    <div>C 아이템 구매 수</div>
+    <div class="cnt">0</div>
+  </div>
+</body>
+<script>
+  //// var cnt0 = 0;
+  //// var cnt1 = 0;
+  //// var cnt2 = 0;
+  // var item = document.getElementsByClassName('item');
+  // var count = [];
+  // for (var i=0; i<item.length; i++){
+  //   count.push(0);
+  // }
+  // var cnt = document.getElementsByClassName('cnt');
+  // for (let j=0; j<item.length; j++){
+  //   item[j].addEventListener('click',function(evt){
+  //     count[j]++;
+  //     cnt[j].innerHTML = count[j];
+  //   });
+  // }
+  //// item[0].addEventListener('click',function(evt){
+  ////   cnt0++;
+  ////   cnt[0].innerHTML = cnt0;
+  //// });
+  //// item[1].addEventListener('click',function(evt){
+  ////   cnt1++;
+  ////   cnt[1].innerHTML = cnt1;
+  //// });
+  //// item[2].addEventListener('click',function(evt){
+  ////   cnt2++;
+  ////   cnt[2].innerHTML = cnt2;
+  //// });
+
+
+  // 이벤트는 어디에 걸까?
+
+var btns = document.querySelectorAll('div.item');
+console.log(btns);
+for (var btn of btns){
+  btn.addEventListener('click',inc_item);
+}
+
+function inc_item(evt){
+  // console.log(evt.target);
+  // console.log(this);
+  // 요소를 가져올땐 document 외에도 특정 요소로부터 찾을수도 있다.
+  var cnt = this.querySelector('.cnt');
+  // 어떻게 증가 시킬까?
+  var num = parseInt(cnt.innerHTML);
+  num++;
+  console.log(num);
+  cnt.innerHTML = num; // 어떨게 표시 할까?
+}
+
+</script>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        // 함수 구성 -> 함수명, 매개변수(인자값, 레퍼런스변수), 반환문
+
+        function 토스트기(빵){
+            return "구워진 "+빵;
+        }
+
+        var 접시 = 토스트기("호밀빵");
+        console.log(접시);
+
+        function 번호표기기(){
+            return "번호표";
+        }
+
+        function 저금통(동전){
+            console.log(동전+'원 저금');
+        }
+
+        function 호출벨(){
+            console.log('띵동');
+        }
+
+        // 변수에 함수 담기
+        var func_var = function(){
+            console.log('변수에 담긴 함수');
+        }
+
+        func_var();
+
+
+    </script>
+</html>

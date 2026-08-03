@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>CSS</title>
+        <link rel="icon" href="img/favicon.png">
+        <style>
+            input{
+                display: block; /*inline, block, inline-block, none*/
+                margin: 10px;
+            }
+
+            div{
+                width: 100px;
+                height: 50px;
+                border: 3px solid yellowgreen;
+                margin: 5px;
+                float: left; /*창 크기에 따라 자동 줄바꿈 됨*/
+            }
+
+            div.first{
+                border-color: red;
+                clear: left;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="text"/>
+        <input type="text"/>
+        <input type="text"/>
+        <input type="text"/>
+
+        <div></div>
+        <div></div>
+        <div></div>
+
+        <div class="first"></div>
+        <div></div>
+        <div></div>
+
+        <div class="first"></div>
+        <div></div>
+        <div></div>
+
+
+
+    </body>
+</html>

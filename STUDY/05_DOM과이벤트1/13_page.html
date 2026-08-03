@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>JavaScript 문법</title>
+  <link rel="icon" href="favicon.png">
+</head>
+
+<body>
+  <h1>H1 Tag1</h1>
+  <h1>H1 Tag3</h1>
+  <h1>H1 Tag4</h1>
+  <h1>H1 Tag5</h1>
+  <h2 class="head2">head2 class</h2>
+  <h2 class="head2">head2 class</h2>
+  <h2 class="head2">head2 class</h2>
+  <h2 class="head2">head2 class</h2>
+  <h3 id="head3">head3 id</h3>
+</body>
+<script>
+  var elemTag = document.getElementsByTagName('h1');
+  console.log(elemTag);
+  var elemClass = document.getElementsByClassName('head2');
+  console.log(elemClass);
+  var elemId = document.getElementById('head3');
+  // 단일 태그로 보여줄때와 배열에 담길때 보여주는 내용이 다르다.
+  console.log(elemId);
+  console.log([elemId]);
+  console.log('---------------------------');
+  // 가장 먼저 걸리는 것 하나(css 선택자 사용)
+  console.log(document.querySelector('.head2'));
+  // 전체(css 선택자 사용)
+  console.log(document.querySelectorAll('.head2'));
+</script>
+
+</html>

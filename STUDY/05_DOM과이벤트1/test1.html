@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>JavaScript 문법</title>
+  <link rel="icon" href="favicon.png">
+</head>
+
+<body>
+  <h3>버튼을 누르면 Text 의 색상이 변한다.</h3>
+  <h3>색상은 “빨,주,노,초,파,남,보” 이다.</h3>
+  <h3>보라색 까지 왔을 때 클릭 하면 다시 빨강색으로 돌아와야 한다.</h3>
+  <br />
+  <h1 id="txt">글자 색상이 변경 됩니다.</h1>
+  <button id="btn">색상 변경</button>
+</body>
+<script>
+  // var btn = document.getElementById('btn');
+  // var txt = document.getElementById('txt');
+  // var cnt = 0;
+  // btn.addEventListener('click',function(){
+  //   if(cnt == 0){
+  //     txt.style.color = 'red';
+  //     cnt++;
+  //   }else if(cnt == 1){
+  //     txt.style.color = 'orange';
+  //     cnt++;
+  //   }else if(cnt == 2){
+  //     txt.style.color = 'yellow';
+  //     cnt++;
+  //   }else if(cnt == 3){
+  //     txt.style.color = 'green';
+  //     cnt++;
+  //   }else if(cnt == 4){
+  //     txt.style.color = 'blue';
+  //     cnt++;
+  //   }else if(cnt == 5){
+  //     txt.style.color = 'navy';
+  //     cnt++;
+  //   }else if(cnt == 6){
+  //     txt.style.color = 'purple';
+  //     cnt=0;
+  //   }else{
+  //     console.log('예상치 못한 에러');
+  //   }
+  // });
+
+  var btn = document.getElementById('btn');
+  // 2. [red,orange,yellow,green,blue,navy,purple] 변경하기
+  var colors = ['red','orange','yellow','green','blue','navy','purple'];
+  var i = 0;
+  // 1. 버튼을 눌렀을때 색상 변하기
+  btn.addEventListener('click',function(){
+    var txt = document.getElementById('txt');
+    // if(i>=colors.length){
+    //   i = 0;
+    // }
+    // txt.style.color = colors[i];
+    // i++;
+    txt.style.color = colors[i%7];
+    i++;
+  });
+
+  // 3. purple->red 변경하기
+
+
+</script>
+
+</html>

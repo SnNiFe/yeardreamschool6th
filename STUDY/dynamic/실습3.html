@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <title>CSS Animation</title>
+  
+  <style>
+
+    .animation {
+        width: 300px;
+        height: 300px;
+        background-color: yellow;
+        animation-name:changeWidth;
+        animation-duration: 1000ms;
+        animation-delay: 1000ms;
+        animation-iteration-count: 1; /*infinite*/
+        animation-direction: alternate;
+        /* 
+        alternate: from->to->from; count 를 2씩 소모
+        alternate-reverse: to->from->to;
+        normal: from -> to;
+        reverse: to -> from;
+        */
+        animation-fill-mode: forwards;
+        /* 
+        fill-mode 를 사용하면 애니메이션이 짝이 안맞아 툭 끊어지는 상황을 방지
+        forwards: 마지막상태에서 정지
+        backwards: from 상태로 다시 되돌림
+        */
+    }
+
+    @keyframes changeWidth {
+        from{
+            width: 300px;
+        }
+        to{
+            width: 100px;
+        }
+    }
+
+  </style>
+  
+</head>
+<body>
+
+  <div class="animation"></div>
+
+</body>
+</html>

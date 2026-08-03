@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>DOM 과 이벤트 2</title>
+    <style>
+        html, body, div {
+            width: 99%;
+            height: 100%;
+        }
+
+        .first {
+            background-color: lightpink;
+        }
+        .second {
+            background-color: magenta;
+        }
+
+        .third {
+            background-color: purple;
+        }
+
+        .scroll-top {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 10; /*1~10*/
+            background-color: black;
+            width: 50px;
+            height: 50px;
+            
+            border-radius: 50%;
+            border: none;
+            color: #fff;
+        }
+
+        .scroll-top:hover {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="scroll-top" id="scroll-btn">TOP</button>
+    <div class="first"></div>
+    <div class="second"></div>
+    <div class="third"></div>
+</body>
+<script>
+    // .third 가 보이게 스크롤
+    document.querySelector('.third').scrollIntoView({behavior:"smooth"});
+    
+    function scrollUp(e){
+        // var btn = document.getElementById(e);
+        // btn.addEventListener('click',function(){
+        //     window.scrollTo({top:0, left:0, behavior:'smooth'});
+        // });
+
+        /*1. 함수를 적용할 target 변수 지정하기*/
+        var target = document.getElementById(e);
+        console.log(target);
+        target.addEventListener('click',function(e){
+            console.log('click');
+            // instant : 순간이동
+            // smooth : 부드럽게 이동
+            window.scrollTo({top:0,behavior:"smooth"});
+        });
+        /*2. 버튼 클릭 시 화면의 최상단으로 이동하기*/
+
+    }
+    scrollUp('scroll-btn');
+</script>
+
+</html>

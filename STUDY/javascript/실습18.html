@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        // function getOnlyAdults(arr){
+        //     var chk = [];
+        //     for (let i = 0; i < arr.length; i++) {
+        //         if(arr[i].age >= 20){
+        //             chk.push(arr[i].name);
+        //             //console.log(chk);
+        //         }
+        //     }
+        //     return chk;
+        // }
+        // var inputA = [{
+        // name: "박태환",
+        // age: 35
+        // }, 
+        // {
+        // name: "유재석",
+        // age: 49
+        // },
+        // {
+        // name: "김강훈",
+        // age: 12
+        // },
+        // {
+        // name: "이지원",
+        // age: 15
+        // }]
+        // console.log(getOnlyAdults(inputA));
+
+
+        function getOnlyAdults(arr){
+            var result = [];
+            // 배열에서 오브젝트를 하나씩 꺼내오는 것
+            for (var item of arr) {
+                // 오브젝트에서 name 과 age 를 추출해 오는것
+                if(item.age>=20){
+                    result.push(item.name);
+                }
+            }
+            return result;
+        }
+        var inputA = [{
+        name: "박태환",
+        age: 35
+        }, 
+        {
+        name: "유재석",
+        age: 49
+        },
+        {
+        name: "김강훈",
+        age: 12
+        },
+        {
+        name: "이지원",
+        age: 15
+        }]
+        console.log(getOnlyAdults(inputA));
+
+    </script>
+</html>

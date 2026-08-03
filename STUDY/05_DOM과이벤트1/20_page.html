@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>JavaScript 문법</title>
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <h1 id="p1"></h1>		
+    <img id="image" src="image1.png"/><br/>
+    <input type="text" value="아무 내용이나..."/>
+    <a href="#" my-attr="header">링크 클릭</a>
+    <a href="#" my-attr="main">링크 클릭</a>
+    <a href="#" my-attr="footer">링크 클릭</a>
+</body>
+<script>
+  // 1. 원하는 태그 가져오기
+  var elem =  document.getElementById('p1');
+  console.log(elem);
+  // 2. 어떤 속성에 무슨직을 할거냐?
+  elem.innerHTML = 'Hello Elice';
+  elem.style.backgroundColor = 'yellow';
+
+  // src 라는 기본속성을 수정해 보자
+  var img = document.querySelector('img');
+  // img.src = 'image4.png'; // 직접속성 지정(안되는 속성들도 있음)
+  // 모든 속성 제어 가능
+  img.setAttribute('src','image3.png');
+
+  // Elements 와 같은 복수형은 배열이나 오브젝트에 담겨서 온다.
+  var input = document.getElementsByTagName('input');
+  console.log(input);
+  input[0].setAttribute('type','button');
+  input[0].value='click';
+
+  // 사용자 속성
+  var tags = document.getElementsByTagName('a');
+  for (var tag of tags) {
+    console.log(tag);
+    var attr = tag.getAttribute('my-attr');
+    tag.innerHTML = '<h1>'+ attr.toUpperCase()+'</h1>';
+  }
+
+</script>
+</html>

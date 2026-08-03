@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>부모 자식</title>
+        <link rel="icon" href="chrome.png">
+        <style>
+            /*부모를 지정하면 자식까지 적용 된다.*/
+            header{
+                color: red;
+            }
+            header p{
+                color: blue;
+            }
+            /*부모자식 사이는 공백 또는 > 를 사용*/
+            header>p{
+                background-color: aquamarine;
+            }
+            /*클래스 footer 의 자식중 h2 태그의 글자색을 오렌지로 변경*/
+            .footer h2{
+                color: orange;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h2>header h2</h2>
+            <p>header p</p>
+        </header>
+        <footer class="footer">
+            <h2>footer h2</h2>
+            <p>.footer p</p>
+        </footer>
+    </body>
+</html>

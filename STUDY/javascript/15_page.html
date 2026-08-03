@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        // Obejct == Dict
+        // 오브젝트 선언
+        var car = {};
+        var computer = new Object();
+
+        // 값 넣는 방법 1
+        car.type = 'Fiat';
+        car.model = 500;
+        car.color = 'white';
+        console.log(car);
+
+        // 값 넣는 방법 2
+        computer['cpu'] = 'Octa Core';
+        computer['ram'] = '16GB';
+        computer['game'] = false;
+        computer['price'] = 1400000;
+        console.log(computer);
+
+        computer.work = function(){
+            console.log('입력된 작업 실행');
+        }
+
+        console.log(computer.cpu);
+        console.log(computer['ram']);
+        // () 가 없으면 실행되지 않고 내용만 보여줌
+        console.log(computer.work);
+        computer.work();
+
+    </script>
+</html>

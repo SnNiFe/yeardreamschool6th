@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>DOM 과 이벤트 2</title>
+        <style>
+            div{
+                width: 150px;
+                height: 150px;
+            }
+            #parent_1{background-color: red;}
+            #parent_2{background-color: orange;}
+            #parent_3{background-color: green;}
+            button{margin: 50px;}
+        </style>
+    </head>
+    <body>
+        <p>이벤트 발생시 다음 3단계를 거친다.</p>
+        <ol>
+            <li>캡쳐링 : window 부터 이벤트 발생 지점까지 내려간다.</li>
+            <li>타겟 : 이벤트 지점에서 실행</li>
+            <li>버블링 : 이벤트 발생지점에서 기포처럼 올라간다.</li>
+        </ol>
+        <p>stopPropagation() 을 사용하면 버블링을 끊을 수 있다.</p>
+        <div id="parent_1">P1
+            <div id="parent_2">P2
+                <div id="parent_3">P3
+                    <button id="btn">Trigger</button>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        var p1 = document.getElementById('parent_1');
+        var p2 = document.getElementById('parent_2');
+        var p3 = document.getElementById('parent_3');
+        var btn = document.getElementById('btn');
+        // 타겟에서 부터 부모까지 올라가는 버블링 현상
+        btn.addEventListener('click',target_name);
+        p3.addEventListener('click',target_name);
+        p2.addEventListener('click',target_name);
+        p1.addEventListener('click',target_name);
+
+        function target_name(evt){
+            console.log(this.getAttribute('id')+'click!!');
+            console.log('이벤트 단계 : ',evt.eventPhase);
+            console.log('현재 지점 : ',evt.currentTarget);
+            console.log('타겟 : ',evt.target);
+            console.log('--------------------------------');
+            evt.stopPropagation();
+        }
+    </script>
+</html>

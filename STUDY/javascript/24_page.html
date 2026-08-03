@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+        <p>단항 연산자 : a++</p>
+        <p>이항 연산자 : a + b</p>
+        <p>3항연산자 : a+b == 3 ? true : false</p>
+    </body>
+    <script>
+        /*이항 연산자 - 문자열 연산*/
+        console.log('10'+'20'); // 문자열 더하기는 append
+        // 그외는 연산이 가능(strict mode 에서는 안된다.)
+        console.log('10'-'20');
+        console.log('10'*'20');
+        console.log('10'/'20');
+
+        // 단항 연산자
+        var num = 10;
+        console.log(++num); // 11
+        console.log(--num); // 10
+
+        console.log(num++); // 10?
+        console.log(num--); // 11?
+
+        // console.log(++num); 증가를 먼저하고 출력
+        // 한바퀴 라고 외치고 운동장 돌기
+        // console.log(num++); 출력을 먼저하고 나중에 증가
+        // 운동장을 돌고 나서 한바퀴 라고 외치기
+
+        /*3항 연산자*/
+        // var val = 조건 ? 참일경우의 값 : 거짓일 경우의 값
+        // val = "값" if 조건 else "아닐경우 값" (python)
+        var score = 90;
+        var grade = score >= 90 ? 'A' : 'B';
+        console.log(score+' 의 등급 : '+grade);
+        score = 70;
+        var grade = score > 90 ? 'A' : score >= 80 ? 'B' : 'C'; // 되긴 하지만 비추천, if 쓰세요
+        console.log(score+' 의 등급 : '+grade);
+
+        // null == undefined , 10 == '10' 둘다 참으로 나오므로 정확한 비교는 === 을 사용 함
+
+    </script>
+</html>

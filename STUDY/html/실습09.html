@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> cascasde</title>
+        <link rel="icon" href="chrome.png">
+        <style>
+            /*아중에 작성된 코드가 우선순위*/
+            p{
+                color: red;
+            }
+            p{
+                color: blue;
+            }
+            /*보다 상세하게 명시할수록 우선순위*/
+            header h3{
+                color: blue;
+            }
+            h3{
+                color: red;
+            }
+            /*style > id > class > tag*/
+            #color{
+                background-color: aqua;
+            }
+
+            h4{
+                background-color: green;
+            }
+        </style>
+    </head>
+    <body>
+        <p>순서 캐스캐이딩</p>
+
+        <header>
+            <h3>디테일 캐스캐이딩</h3>
+        </header>
+
+        <h4 style="background-color: yellow;" id="color">선택자 캐스캐이딩</h4>
+    </body>
+</html>

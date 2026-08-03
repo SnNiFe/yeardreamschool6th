@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>CSS selector</title>
+        <link rel="icon" href="chrome.png">
+        <style>
+            /*
+            # 아이디
+            . 클래스
+            태그
+            태그[속성]
+            */
+            h1{
+                background-color: dodgerblue;
+            }
+            /*h1태그 중에서 아이디가 coding 인 요소 (붙여써야 함)*/
+            h1#coding{
+                color: red;
+                background-color: yellow;
+            }
+            input[type="text"]{
+                background-color: pink;
+            }
+            .codes{
+                color: orange;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Type Elice</h1>
+        <h1 class="codes">Class Elice</h1>
+        <!-- id 는 페이지 내 오직 1개만 존재 -->
+        <h1 id="coding">ID Elice</h1>
+        <input type="text" value="입력값"/>
+        <input type="password" value="입력값"/>
+
+        <h2>Type Hello World</h2>
+        <h2 class="codes">Type Hello World</h2>
+        <h2 id="coding">Type Hello World</h2>
+    </body>
+</html>

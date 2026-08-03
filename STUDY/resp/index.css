@@ -1,0 +1,204 @@
+/* 실습7 내용 */
+* { /*모든 요소에 여백을 없애겠다.*/
+    margin: 0;
+    padding: 0;
+}
+
+div.container{
+    /*넓이를 고정*/
+    width: 960px;
+}
+
+/* list 의 스타일을 제거 */
+ol,ul{
+    list-style-type: none;
+}
+/* a 태그의 스타일을 제거 */
+a{
+    text-decoration: none;
+    color: #000;
+}
+
+#intro{ /*header 의 넓이와 높이 지정*/
+    width: 100%;
+    height: 80px;
+}
+
+/* h1 태그를 일렬로 정렬 */
+#intro h1{
+    float: left;
+    width: 50%;
+    height: 80px;
+    background-color: #fbfbfb;
+}
+/* a 태그 내 글자를 공간형성을 위해 block 으로 변환 */
+#intro h1 a{
+    display: block;
+    padding: 15px 0 0 30px;
+}
+
+#intro nav{
+    float: right;
+    width: 50%;
+    height: 80px;
+    background-color: pink;
+}
+/* 서브메뉴 크기 지정 및 정렬 */
+#intro nav ul li{
+    float: left;
+    height: 80px;
+    width: 33.33333%;
+    text-align: center;
+    line-height: 80px;
+}
+
+
+
+/* 메뉴 배경색 */
+#intro nav ul li.one{
+    background-color: lightgray; /*엘리스에서는 #efeff6*/
+}
+#intro nav ul li.two{
+    background-color: darkgray; /*엘리스에서는 #dcdcec*/
+}
+#intro nav ul li.three{
+    background-color: gray; /*엘리스에서는 #cbcae3*/
+}
+/* 글자 스타일 */
+#intro nav ul li a{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* 움직이는 웹 - 실습 5번 */
+#intro nav ul li:hover{
+    background-color: pink;
+}
+
+#intro nav ul li{
+    transition-property: background-color;
+    transition-duration: 1000ms;
+}
+
+/* 실습8 */
+/* main 영역 정리 - 크기 지정, 정렬 지정 */
+#main article{
+    width: 50%;
+    height: 320px;
+    float: left;
+}
+/* a 태그 영역을 article 영역과 동등하게 */
+#main article a{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+#main article.one{
+    background-color: blueviolet;
+}
+#main article.two{
+    background-color: purple;
+}
+#main article.three{
+    background-color: darkturquoise;
+}
+
+/* 상위 요소 크기 변화에 이미지도 맞추도록... */
+#main article img{
+    width: 100%;
+}
+
+#main article h2{
+    text-align: center;
+    color: white;
+    font-size: 25px;
+    padding: 3px 0;
+}
+
+/* 하얀색 바 만들기 */
+#main article.text{
+    width: 100%;
+    height: 70px;
+}
+#main article.text p{
+    text-align: center;
+    font-size: 25px;
+    font-weight: 600;
+    padding: 17px 0;
+    border: 1px solid black;
+    height: 34px;
+}
+
+/* 움직이는 웹 - 실습 6번 */
+#main article:hover{
+    opacity: 0.5;
+}
+#main article{
+    transition-property: opacity;
+    transition-duration: 500ms;
+}
+#main article img:hover{
+    /* 
+    이미지 주변에 영향 생김
+    0,0 좌표를 기준으로 커짐
+    cpu 연산이므로 부드럽지 않다.
+    width: 110%;
+    height: 110%;
+    */
+    transform: scale(1.1);
+}
+#main article img{
+    transition: all 500ms;
+}
+
+
+/* 실습9 */
+#footer{
+    clear: both; /*이전에 사용한 float 무시*/
+    color: gray;
+    text-align: center;
+    background-color: lightgray;
+    font-size: 12px;
+    padding: 20px 0;
+    height: 15px;
+}
+#footer div.copyright{
+    width: 50%;
+    float: left;
+}
+
+#footer div.address{
+    width: 50%;
+    float: right;
+}
+
+/* 반응형 실습4 */
+@media (min-width:320px) and (max-width:800px) {
+    div.container{width: 640px;}
+    #intro{height: 160px;}
+    #intro h1{width: 100%;}
+    #intro h1 a{
+        text-align: center;
+        padding: 22px 0 0 0;
+    }
+    #intro nav{width: 100%;}
+
+    /* 반응형 실습5 */
+    #main article{
+        width: 100%;
+        height: 420px;
+        clear: left;
+        /* 그림이 커질때 살짝 겹치는 이유는 opacity 때문 */
+    }
+
+    /* 반응형 실습6 */
+    #footer{
+        height: 90px;
+    }
+    #footer div.copyright, #footer div.address{
+        width: 100%;
+    }
+    #footer div.copyright p, #footer div.address p{
+        margin: 15px 0;
+    }
+}

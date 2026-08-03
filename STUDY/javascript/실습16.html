@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        // function makeNumberFromDigits(arr){
+        //     var result = '';
+        //     for (let i = 0; i < arr.length; i++) {
+        //         result += arr[i]
+        //         //console.log(result);
+        //     }
+        //     return parseInt(result);
+        // }
+        // var inputA = [1, 1, 0, 0]
+        // console.log(makeNumberFromDigits(inputA)); //1100
+
+        function makeNumberFromDigits(arr){
+            // 1,1,0,0 을 합치기?
+            // join 을 이용한 문자열화 -> 정수화
+            return parseInt(arr.join(''));
+        }
+        var inputA = [1, 1, 0, 0]
+        console.log(makeNumberFromDigits(inputA)); //1100
+    </script>
+</html>

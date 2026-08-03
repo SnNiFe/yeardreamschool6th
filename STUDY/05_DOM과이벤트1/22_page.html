@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>JavaScript 문법</title>
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <ul id="list">
+
+    </ul>
+</body>
+<script>
+  var li = document.createElement('li');
+  // 새로운 아이템 이라는 문구를 li 사이어 넣기
+  li.innerHTML = '새로운 아이템';
+  var ul = document.getElementById('list');
+  ul.appendChild(li);
+  
+  // <input type="submit" value="로그인"/>
+  // <input/>
+  var input = document.createElement('input');
+  // input 태그에 type="submit" value="로그인" 추가
+  input.setAttribute('type','submit');
+  input.setAttribute('value','로그인');
+  document.getElementsByTagName('body')[0].appendChild(input);
+
+</script>
+</html>

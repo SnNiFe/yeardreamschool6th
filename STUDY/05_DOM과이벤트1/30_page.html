@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript 문법</title>
+    <link rel="icon" href="favicon.png">
+    <style>
+        #eventZone{
+            width: 250px;
+            height: 250px;
+            background-color: yellowgreen;
+            text-align: center;
+        }
+    </style>
+	</head>
+	<body>
+        <h4 id="msg">FOCUS NULL</h4>
+		<div id="eventZone"></div>
+        <h4>mouse position : <span id="pos"></span></h4>
+	</body>
+    <script>
+        var zone = document.getElementById('eventZone');
+        // 이벤트걸요소.addEventListener('이벤트명','실행함수명');
+        // 함수 등록시 () 는 뺀다.
+        zone.addEventListener('click',callBack);
+
+        function callBack(evt){
+            zone.style.backgroundColor = 'orange';
+            zone.innerHTML = 'click';
+        }
+
+        // 익명함수 -> 여기서만 딱 사용 된다. (이름이 필요 없다.)
+        zone.addEventListener('dblclick',function(evt){
+            evt.target.style.backgroundColor = 'yellow';
+            // evt.target == this
+            evt.target.innerHTML = 'double click';
+        });
+
+        //mouseenter
+        zone.addEventListener('mouseenter',function(evt){
+            evt.target.style.backgroundColor = 'grey';
+            evt.target.innerHTML = 'mouse enter';
+        });
+        //mouseout
+        zone.addEventListener('mouseout',function(evt){
+            this.style.backgroundColor = 'green';
+            this.innerHTML = '_';
+        });
+
+        document.addEventListener('mousemove',function(evt){
+            //console.log(evt.clientX+'/'+evt.clientY);
+            var pos = document.getElementById('pos');
+            pos.innerHTML = evt.clientX+'/'+evt.clientY;
+        });
+    </script>
+</html>

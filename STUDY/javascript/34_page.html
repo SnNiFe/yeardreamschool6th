@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        /*
+        // 조건이 참이면 {} 안을 실행
+        var num =0;
+        while (true) { // 무한 루프
+            num++;
+            console.log(num);
+            if (num>=10) { // 조건 변경될수 있거나 강제 정지 할 수 있는 코드 필요
+                break;
+            }
+        }
+        console.log('반복 종료'); // unreachable code
+        */
+
+        var cnt = 1;
+        while (cnt<=10) { // 조건을 만족 하면 실행
+            console.log(`${cnt}회 사용`);
+            cnt++;
+        }
+
+        // do while : 일단 실행하고 반복 여부를 체크
+        // do while 은 조건이 만족하지 않아도 한번은 실행하게 하고 싶을 경우
+        // 버스 내릴때 버스카드 태그
+        cnt = 11;
+        do {
+            console.log(`do while : ${cnt}회 사용`);
+            cnt++;
+        } while (cnt<=10);
+    </script>
+</html>

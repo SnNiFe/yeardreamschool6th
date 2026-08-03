@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        // 지시사항에 따라 코드를 작성합니다.
+        // a*b + c*d
+        function makeTotalPrice(input){
+            // return input['quantity1']*input['price1']+input['quantity2']*input['price2'];
+
+            // var total1 = input.quantity1 * input.price1;
+            // var total2 = input.quantity2 * input.price2;
+            // return total1 + total2;
+
+            // quantity 와 price 는 한 쌍으로 뒤의 숫자가 일치한다.
+            // 이 쌍은 몇개가 들어올지 모른다.
+            var result = 0;
+            var num = 1;
+
+            while(true){
+                console.log(input[`quantity${num}`],input[`price${num}`]);
+
+                if(input[`quantity${num}`]==null){
+                    break;
+                }
+                result += input[`quantity${num}`] * input[`price${num}`];
+                num++;
+            }
+            return result;
+        }
+        // 아래 숫자 부분을 자유롭게 바꾸어 가며 실행해 보세요.
+        // 물론 현재 그대로 두어도 무방합니다. 제출 시의 채점과는 무관합니다.
+        var inputA = {
+        quantity1: 4,
+        price1: 500,
+        quantity2: 2,
+        price2: 300,
+        quantity3: 4,
+        price3: 500,
+        quantity4: 2,
+        price4: 300
+        };
+        console.log(makeTotalPrice(inputA));
+    </script>
+</html>

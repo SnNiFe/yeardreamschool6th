@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        // 지시사항에 따라 코드를 작성합니다.
+        function removeBlank(str){
+            // var splited = str.split(' ');
+            // var result = '';
+            // for (let i = 0; i < splited.length; i++) {
+            //     result += splited[i];
+            // }
+            // return result;
+
+            var result_str;
+
+            // 1. result_str = str.split(" ").join();
+
+            /*2. for(var ch of str.split('')){
+                if(ch != ' '){
+                    result_str += ch;
+                }
+            }
+            */
+            //str.replace(' ',''); // 딱 한개만...
+            //str.replaceAll(' ',''); // js 에서는 안먹힌다.
+            //str.replace('/\s+/g',''); // 정규표현식(비추)
+            var result_str = str;
+            var idx = result_str.indexOf(' ');
+            while(idx>-1){
+                result_str = result_str.replace(' ','');
+                idx = result_str.indexOf(' ');
+            }
+            return result_str;
+        }
+        // "안녕, 나의 이름은 엘리스야"
+        // ' hello world '
+        var inputA = " hello world ";
+        var result = removeBlank(inputA);
+        console.log(result);
+    </script>
+</html>

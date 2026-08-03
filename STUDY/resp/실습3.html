@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>미디어쿼리</title>
+  
+  <style>
+    .media {
+      width: 500px;
+      height: 500px;
+      background-color: yellow;
+      border: 10px solid red;
+    }
+
+  @media (min-width: 320px) and (max-width: 800px) {
+      .media {
+        width: 300px;
+        height: 300px;
+        /* 배경색과 경계선은 기본클래스 것을 그대로 상속받아서 적용 된다. */
+        /* 겹치는 속성이 발생시 덮어쓰게 된다. */
+        background-color: yellowgreen;
+        border: 10px dashed blue;
+      }
+  }
+  </style>
+  
+</head>
+<body>
+
+  <div class="media"></div>
+
+</body>
+</html>

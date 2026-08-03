@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <title>레이아웃에 영향을 미치는 속성 - float</title>
+  
+  <style>
+    /* 아스타리크(*) : 모든것 */
+    /* 와일드카드(%) : 규격외 */
+    * { /*html ~ */
+        border: 10px solid gray;
+    }
+
+    /* .left {  
+      width: 300px;
+      height: 300px;
+      background-color: yellow;
+      float: left;
+    }
+    
+    .right {
+      width: 300px;
+      height: 400px;
+      background-color: blue;
+      float: right;
+    } */
+    
+    
+    
+    header {
+      width: 100%;
+      height: 100px;
+      background-color: yellow;
+    }
+    
+    #left {
+      width: 200px;
+      height: 200px;
+      background-color: red;
+      float: left;
+    }
+    
+    main {
+      width: 300px;
+      height: 200px;
+      background-color: green;
+      float: left;
+    }
+    
+    #right {
+      width: 200px;
+      height: 200px;
+      background-color: pink;
+      float: right;
+    }
+    
+    footer {
+      width: 100%;
+      height: 100px;
+      background-color: black;
+      /*float 양쪽으로 부터 자유로워 질래*/
+      clear: both;
+    }
+   
+    
+  </style>
+  
+</head>
+<body>
+
+
+  <!-- 26.07.28.
+   불필요한 내용이므로 주석처리
+   (김낙준)
+  <div class="left"></div>
+  <div class="right"></div> -->
+  
+  
+
+  <!-- 전통적인 웹사이트 레이아웃 구조 만들기 -->
+  
+  <header></header>
+  
+  <article id="left"></article>
+  <main></main>
+  <article id="right"></article>
+  
+  <footer></footer>
+ 
+  
+
+</body>
+</html>

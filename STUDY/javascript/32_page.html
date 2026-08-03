@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        var arr = [1,2,3,4,5];
+        var str = "forEach 와 for of 의 차이";
+
+        // 1. for - 세밀한 조정 가능, 문자열도 가능
+        for (let i = 0; i < arr.length; i++) {
+            console.log(arr[i]);
+        }
+        // for (let i = arr.length-1; i >= 0; i--) { // 한 번 해봄
+        //     console.log(arr[i]);
+        // }
+
+        // 2. for each - 문자열에도 사용 할 수 없다.
+        // arr.forEach(function(item,idx){
+        //     console.log(idx,item);
+        //     if(idx==3){ // 중간에 break 로 멈출수 없다.
+        //         break;
+        //     }
+        // });
+
+        // 3. for of - index 가 없으며, 시작점 지정이 안된다.
+        var idx = 0; // 인덱스를 사용하고 싶다면 직접 만들어서 사용
+        for (var item of arr) {
+            console.log('for of : '+item);
+            if(item == 3){ // break 가능
+                break;
+            }
+            idx++;
+        }
+
+        for (var ch of str) { // 문자열도 가능
+            console.log(ch);
+        }
+
+    </script>
+</html>

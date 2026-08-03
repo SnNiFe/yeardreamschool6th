@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        // 지시사항에 따라 코드를 작성합니다.
+        function getOnlyOddNumber(inp){
+            // var arr = [];
+            // for (let i = 0; i < inp.length; i++) {
+            //     if (inp[i]%2 ==1) {
+            //         arr.push(inp[i]);
+            //     }else{
+            //         console.log(inp[i],'는 짝수라서 제외');
+            //     }
+            // }
+            // return arr;
+
+            var result = [];
+            // 홀수 구분 - 수/2 = 나머지 1
+            for (const num of inp) {
+                if (num%2 > 0) {
+                    result.push(num); // 배열에 새로 담기? 기존 배열에서 지워 나가기?
+                }
+            }
+            return result;
+        }
+
+        // 아래 숫자 부분을 자유롭게 바꾸어 가며 실행해 보세요.
+        // 물론 현재 그대로 두어도 무방합니다. 제출 시의 채점과는 무관합니다.
+        var inputA = [1, 2, 3, 4, 5, 6, 7]
+        console.log(getOnlyOddNumber(inputA));
+    </script>
+</html>

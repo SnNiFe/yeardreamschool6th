@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Java Script</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        var fruits = ['사과','바나나','포도','배','오렌지','복숭아'];
+        var result; // undefined == Null Point Exception
+        console.log(fruits.join(','));
+        console.log(result);
+
+        //push [0][1][2] <-[3]
+        fruits.push('new 1');
+        console.log(fruits.join(','));
+
+        //unshift [3] -> [0][1][2]
+        fruits.unshift('new 2');
+        console.log(fruits.join(','));
+
+        //pop() [0][1][2] -> [3]
+        result = fruits.pop();
+        console.log('result='+result);
+        console.log(fruits.join(','));
+        //shift() [0] <- [1][2][3]
+        result = fruits.shift();
+        console.log('result='+result);
+        // join() : 배열안에 내용을 특정한 구분자로 연결해서 문자열로 보여줌
+        console.log(fruits.join('*'));
+
+        // slice(a인덱스 부터 보여주고, b 인덱스 부터 버려라)
+        // 원본은 건드리지 않고 새로운 배열에 적용 시킨다.
+        var newArr = fruits.slice(1,4);
+        console.log(newArr);
+        /* console.log(fruits.slice(1,4).join(',')); 미리 적어봤는데 원본 건드리면 안되는 듯 */
+
+        // indexOf() 특정 내용을 앞에서부터 찾아 인덱스 번호를 반환(1개)
+        var idx = fruits.indexOf('수박');
+        console.log('수박이 있는 위치 : ',idx); // -1 <- 더이상 없다.
+
+        // splice() - 원본을 건드림, 추가/수정/삭제가 모두 가능
+        // x번 인덱스 포함, n개 삭제
+        fruits.splice(2,2); // 2번 인텍스인 포도를 포함 2개 삭제
+        console.log(fruits);
+
+        // x번 인덱스 포함, n개 삭제, 넣을 값, ...
+        // 수정 : 2번 인덱스 부터 2개를 지우고, orange, peach, 를 넣는다.
+        fruits.splice(2,2,'orange','peach');
+        console.log(fruits.join(','));
+
+        // 추가 : 2번 인덱스에 수박, 참외 추가
+        fruits.splice(2,0,'수박','참외');
+        console.log(fruits.join(','));
+
+    </script>
+</html>

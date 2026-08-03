@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Block 요소와 Inline 요소</title>
+  <style>
+    /*p 태그와 a 태그*/
+    /*Inline 은 높이와 넓이 조정 불가*/
+    p,a{
+        width: 200px;
+        height: 200px;
+    }
+    p{
+        background-color: yellow;
+    }
+    a{
+        background-color: pink;
+    }
+    /*inline 은 margin 등 여백 요소를 사용할 수 없다.*/
+    p,a{
+        margin-top: 100px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Block 요소 -->
+  <p>Block 요소</p>
+  <p>Block 요소</p>
+  <p>Block 요소</p>
+  <!-- Inline 요소 -->
+  <a href="#">Inline 요소</a>
+  <a href="#">Inline 요소</a>
+  <a href="#">Inline 요소</a>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>마진병합현상</title>
+  <style>
+    /* #box1 {
+      width: 100%;
+      height: 200px;
+      background-color: yellow;
+      margin-bottom: 150px;
+    }   */
+    /*150+100 = 250 이 아니라 150 으로 흡수된다.*/
+    /* #box2 {
+      width: 100%;
+      height: 200px;
+      background-color: pink;
+      margin-top: 100px;
+    }   */
+
+    
+    main {
+      width: 100%;
+      height: 400px;
+      background-color: yellow;
+      margin-top: 50px;
+      /*부모와 자식이 각각 마진을 사용하고 싶다면?*/
+      /*부모에게 테두리를 부여하여 독립적으로 만들어준다.*/
+      /* border: 1px solid transparent; */
+    }
+    article {
+      /*부모를 기준으로 움직임, 안하무인 - 레이어팝업*/
+      position: absolute; /*position 속성 변경*/
+      width: 100px;
+      height: 100px;
+      background-color: red;
+      margin-top: 10000px;
+    }
+    /*따라다니는 메뉴*/
+    .fixed{
+        width: 70px;
+        height: 100px;
+        background-color: blue;
+        position: fixed;
+        right: 0px;
+    }
+   
+  </style>
+</head>
+<body>
+    <div class="fixed"></div>
+  <!-- 형제 지간에 발생하는 마진 병합 현상 -->
+  <div id="box1"></div>
+  <div id="box2"></div>
+  <!-- 부모 자식 지간에 발생하는 마진 병합 현상 -->
+  <main role="main">  
+    <article></article>
+  </main>
+</body>
+</html>

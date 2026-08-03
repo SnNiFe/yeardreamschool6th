@@ -26,6 +26,10 @@ warnings.filterwarnings("ignore")
 is_running = False 
 driver = None
 
+# 👇 [여기서부터 3줄 추가] 오전/오후 출석 완료 여부를 기억하는 변수
+morning_done = False
+afternoon_done = False
+last_attendance_date = ""
 
 # =====================================================================
 # [2] 필수 패키지 자동 설치 및 환경 세팅 함수
@@ -265,7 +269,24 @@ def run_bot():
     global driver, is_running
     if not is_running: 
         return
+
+    # 💡 [바로 이 부분!] 날짜가 바뀌었는지 확인하고, 바뀌었으면 출석 완료 상태를 False로 리셋
+    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
+    if last_attendance_date != today_str:
+        morning_done = False
+        afternoon_done = False
+        last_attendance_date = today_str
+        print(f"📅 새로운 날짜({today_str})가 되어 출석 기록을 초기화합니다.")
         
+    # 이미 출석했는지 검사해서 스킵하는 부분
+    current_hour = datetime.datetime.now().hour
+    if current_hour < 12 and morning_done:
+        print("✅ [스킵] 이미 오늘 오전 출석(09:xx AM)이 확인되었습니다.")
+        return
+    elif current_hour >= 12 and afternoon_done:
+        print("✅ [스킵] 이미 오늘 오후 퇴실(04:xx PM)이 확인되었습니다.")
+        return
+    
     try:
         max_retry_val = int(retry_var.get())
         wait_time_val = int(wait_var.get())
@@ -342,24 +363,55 @@ def run_bot():
                 print("✅ '나중에 하기' 팝업을 치웠습니다!")
             except: pass
 
-            print("✅ 강의실 탐색 시작.")
+            # ====================================================================
+            # 🔍 강의실 탐색 로직 (플랜 A -> 플랜 B)
+            # ====================================================================
+            print("✅ 강의실 탐색 시작 (플랜 A: 날짜 기반 검색).")
             today_date = get_today_date_str()
             wait = WebDriverWait(driver, 20)
-            elements = wait.until(EC.presence_of_all_elements_located((By.XPATH, f"//*[contains(text(), '{today_date}')]")))
-
             target_found = False
-            for elem in elements:
-                try:
+            
+            try:
+                elements = wait.until(EC.presence_of_all_elements_located((By.XPATH, f"//*[contains(text(), '{today_date}')]")))
+                for elem in elements:
                     text = elem.text
                     if len(text) > 0 and len(text) < 100 and "강의실" in text:
-                        print(f"🎯 강의실 발견: {text}")
+                        print(f"🎯 [플랜 A 성공] 날짜 매칭 강의실 발견: {text}")
                         driver.execute_script("arguments[0].click();", elem)
                         target_found = True
                         break
-                except: continue
-            
+            except:
+                pass
+
+            # 💡 [플랜 B 가동] 날짜로 못 찾았다면, 특강이라고 간주하고 인원수로 탐색!
             if not target_found:
-                raise Exception(f"⚠️ 오늘 날짜({today_date}) 기반의 강의실을 찾지 못했습니다.")
+                print("⚠️ 오늘 날짜 강의실이 없습니다. [플랜 B: 10명 이상 참여 방 탐색]을 시작합니다.")
+                import re 
+                try:
+                    # 1. '명'이라는 글자가 들어간 <b> 태그를 찾고, 그 부모 요소(/..)를 통째로 낚아챔
+                    participant_elements = driver.find_elements(By.XPATH, "//b[contains(text(), '명')]/..")
+                    
+                    for elem in participant_elements:
+                        # 2. 껍데기 안에 있는 모든 글자를 하나로 합쳐서 가져옴 (예: "55명 참여")
+                        text = elem.text.replace("\n", " ").strip() 
+                        
+                        if "참여" in text:
+                            # 3. 정규식으로 숫자만 깔끔하게 발라냄
+                            match = re.search(r'(\d+)\s*명\s*참여', text)
+                            if match:
+                                count = int(match.group(1))
+                                if count >= 10: 
+                                    print(f"🎯 [플랜 B 성공] 특강/활성화된 방 발견! (현재 인원: {count}명)")
+                                    driver.execute_script("arguments[0].click();", elem)
+                                    target_found = True
+                                    break
+                except Exception as e:
+                    print(f"⚠️ 플랜 B 탐색 중 오류 발생: {e}")
+
+            # 플랜 A와 플랜 B가 모두 실패했을 때만 진짜 에러를 내고 재시작 루프로 던짐
+            if not target_found:
+                raise Exception(f"⚠️ 정규 강의({today_date}) 및 활성화된 특강(10명 이상) 방을 모두 찾지 못했습니다.")
+            # ====================================================================
 
             print("입장 버튼 클릭 대기 중...")
             time.sleep(5) 
@@ -459,11 +511,51 @@ def run_bot():
                         driver.close() 
                     except:
                         print("⚠️ '출석' 글씨 확인 불가 (출석 탭은 유지하되, 시점은 기존 강의실로 복귀합니다)")
-                        
+
+                    # ... [기존 코드] 팝업 '닫기' 버튼 강제 타격 완료! ...
+                    
+                    time.sleep(3) # 출석이 서버에 기록될 시간을 잠깐 줍니다.
+
+                    # 👇 [새로 추가된 핵심 구역] 탭을 닫기 전 마이페이지로 이동하여 실제 시간 확인!
+                    print("🔍 [마이페이지 교차 검증] 출석 도장이 시스템에 찍혔는지 확인합니다...")
+                    driver.get("https://yeardream2026.elice.io/my")
+                    time.sleep(4) # 마이페이지 로딩 대기
+                    
+                    import re
+                    page_text = driver.find_element(By.TAG_NAME, "body").text
+                    current_hour = datetime.datetime.now().hour
+                    
+                    # 오전 출석(09:xx AM) 확인
+                    if current_hour < 12: 
+                        if re.search(r'09:\d{2}\s*[Aa][Mm]', page_text):
+                            morning_done = True
+                            print("🎉 [오전 출석 최종 확인] 09:xx AM 출석 기록이 완벽하게 확인되었습니다!")
+                        else:
+                            print("⚠️ 마이페이지에 오전 출석 도장이 없습니다. (다음 스케줄에 재시도합니다)")
+                    
+                    # 오후 퇴실(04:xx PM 또는 16:xx) 확인
+                    else: 
+                        if re.search(r'04:\d{2}\s*[Pp][Mm]', page_text) or re.search(r'16:\d{2}', page_text):
+                            afternoon_done = True
+                            print("🎉 [오후 퇴실 최종 확인] 04:xx PM (또는 16:xx) 퇴실 기록이 완벽하게 확인되었습니다!")
+                        else:
+                            print("⚠️ 마이페이지에 오후 퇴실 도장이 없습니다. (다음 스케줄에 재시도합니다)")
+                            
+                    print("✅ 교차 검증 완료. 이제 이 확인용 탭을 닫습니다.")
+                    driver.close() # 👈 미련 없이 새 탭을 닫음
+
+                    
             except Exception as e:
                 print(f"⚠️ QR 출석 진행 중 오류 발생 (무시하고 화면 유지): {e}")
             finally:
+                # [여기서부터 복사해서 덮어쓰세요]
                 try:
+                    # [추가 방어 0] 혹시 모를 웹사이트 자체 경고창(세션 만료 등) 강제 무시
+                    try:
+                        alert = driver.switch_to.alert
+                        alert.accept()
+                    except: pass
+
                     # [완벽 방어 1] 찌꺼기 탭 정리
                     for handle in driver.window_handles:
                         if handle != original_window:
@@ -479,7 +571,6 @@ def run_bot():
                     if base_expected in base_current or "elice.io" in base_current:
                         print("✅ 기존 강의실 화면 복귀 및 주소(URL) 일치 검증 완료.")
                         
-                        # [완벽 방어 3] 윈도우 최상단 고정 강제 해제
                         if platform.system() == "Windows":
                             try:
                                 hwnd = ctypes.windll.user32.GetForegroundWindow()
@@ -487,15 +578,16 @@ def run_bot():
                                 print("🔓 창 최상단 고정을 해제하여 컴퓨터 사용을 자유롭게 합니다.")
                             except: pass
                     else:
-                        raise Exception(f"강의실 화면 이탈 감지됨 (현재 주소: {current_url})")
+                        print(f"⚠️ 강의실 화면 이탈 감지됨 (현재 주소: {current_url})")
+                        print("💡 [안전 방어] 이탈이 감지되었으나, 강의 시청을 위해 창을 강제로 끄지 않고 유지합니다.")
 
                 except Exception as e:
-                    print(f"⚠️ 탭 복귀 실패! 원인: {e}")
-                    raise Exception("강의실 탭 복귀/검증 실패로 인해 처음부터 다시 진입합니다.")
+                    print(f"⚠️ 탭 복귀 중 에러 발생: {e}")
+                    print("💡 [안전 방어] 에러가 났지만 강의실 내부이므로 창을 강제로 끄지 않고 유지합니다.")
             # ====================================================================
 
             # [완벽 방어 4] 스케줄러가 장기 대기(sleep) 때문에 뻗지 않도록 짧게 쉬고 빠져나옴
-            print("🎉 출석 사이클 성공! 봇 엔진은 다음 스케줄을 감시하기 위해 대기 모드로 돌아갑니다.")
+            print("🎉 출석/대기 사이클 완료! 봇 엔진은 다음 스케줄을 감시하기 위해 돌아갑니다.")
             time.sleep(10)
             break 
 
