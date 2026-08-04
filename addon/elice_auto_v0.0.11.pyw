@@ -660,7 +660,7 @@ def run_bot():
             try:
                 if driver:
                     now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-                    driver.save_screenshot(f"error_blackbox_{now}.png")
+                    driver.save_screenshot(f"C:\yeardreamschool6th\addon\errorLogs\error_blackbox_{now}.png")
                     print(f"📸 블랙박스 저장 완료: error_blackbox_{now}.png")
             except: pass
 
