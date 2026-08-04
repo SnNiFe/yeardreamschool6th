@@ -15,6 +15,7 @@ import webbrowser
 import json 
 import ctypes      
 import traceback   
+import calendar    # 👈 [추가됨] 미니 달력을 만들기 위한 내장 모듈
 
 
 # =====================================================================
@@ -26,6 +27,8 @@ warnings.filterwarnings("ignore")
 is_running = False 
 driver = None
 
+# 👇 [수정됨] 단일 변수 대신 딕셔너리 형태로 출석 로그를 통째로 메모리에 들고 있습니다.
+attendance_log = {}
 # 👇 [여기서부터 3줄 추가] 오전/오후 출석 완료 여부를 기억하는 변수
 morning_done = False
 afternoon_done = False
@@ -265,28 +268,74 @@ def scan_screen_for_qr(timeout_minutes=5):
 # =====================================================================
 # [4] 엘리스 로그인 및 강의실 자동 입장 메인 로직 (🛡️ 무적 루프 적용)
 # =====================================================================
+
+# 👇 [새로 추가] UI와 상관없이 출석 기록만 안전하게 DB에 저장하는 함수
+def save_attendance_to_file():
+    global attendance_log
+    config_file = os.path.join(os.getcwd(), "bot_config.json")
+    try:
+        with open(config_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except:
+        data = {}
+        
+    data["attendance_log"] = attendance_log # 출석 기록 업데이트
+    
+    try:
+        with open(config_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+    except: pass
+
+
 def run_bot():
-    global driver, is_running, morning_done, afternoon_done, last_attendance_date
+    global driver, is_running, attendance_log
+    
     if not is_running: 
         return
-
-    # 💡 [바로 이 부분!] 날짜가 바뀌었는지 확인하고, 바뀌었으면 출석 완료 상태를 False로 리셋
-    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
-    if last_attendance_date != today_str:
-        morning_done = False
-        afternoon_done = False
-        last_attendance_date = today_str
-        print(f"📅 새로운 날짜({today_str})가 되어 출석 기록을 초기화합니다.")
         
-    # 이미 출석했는지 검사해서 스킵하는 부분
-    current_hour = datetime.datetime.now().hour
-    if current_hour < 12 and morning_done:
-        print("✅ [스킵] 이미 오늘 오전 출석(09:xx AM)이 확인되었습니다.")
-        return
-    elif current_hour >= 12 and afternoon_done:
-        print("✅ [스킵] 이미 오늘 오후 퇴실(04:xx PM)이 확인되었습니다.")
-        return
+    # [새로운 날짜 확인 및 DB 초기화]
+    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
+    if today_str not in attendance_log:
+        attendance_log[today_str] = {"morning": False, "afternoon": False}
+        print(f"📅 새로운 날짜({today_str})가 되어 출석 기록을 준비합니다.")
+
+    # 👇 [수정된 구역] 무작정 스킵하지 않고 상황을 판단합니다!
+    current_hour = datetime.datetime.now().hour  
+    is_already_done = False
     
+    if current_hour < 12 and attendance_log[today_str].get("morning") == True:
+        is_already_done = True
+    elif current_hour >= 12 and attendance_log[today_str].get("afternoon") == True:
+        is_already_done = True
+
+    if is_already_done:
+        # 출석은 했지만, 현재 브라우저가 살아있는지 슬쩍 찔러봄
+        is_browser_alive = False
+        if driver is not None:
+            try:
+                driver.current_url 
+                is_browser_alive = True
+            except: pass
+            
+        if is_browser_alive:
+            print("✅ [스킵] 이미 출석이 완료되었고, 현재 강의 시청 중이시므로 방해하지 않습니다.")
+            return # 창이 켜져 있으니 진짜 스킵
+        else:
+            print("💡 출석은 이미 기록되어 있지만, 강의 시청을 위해 강의실로 자동 입장을 시작합니다.")
+            # return 하지 않고 아래로 내려가서 브라우저를 켭니다!
+
+    # (이 아래부터 기존의 try: max_retry_val = int(retry_var.get()) ... 코드가 이어집니다)
+        
+    # 기존 진입 횟수 체크 시작
+    try:
+        max_retry_val = int(retry_var.get())
+        wait_time_val = int(wait_var.get())
+    except:
+        max_retry_val = 3
+        wait_time_val = 1
+        
+    retry_count = 0
+
     try:
         max_retry_val = int(retry_var.get())
         wait_time_val = int(wait_var.get())
@@ -380,8 +429,7 @@ def run_bot():
                         driver.execute_script("arguments[0].click();", elem)
                         target_found = True
                         break
-            except:
-                pass
+            except: pass
 
             # 💡 [플랜 B 가동] 날짜로 못 찾았다면, 특강이라고 간주하고 인원수로 탐색!
             if not target_found:
@@ -414,7 +462,7 @@ def run_bot():
             # ====================================================================
 
             print("입장 버튼 클릭 대기 중...")
-            time.sleep(5) 
+            time.sleep(2) 
             if not is_running: return 
             
             click_success = False
@@ -426,6 +474,8 @@ def run_bot():
                         time.sleep(1.5) 
                         click_success = True
             except: pass
+
+            time.sleep(2) 
 
             if not click_success:
                 iframes = driver.find_elements(By.TAG_NAME, "iframe")
@@ -453,6 +503,8 @@ def run_bot():
             time.sleep(5) 
             close_annoying_popups(driver)
 
+            # (이 아래부터 기존의 try: 채팅창 열기 및 QR 스캔 로직 이어짐...)
+
             try:
                 print("💬 채팅창 열기 시도 중...")
                 chat_clicked = False
@@ -477,6 +529,20 @@ def run_bot():
                         if chat_clicked: break
             except: print("⚠️ 채팅창을 열지 못했습니다. (무시하고 계속 진행)")
 
+            # (위쪽 채팅창 열기 등 기존 코드...)
+
+            
+            # 👇 [새로 추가된 구역] 이미 출석이 되어있다면 여기서 멈추고 시청 모드로 전환!
+            if is_already_done:
+                print("🎉 이미 출석이 완료된 상태입니다. QR 스캔을 생략하고 편안한 시청을 위해 고정을 해제합니다!")
+                if platform.system() == "Windows":
+                    try:
+                        hwnd = ctypes.windll.user32.GetForegroundWindow()
+                        ctypes.windll.user32.SetWindowPos(hwnd, -2, 0, 0, 0, 0, 3)
+                    except: pass
+                break # 아래쪽 QR 로직을 무시하고 바로 대기 상태로 빠져나감
+            
+            
             original_window = driver.current_window_handle 
             expected_url = driver.current_url 
             
@@ -504,92 +570,87 @@ def run_bot():
                                 print("✅ 팝업 '닫기' 버튼 강제 타격 완료!")
                     except: pass
 
-                    print("👀 출석 완료 텍스트 대기 중 (최대 10초)...")
-                    try:
-                        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '출석')]")))
-                        print("✅ 출석 완료 확인! 탭을 닫습니다.")
-                        driver.close() 
-                    except:
-                        print("⚠️ '출석' 글씨 확인 불가 (출석 탭은 유지하되, 시점은 기존 강의실로 복귀합니다)")
-
-                    # ... [기존 코드] 팝업 '닫기' 버튼 강제 타격 완료! ...
+                    # =========================================================
+                    # 🔍 [구형 로직 완벽 삭제 및 마이페이지 교차 검증 시작]
+                    # =========================================================
+                    time.sleep(3) # QR 인식이 서버에 반영될 여유 시간
                     
-                    time.sleep(3) # 출석이 서버에 기록될 시간을 잠깐 줍니다.
-
-                    # 👇 [새로 추가된 핵심 구역] 탭을 닫기 전 마이페이지로 이동하여 실제 시간 확인!
                     print("🔍 [마이페이지 교차 검증] 출석 도장이 시스템에 찍혔는지 확인합니다...")
                     driver.get("https://yeardream2026.elice.io/my")
-                    time.sleep(4) # 마이페이지 로딩 대기
+                    time.sleep(4) 
                     
                     import re
                     page_text = driver.find_element(By.TAG_NAME, "body").text
-                    current_hour = datetime.datetime.now().hour
+                    check_hour = datetime.datetime.now().hour
+                    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
                     
                     # 오전 출석(09:xx AM) 확인
-                    if current_hour < 12: 
-                        if re.search(r'09:\d{2}\s*[Aa][Mm]', page_text):
-                            morning_done = True
-                            print("🎉 [오전 출석 최종 확인] 09:xx AM 출석 기록이 완벽하게 확인되었습니다!")
+                    if check_hour < 12: 
+                        # 09:xx 또는 9:xx 가 포함되어 있으면 무조건 인식
+                        if re.search(r'0?9:\d{2}', page_text): 
+                            attendance_log[today_str]["morning"] = True
+                            print("🎉 [오전 출석 최종 확인] 오전 출석 도장이 확인되었습니다!")
+                            save_attendance_to_file()  # 🟢 [수정완료] 전용 저장 함수 호출
+                            try: refresh_calendar_ui() 
+                            except: pass
                         else:
-                            print("⚠️ 마이페이지에 오전 출석 도장이 없습니다. (다음 스케줄에 재시도합니다)")
+                            print("⚠️ 마이페이지에 오전 출석 시간(09:xx)이 발견되지 않았습니다.")
                     
                     # 오후 퇴실(04:xx PM 또는 16:xx) 확인
                     else: 
-                        if re.search(r'04:\d{2}\s*[Pp][Mm]', page_text) or re.search(r'16:\d{2}', page_text):
-                            afternoon_done = True
-                            print("🎉 [오후 퇴실 최종 확인] 04:xx PM (또는 16:xx) 퇴실 기록이 완벽하게 확인되었습니다!")
+                        # 16:xx 또는 04:xx 또는 4:xx 모두 인식
+                        if re.search(r'(16:\d{2}|0?4:\d{2}\s*[Pp][Mm]?)', page_text):
+                            attendance_log[today_str]["afternoon"] = True
+                            print("🎉 [오후 퇴실 최종 확인] 오후 퇴실 도장이 확인되었습니다!")
+                            save_attendance_to_file()  # 🟢 [수정완료] 전용 저장 함수 호출
+                            try: refresh_calendar_ui() 
+                            except: pass
                         else:
-                            print("⚠️ 마이페이지에 오후 퇴실 도장이 없습니다. (다음 스케줄에 재시도합니다)")
+                            print("⚠️ 마이페이지에 오후 퇴실 시간(16:xx 또는 4:xx PM)이 발견되지 않았습니다.")
                             
                     print("✅ 교차 검증 완료. 이제 이 확인용 탭을 닫습니다.")
-                    driver.close() # 👈 미련 없이 새 탭을 닫음
+                    driver.close() # 새 탭 미련 없이 닫기
+                    # =========================================================
 
-                    
             except Exception as e:
                 print(f"⚠️ QR 출석 진행 중 오류 발생 (무시하고 화면 유지): {e}")
+            
             finally:
-                # [여기서부터 복사해서 덮어쓰세요]
+                # [안전 구역] 찌꺼기 탭 정리 및 원래 강의실로 시점 복귀
                 try:
-                    # [추가 방어 0] 혹시 모를 웹사이트 자체 경고창(세션 만료 등) 강제 무시
                     try:
                         alert = driver.switch_to.alert
                         alert.accept()
                     except: pass
 
-                    # [완벽 방어 1] 찌꺼기 탭 정리
                     for handle in driver.window_handles:
                         if handle != original_window:
                             driver.switch_to.window(handle)
                             driver.close() 
                     
-                    # [완벽 방어 2] 메인 창 복귀 및 검증
                     driver.switch_to.window(original_window)
                     current_url = driver.current_url
                     base_expected = expected_url.split("?")[0]
                     base_current = current_url.split("?")[0]
                     
                     if base_expected in base_current or "elice.io" in base_current:
-                        print("✅ 기존 강의실 화면 복귀 및 주소(URL) 일치 검증 완료.")
-                        
+                        print("✅ 기존 강의실 화면 복귀 완료.")
                         if platform.system() == "Windows":
                             try:
                                 hwnd = ctypes.windll.user32.GetForegroundWindow()
                                 ctypes.windll.user32.SetWindowPos(hwnd, -2, 0, 0, 0, 0, 3)
-                                print("🔓 창 최상단 고정을 해제하여 컴퓨터 사용을 자유롭게 합니다.")
+                                print("🔓 창 최상단 고정을 해제합니다.")
                             except: pass
                     else:
-                        print(f"⚠️ 강의실 화면 이탈 감지됨 (현재 주소: {current_url})")
-                        print("💡 [안전 방어] 이탈이 감지되었으나, 강의 시청을 위해 창을 강제로 끄지 않고 유지합니다.")
+                        print(f"⚠️ 강의실 이탈 감지됨 (현재 주소: {current_url}) - 화면 유지함")
 
                 except Exception as e:
-                    print(f"⚠️ 탭 복귀 중 에러 발생: {e}")
-                    print("💡 [안전 방어] 에러가 났지만 강의실 내부이므로 창을 강제로 끄지 않고 유지합니다.")
-            # ====================================================================
+                    print(f"⚠️ 탭 복귀 중 에러 발생: {e} - 화면 유지함")
 
-            # [완벽 방어 4] 스케줄러가 장기 대기(sleep) 때문에 뻗지 않도록 짧게 쉬고 빠져나옴
+            # 스케줄러 장기 대기 방지 및 루프 종료
             print("🎉 출석/대기 사이클 완료! 봇 엔진은 다음 스케줄을 감시하기 위해 돌아갑니다.")
             time.sleep(10)
-            break 
+            break
 
         except Exception as e:
             retry_count += 1
@@ -675,6 +736,7 @@ def create_gui():
     root.configure(bg="#f4f4f4")
     
     config_file = os.path.join(current_folder, "bot_config.json")
+    
     def load_config():
         try:
             with open(config_file, 'r', encoding='utf-8') as f:
@@ -686,22 +748,26 @@ def create_gui():
                 "afternoon": ["16:25", "16:30"],
                 "close_browser": True,
                 "retry_count": "3",
-                "wait_time": "1"
+                "wait_time": "1",
+                "attendance_log": {} # 👈 [핵심] 불러올 때 빈 달력 데이터 기본값 생성
             }
             
     def save_config():
+        global attendance_log # 👈 [핵심] 전역 변수 데이터를 확실하게 가져옴
         saved_data = {
             "url": url_entry.get().strip(),
             "morning": [t for t, var in morning_vars.items() if var.get()],
             "afternoon": [t for t, var in afternoon_vars.items() if var.get()],
             "close_browser": close_browser_var.get(),
             "retry_count": retry_var.get(),
-            "wait_time": wait_var.get()
+            "wait_time": wait_var.get(),
+            "attendance_log": attendance_log # 👈 [핵심] 파일에 출석 로그를 영구 저장함
         }
         try:
             with open(config_file, 'w', encoding='utf-8') as f:
                 json.dump(saved_data, f, ensure_ascii=False, indent=4)
-        except: pass
+        except Exception as e: 
+            print(f"⚠️ 설정 저장 실패: {e}")
 
     saved_config = load_config()
     close_browser_var = tk.BooleanVar(value=saved_config.get("close_browser", True)) 
@@ -786,20 +852,90 @@ def create_gui():
         btn_stop.config(state=tk.DISABLED)
         url_entry.config(state=tk.NORMAL)
 
+# =====================================================================
+    # 🎨 [UI 변경] 하단 조작부 좌/우 분할 및 미니 달력 레이아웃
+    # =====================================================================
     ctrl_frame = tk.Frame(root, bg="#f4f4f4")
-    ctrl_frame.pack(pady=5)
+    ctrl_frame.pack(padx=20, pady=5, fill=tk.X)
 
-    btn_start = tk.Button(ctrl_frame, text="▶️ 통합 자동 출석 가동 시작", font=("Helvetica", 11, "bold"), 
-                     width=42, height=2, command=start_integrated_mode, bg="#4CAF50", fg="black")
-    btn_start.pack(pady=3)
+    # [좌측] 가동/중지 버튼 및 설정 구역
+    left_ctrl = tk.Frame(ctrl_frame, bg="#f4f4f4")
+    left_ctrl.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 10))
+
+    btn_start = tk.Button(left_ctrl, text="▶️ 통합 자동 출석 가동 시작", font=("Helvetica", 11, "bold"), 
+                     height=2, command=start_integrated_mode, bg="#4CAF50", fg="black")
+    btn_start.pack(fill=tk.X, pady=3)
     
-    btn_stop = tk.Button(ctrl_frame, text="⏹️ 작동 중지 및 초기화", font=("Helvetica", 11, "bold"), 
-                         width=42, height=2, command=stop_bot, fg="red", state=tk.DISABLED)
-    btn_stop.pack(pady=3)
+    btn_stop = tk.Button(left_ctrl, text="⏹️ 작동 중지 및 초기화", font=("Helvetica", 11, "bold"), 
+                         height=2, command=stop_bot, fg="red", state=tk.DISABLED)
+    btn_stop.pack(fill=tk.X, pady=3)
 
-    chk_close = tk.Checkbutton(root, text="프로그램 중지/종료 시 브라우저 같이 닫기", 
+    chk_close = tk.Checkbutton(left_ctrl, text="프로그램 중지/종료 시 브라우저 같이 닫기", 
                                variable=close_browser_var, bg="#f4f4f4", font=("Helvetica", 9))
-    chk_close.pack(pady=2)
+    chk_close.pack(anchor=tk.W, pady=2)
+
+    # [우측] 이번 달 출석 현황 미니 달력 구역
+    right_ctrl = tk.Frame(ctrl_frame, bg="#ffffff", bd=1, relief=tk.SOLID, padx=5, pady=5)
+    right_ctrl.pack(side=tk.RIGHT)
+
+    def draw_calendar():
+        global attendance_log
+        # 기존에 그려진 달력이 있으면 지우고 새로 그림 (새로고침 용도)
+        for widget in right_ctrl.winfo_children():
+            widget.destroy()
+
+        now = datetime.datetime.now()
+        year, month = now.year, now.month
+
+        # 달력 제목
+        title_lbl = tk.Label(right_ctrl, text=f"📅 {month}월 출석 현황", font=("Helvetica", 9, "bold"), bg="#ffffff")
+        title_lbl.pack(pady=(0,3))
+
+        cal_grid = tk.Frame(right_ctrl, bg="#ffffff")
+        cal_grid.pack()
+
+        days_header = ["일", "월", "화", "수", "목", "금", "토"]
+        for i, d in enumerate(days_header):
+            tk.Label(cal_grid, text=d, font=("Helvetica", 7), bg="#ffffff", fg="#555").grid(row=0, column=i)
+
+        calendar.setfirstweekday(calendar.SUNDAY)
+        month_days = calendar.monthcalendar(year, month)
+
+        # 달력 날짜 및 상태 표시기(상하 두 칸) 생성
+        for r, week in enumerate(month_days):
+            for c, day in enumerate(week):
+                if day == 0:
+                    continue
+                date_str = f"{year}-{month:02d}-{day:02d}"
+                
+                # 로그 파일에서 해당 날짜의 기록을 가져옴 (없으면 False 처리)
+                log = attendance_log.get(date_str, {"morning": False, "afternoon": False})
+                
+                cell = tk.Frame(cal_grid, bg="#ffffff")
+                cell.grid(row=r+1, column=c, padx=2, pady=2)
+
+                # 날짜 텍스트 (일요일은 빨간색)
+                fg_color = "red" if c == 0 else "black"
+                tk.Label(cell, text=str(day), font=("Helvetica", 7, "bold"), bg="#ffffff", fg=fg_color, width=2).pack(side=tk.LEFT)
+
+                # 상(오전)/하(오후) 상태 표시용 캔버스 (크기: 가로 5px, 세로 12px)
+                canvas = tk.Canvas(cell, width=5, height=12, bg="#ffffff", highlightthickness=0)
+                canvas.pack(side=tk.LEFT, padx=(0, 2))
+
+                m_color = "#4CAF50" if log.get("morning") else "#e0e0e0"   # 초록 or 회색
+                a_color = "#2196F3" if log.get("afternoon") else "#e0e0e0" # 파랑 or 회색
+
+                canvas.create_rectangle(0, 0, 5, 5, fill=m_color, outline="")   # 상단(오전)
+                canvas.create_rectangle(0, 7, 5, 12, fill=a_color, outline="")  # 하단(오후)
+
+    # 🔄 [핵심] JSON 파일에서 출석 로그를 읽어와 달력을 최초로 그립니다.
+    global attendance_log
+    attendance_log = saved_config.get("attendance_log", {})
+    draw_calendar()
+    
+    # 봇이 출석을 성공했을 때 외부(쓰레드)에서 달력을 새로고침 할 수 있도록 함수를 전역으로 빼줍니다.
+    global refresh_calendar_ui
+    refresh_calendar_ui = lambda: root.after(0, draw_calendar)
 
     log_frame = tk.Frame(root)
     log_frame.pack(padx=20, pady=10, fill=tk.BOTH, expand=True)

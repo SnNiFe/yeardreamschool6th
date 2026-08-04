@@ -12,5 +12,11 @@
     ],
     "close_browser": true,
     "retry_count": "2",
-    "wait_time": "1"
+    "wait_time": "1",
+    "attendance_log": {
+        "2026-08-04": {
+            "morning": true,
+            "afternoon": false
+        }
+    }
 }
