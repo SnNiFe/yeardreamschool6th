@@ -598,16 +598,22 @@ def run_bot():
                     
                     # 오후 퇴실(04:xx PM 또는 16:xx) 확인
                     else: 
-                        # 16:xx 또는 04:xx 또는 4:xx 모두 인식
                         if re.search(r'(16:\d{2}|0?4:\d{2}\s*[Pp][Mm]?)', page_text):
                             attendance_log[today_str]["afternoon"] = True
                             print("🎉 [오후 퇴실 최종 확인] 오후 퇴실 도장이 확인되었습니다!")
-                            save_attendance_to_file()  # 🟢 [수정완료] 전용 저장 함수 호출
+                            
+                            # 👇 [새로 추가된 구역] 오전 기록이 DB에 비어있는데 화면엔 있다면 보정!
+                            if not attendance_log[today_str].get("morning"):
+                                if re.search(r'0?9:\d{2}', page_text):
+                                    attendance_log[today_str]["morning"] = True
+                                    print("💡 [자동 보정] 마이페이지에서 오전 출석 기록도 발견되어 달력에 함께 보정(체크)했습니다!")
+                            # 👆 [추가 끝]
+
+                            save_attendance_to_file() 
                             try: refresh_calendar_ui() 
                             except: pass
                         else:
                             print("⚠️ 마이페이지에 오후 퇴실 시간(16:xx 또는 4:xx PM)이 발견되지 않았습니다.")
-                            
                     print("✅ 교차 검증 완료. 이제 이 확인용 탭을 닫습니다.")
                     driver.close() # 새 탭 미련 없이 닫기
                     # =========================================================
@@ -657,12 +663,21 @@ def run_bot():
             print(f"\n🚨 [오류 발생] 강의실 진입 실패! (실패 횟수: {retry_count}/{max_retry_val})")
             print(f"상세 원인: {e}")
             
+            # 👇 [여기서부터 덮어쓰기] 블랙박스 안전 저장 코드로 교체
             try:
                 if driver:
-                    now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-                    driver.save_screenshot(f"C:\yeardreamschool6th\addon\errorLogs\error_blackbox_{now}.png")
-                    print(f"📸 블랙박스 저장 완료: error_blackbox_{now}.png")
-            except: pass
+                    # 파일명에 콜론(:)만 안 들어가게 처리
+                    safe_now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                    
+                    # 폴더가 없으면 에러가 나니 만들어주는 딱 두 줄만 유지
+                    if not os.path.exists("errorLogs"):
+                        os.makedirs("errorLogs")
+                        
+                    # 맨 앞에 / 없이 깔끔하게 상대 경로로 저장!
+                    driver.save_screenshot(f"errorLogs/error_blackbox_{safe_now}.png")
+                    print(f"📸 블랙박스 저장 완료: errorLogs/error_blackbox_{safe_now}.png")
+            except Exception as pic_error: 
+                print(f"⚠️ 블랙박스 캡처 중 오류 발생: {pic_error}")
 
             try:
                 if driver: driver.quit()
@@ -852,7 +867,7 @@ def create_gui():
         btn_stop.config(state=tk.DISABLED)
         url_entry.config(state=tk.NORMAL)
 
-# =====================================================================
+    # =====================================================================
     # 🎨 [UI 변경] 하단 조작부 좌/우 분할 및 미니 달력 레이아웃
     # =====================================================================
     ctrl_frame = tk.Frame(root, bg="#f4f4f4")
@@ -878,18 +893,33 @@ def create_gui():
     right_ctrl = tk.Frame(ctrl_frame, bg="#ffffff", bd=1, relief=tk.SOLID, padx=5, pady=5)
     right_ctrl.pack(side=tk.RIGHT)
 
+    # 👇 [여기서부터 덮어쓰기 시작] 달력 이동을 위한 현재 뷰(View) 변수
+    global view_year, view_month
+    view_year = datetime.datetime.now().year
+    view_month = datetime.datetime.now().month
+
+    def change_month(delta):
+        global view_year, view_month
+        view_month += delta
+        if view_month > 12:
+            view_month = 1
+            view_year += 1
+        elif view_month < 1:
+            view_month = 12
+            view_year -= 1
+        draw_calendar()
+
     def draw_calendar():
-        global attendance_log
-        # 기존에 그려진 달력이 있으면 지우고 새로 그림 (새로고침 용도)
+        global attendance_log, view_year, view_month
         for widget in right_ctrl.winfo_children():
             widget.destroy()
 
-        now = datetime.datetime.now()
-        year, month = now.year, now.month
-
-        # 달력 제목
-        title_lbl = tk.Label(right_ctrl, text=f"📅 {month}월 출석 현황", font=("Helvetica", 9, "bold"), bg="#ffffff")
-        title_lbl.pack(pady=(0,3))
+        # 📅 [수정됨] 상단 월 이동 네비게이션 (◀ ▶)
+        nav_frame = tk.Frame(right_ctrl, bg="#ffffff")
+        nav_frame.pack(pady=(0,3), fill=tk.X)
+        tk.Button(nav_frame, text="◀", command=lambda: change_month(-1), bd=0, bg="#ffffff", cursor="hand2").pack(side=tk.LEFT)
+        tk.Label(nav_frame, text=f"{view_year}년 {view_month}월", font=("Helvetica", 9, "bold"), bg="#ffffff").pack(side=tk.LEFT, expand=True)
+        tk.Button(nav_frame, text="▶", command=lambda: change_month(1), bd=0, bg="#ffffff", cursor="hand2").pack(side=tk.RIGHT)
 
         cal_grid = tk.Frame(right_ctrl, bg="#ffffff")
         cal_grid.pack()
@@ -899,36 +929,59 @@ def create_gui():
             tk.Label(cal_grid, text=d, font=("Helvetica", 7), bg="#ffffff", fg="#555").grid(row=0, column=i)
 
         calendar.setfirstweekday(calendar.SUNDAY)
-        month_days = calendar.monthcalendar(year, month)
+        month_days = calendar.monthcalendar(view_year, view_month)
 
-        # 달력 날짜 및 상태 표시기(상하 두 칸) 생성
         for r, week in enumerate(month_days):
             for c, day in enumerate(week):
                 if day == 0:
                     continue
-                date_str = f"{year}-{month:02d}-{day:02d}"
-                
-                # 로그 파일에서 해당 날짜의 기록을 가져옴 (없으면 False 처리)
+                date_str = f"{view_year}-{view_month:02d}-{day:02d}"
                 log = attendance_log.get(date_str, {"morning": False, "afternoon": False})
                 
                 cell = tk.Frame(cal_grid, bg="#ffffff")
-                cell.grid(row=r+1, column=c, padx=2, pady=2)
+                cell.grid(row=r+1, column=c, padx=1, pady=1)
 
-                # 날짜 텍스트 (일요일은 빨간색)
                 fg_color = "red" if c == 0 else "black"
                 tk.Label(cell, text=str(day), font=("Helvetica", 7, "bold"), bg="#ffffff", fg=fg_color, width=2).pack(side=tk.LEFT)
 
-                # 상(오전)/하(오후) 상태 표시용 캔버스 (크기: 가로 5px, 세로 12px)
-                canvas = tk.Canvas(cell, width=5, height=12, bg="#ffffff", highlightthickness=0)
+                # 🖱️ [수정됨] 마우스 클릭을 쉽게 하기 위해 폭을 8px로 넓힘
+                canvas = tk.Canvas(cell, width=8, height=12, bg="#ffffff", highlightthickness=0, cursor="hand2")
                 canvas.pack(side=tk.LEFT, padx=(0, 2))
 
-                m_color = "#4CAF50" if log.get("morning") else "#e0e0e0"   # 초록 or 회색
-                a_color = "#2196F3" if log.get("afternoon") else "#e0e0e0" # 파랑 or 회색
+                m_color = "#4CAF50" if log.get("morning") else "#e0e0e0"   
+                a_color = "#2196F3" if log.get("afternoon") else "#e0e0e0" 
 
-                canvas.create_rectangle(0, 0, 5, 5, fill=m_color, outline="")   # 상단(오전)
-                canvas.create_rectangle(0, 7, 5, 12, fill=a_color, outline="")  # 하단(오후)
+                canvas.create_rectangle(0, 0, 8, 5, fill=m_color, outline="")   
+                canvas.create_rectangle(0, 7, 8, 12, fill=a_color, outline="")  
 
-    # 🔄 [핵심] JSON 파일에서 출석 로그를 읽어와 달력을 최초로 그립니다.
+                # ✍️ [수정됨] 마우스 클릭 시 DB 값을 뒤집고 자동 저장(토글 기능)
+                # ✍️ [수정됨] 마우스 클릭 시 확인 팝업을 먼저 띄움
+                def toggle_status(event, d_str=date_str):
+                    # 클릭한 곳이 위쪽(오전)인지 아래쪽(오후)인지 판별
+                    is_morning = event.y < 6
+                    part_name = "오전(출석)" if is_morning else "오후(퇴실)"
+                    
+                    # 🚨 [새로 추가됨] 실수 방지용 예/아니오 팝업창
+                    confirm = messagebox.askyesno(
+                        "출석 기록 수동 수정", 
+                        f"[{d_str}] 날짜의 '{part_name}' 기록 상태를 반대로 변경하시겠습니까?"
+                    )
+                    
+                    if confirm: # '예'를 눌렀을 때만 작동
+                        if d_str not in attendance_log:
+                            attendance_log[d_str] = {"morning": False, "afternoon": False}
+                        
+                        if is_morning: 
+                            attendance_log[d_str]["morning"] = not attendance_log[d_str]["morning"]
+                        else:          
+                            attendance_log[d_str]["afternoon"] = not attendance_log[d_str]["afternoon"]
+                            
+                        save_attendance_to_file() # DB 파일에 즉시 기록
+                        draw_calendar()           # 화면 새로고침
+                # 좌클릭 이벤트 바인딩
+                canvas.bind("<Button-1>", toggle_status)
+
+    # (이 아래쪽 코드는 기존과 동일합니다)
     global attendance_log
     attendance_log = saved_config.get("attendance_log", {})
     draw_calendar()
