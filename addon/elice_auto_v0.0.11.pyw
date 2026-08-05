@@ -467,12 +467,14 @@ def run_bot():
             
             click_success = False
             try:
-                enter_buttons = driver.find_elements(By.XPATH, "//*[normalize-space()='입장하기']")
-                for btn in enter_buttons:
-                    if btn.is_displayed():
-                        driver.execute_script("arguments[0].click();", btn)
-                        time.sleep(1.5) 
-                        click_success = True
+                elements = wait.until(EC.presence_of_all_elements_located((By.XPATH, f"//*[contains(text(), '{today_date}')]")))
+                for elem in elements:
+                    text = elem.text
+                    if len(text) > 0 and len(text) < 100 and "강의실" in text:
+                        print(f"🎯 [플랜 A 성공] 날짜 매칭 강의실 발견: {text}")
+                        driver.execute_script("arguments[0].click();", elem)
+                        target_found = True
+                        break
             except: pass
 
             time.sleep(2) 
@@ -581,12 +583,16 @@ def run_bot():
                     
                     import re
                     page_text = driver.find_element(By.TAG_NAME, "body").text
+                    
+                    # 👇 [새로 추가된 핵심 구역] 봇을 속이는 가짜 안내 문구를 텍스트에서 강제로 날려버립니다.
+                    page_text = re.sub(r'09:00\s*[Aa][Mm]\s*~\s*17:00\s*[Pp][Mm]', '', page_text, flags=re.IGNORECASE)
+                    page_text = re.sub(r'09:00\s*~\s*17:00', '', page_text) # (AM/PM 글씨가 생략된 변형 대비)
+
                     check_hour = datetime.datetime.now().hour
                     today_str = datetime.datetime.now().strftime("%Y-%m-%d")
                     
                     # 오전 출석(09:xx AM) 확인
                     if check_hour < 12: 
-                        # 09:xx 또는 9:xx 가 포함되어 있으면 무조건 인식
                         if re.search(r'0?9:\d{2}', page_text): 
                             attendance_log[today_str]["morning"] = True
                             print("🎉 [오전 출석 최종 확인] 오전 출석 도장이 확인되었습니다!")
