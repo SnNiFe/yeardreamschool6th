@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>로그인 버튼 활성화시키기</title>
+    <style>
+        body {
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            margin: 90px auto;
+            max-width: 340px;
+            border: none;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .loginWindow {
+            padding: 10px auto;
+        }
+
+        .loginWindow input {
+            margin-bottom: 10px;
+            background-color: #ffffff;
+            height: 40px;
+            padding: 10px 10px;
+            box-sizing: border-box;
+            border: 1px solid #eaeaea;
+            border-radius: 4px;
+        }
+
+        .loginWindow input::placeholder {
+            font-size: 12px;
+            font-weight: 100;
+        }
+
+        .login {
+            height: 40px;
+            box-sizing: border-box;
+            border: 0px;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .deactivatedColor {
+            background-color: #c8ace8;
+        }
+
+        .activatedColor {
+            background-color: #9500ff;
+        }
+
+        .loginWindow * {
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="loginWindow">
+            <input type="text" placeholder="아이디">
+            <input type="password" placeholder="비밀번호">
+            <button class="login deactivatedColor">로그인</button>
+        </div>
+    </div>
+    <script>
+        // /*지시사항을 따라 작성해주세요*/
+        // var inputs = document.getElementsByTagName("input");
+        // var loginButton = document.getElementsByTagName("button")[0];
+        // var id = inputs[0];
+        // var pw = inputs[1];
+        // /*1. 버튼 활성화시키기*/
+        // function activateBtn() {
+        //     /* 여기에 작성해주세요 */
+        //     if ((id.value != '') && (pw.value != '')){
+        //         loginButton.classList.remove('deactivatedColor');
+        //         loginButton.classList.add('activatedColor');
+        //     }else{
+        //         loginButton.classList.remove('activatedColor');
+        //         loginButton.classList.add('deactivatedColor');
+        //     }
+        // }
+        // pw.addEventListener("keyup", activateBtn);
+        // /*2. 로그인 성공 여부 나타내기*/
+        // function login() {
+        //     /* 여기에 작성해주세요 */
+        //     if ((id.value == 'elice') && (pw.value == '1234')){
+        //         alert('로그인 성공');
+        //     }else{
+        //         alert('로그인 실패');
+        //     }
+        // }
+        // loginButton.addEventListener("click", login);
+
+                /*지시사항을 따라 작성해주세요*/
+        var inputs = document.getElementsByTagName("input");
+        var loginButton = document.getElementsByTagName("button")[0];
+        var id = inputs[0];
+        var pw = inputs[1];
+        /*1. 버튼 활성화시키기*/
+        function activateBtn() {
+            // 1. id, pw 의 값을 가져오는 일
+            var id_str = id.value;
+            var pw_str = pw.value;
+            console.log(id_str+'/'+pw_str);
+            // 2. id 나 pw 가 입력되지 않았음을 어떻게 알지?
+            if(id_str != '' && pw_str != ''){
+                //console.log(loginButton.classList);
+                loginButton.classList.add('activatedColor');
+                loginButton.classList.remove('deactivatedColor');
+            }else{
+                loginButton.classList.add('deactivatedColor');
+                loginButton.classList.remove('activatedColor');
+            }
+
+        }
+        id.addEventListener("keyup", activateBtn);
+        pw.addEventListener("keyup", activateBtn);
+        /*2. 로그인 성공 여부 나타내기*/
+        function login() {
+            /* 여기에 작성해주세요 */
+            // id : elice / pw : 1234
+            var id_str = id.value;
+            var pw_str = pw.value;
+            console.log(id_str+'/'+pw_str);
+            if(id_str == 'elice' && pw_str == '1234'){
+                alert('로그인에 성공 했습니다.');
+            }else{
+                alert('아이디 또는 비밀번호를 확인해 주세요!');
+            }
+        }
+        loginButton.addEventListener("click", login);
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ECMA SCRIPT 6</title>
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <h3>Scope Chain</h3>
+        <p>scope chain 은 변수를 찾는 순서에 대한 이야기</p>
+        <p>우선 내 주변부터 찾고, 없으면 점차 밖으로 나가면서 찾는다.</p>
+        <p>global 이 각각 누구를 찾는지 확인해 보자</p>
+        <p>변수를 찾을때 가까운 영역 먼저 찾는다. 이름이 겹칠 경우 가까운것이 우선순위다.</p>
+    </body>
+    <script>
+        const global = 10;
+        console.log('=== 함수 밖 ===');
+        console.log(global); // 10 : 외부영역에 있기에 그것을 쓴다.
+        outerFunc();
+
+        function outerFunc(){
+            const global = 20;
+            const local1 = 10;
+            console.log('=== OUTER FUNCTION ===');
+            console.log(global); // 20 : global 이 outerFunc 안에 있어서 그걸 쓴다.
+            console.log(local1);
+            innerFunc();
+
+            function innerFunc(){
+                const local1 = 40;
+                const local2 = 50;
+                console.log('=== INNER FUNCTION ===');
+                console.log(global); // 20 : innerFunc 에 global 이 없어서 outerFunc 것을 가져온다.
+                console.log(local1);
+                console.log(local2);
+            }
+        }
+    </script>
+</html>

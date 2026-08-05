@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ECMA SCRIPT 6</title>
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <p>let : 블록단위 변수</p>
+        <p>var : 함수단위 변수</p>
+        <p>const : 변경 불가한 값(상수), 배열이나 오브젝트의 일부 변경은 가능</p>
+    </body>
+    <script>
+
+        let global = '전역 변수';
+
+        function test(){
+            let global = '지역 변수';
+            // let 은 철저히 영역에 제한을 받는다.
+            console.log(global);
+        }
+        test();
+        console.log(global);
+
+        function test2(){
+            if(true){
+                var scope = '함수 영역'; // 블록영역 영향을 받긴 하는데, 함수 안에서는 안받는다.
+                let local = '블록 영역'; // 철저히 블록 영역을 벗어나지 못한다.
+            }
+            console.log(scope);
+            //console.log(local);
+        }
+        test2();
+
+        const x = 10;
+        x = 30; // 상수는 변경이 안된다.
+        
+    </script>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DOM Exercise</title>
+    <style>
+        div {
+            width: 50px;
+            height: 50px;
+            display: inline-block;
+        }
+
+        .brown {
+            background-color: brown;
+        }
+
+        .green {
+            background-color: green;
+        }
+
+        .blue {
+            background-color: blue;
+        }
+
+        .purple {
+            background-color: purple;
+        }
+
+        .yellow {
+            background-color: yellow;
+        }
+
+        .car1 {
+            /* background-color: yellow; */
+            border: 1px dashed black;
+        }
+
+        .car2 {
+            background-color: purple;
+        }
+
+        .car1,
+        .car2 {
+            margin-left: 0;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1 id="change_heading">카 레이싱 대회</h1>
+    SELECTED COLOR <span class="selected">None!</span>
+    <section>
+        <div class="brown"></div>
+        <div class="green"></div>
+        <div class="blue"></div>
+        <div class="yellow"></div>
+        <!-- <div class="purple"></div> -->
+    </section>
+    <h2>Race!</h2>
+    <button>경주 시작</button>
+    <br>
+    <div class="car1" style="margin-left: 0px;"></div>
+    <br>
+    <div class="car2" style="margin-left: 0px;"></div>
+    <script>
+        window.onload = function () {
+            var el = document.getElementById("change_heading");
+            el.innerText = "카 레이싱 대회";
+
+            var section = document.querySelector("section");
+
+            var newDiv = document.createElement("div");
+            newDiv.className = "purple";
+            section.appendChild(newDiv);
+
+            var button = document.querySelector("button");
+            var car1 = document.querySelector(".car1");
+            var car2 = document.querySelector(".car2");
+            function reset() {
+                car1.style.marginLeft = 0;
+                car2.style.marginLeft = 0;
+                button.disabled = false;
+            }
+            reset();
+
+            //2. `<section>`내에 있는 색 팔레트에 마우스 커서를 갖다댈 때 `index.html`에 `<span class="selected">`태그에 None!을 해당하는 색깔로 대체하는 코드를 작성하세요.
+            var class_name ='';
+            section.addEventListener('mouseover',function(evt){
+                // 이벤트 위임, 부모에 이벤트를 걸면 자식도 효과를 볼 수 있다.
+                // console.log(evt.target);
+                // var selected = document.getElementsByClassName('selected')[0];
+                // if (evt.target.className != ''){
+                //     selected.innerHTML = evt.target.className;
+                // }
+                if (evt.target.className != ''){
+                    class_name = evt.target.className;
+                }
+                console.log('className : '+class_name);
+                document.querySelector('.selected').innerHTML = class_name;
+                document.querySelector('.car1').style.backgroundColor = class_name;
+            });
+            //3.`button.addEventListener()` 함수 내에 경주 시작 버튼을 클릭할 때 car1과 car 2를 좌에서 우로 움직이는 코드를 작성하세요.
+            //4.car1이 오른쪽 사이드에 먼저 도착했을 경우 Car 1 승이라는 alert를 띄우세요. car2도 동일하게 alert 메시지를 띄우는 코드를 작성하세요.
+
+            button.addEventListener("click", function (event) {
+                button.disabled = true;
+                
+                // var car1sp = 0;
+                // var car2sp = 0;
+                // var time = setInterval(function(){
+                //     car1sp += 100;
+                //     car2sp += 90;
+                //     car1.style.marginLeft = car1sp+'px';
+                //     car2.style.marginLeft = car2sp+'px';
+                //     console.log(car2.style.marginLeft);
+                //     if(car1sp >= 1000){
+                //         clearInterval('time');
+                //         alert('car1 win');
+                //     }else if(car2sp >= 1000){
+                //         clearInterval('time');
+                //         alert('car2 win');
+                //     }
+                // },10);
+
+
+                var x1 = 0; 
+                var x2 = 0;
+                var target_line = window.innerWidth; // 창 안의크기
+                console.log(target_line);
+                var timer = setInterval(function(){
+                    x1 += parseInt(Math.random() * 50+1);
+                    x2 += parseInt(Math.random() * 50+1);
+                    car1.style.marginLeft = x1+'px';
+                    car2.style.marginLeft = x2+'px';
+                    if(x1 >= target_line || x2 >= target_line){
+                        clearInterval(timer);
+                        alert(x1>x2 ? 'car1 승리' : 'car2 승리');
+                        reset();
+                    }
+                },100);
+            });
+        };
+
+    </script>
+
+</body>
+
+</html>

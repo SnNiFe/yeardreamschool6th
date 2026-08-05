@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ECMA SCRIPT 6</title>
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <p>Null 이나 None, undefined 의 값에 무언가를 하려고 하면 에러 발생</p>
+        <p>Null Point Exception</p>
+    </body>
+    <script>
+        const user = {
+            profile:{
+                name:'Alice'
+            },
+            number:[1,2,3]
+        };
+        // oo.oo 라고 했을때 undefined 값이 나오면 뭘 하지 마라!
+        console.log(user.profile.name);     // Alice
+        console.log(user.profile.age);      // undefined
+        //console.log(user.contact.email);    // error
+        console.log(user.contact?.email);   // undefined
+
+        console.log(user.number[1]);        // 2
+        console.log(user.number[4]);        // undefined
+        //console.log(user.number[4].toString()); // error
+        console.log(user.number[4]?.toString()); // undefined
+    </script>
+</html>

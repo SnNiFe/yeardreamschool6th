@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Dom Script</title>
+    </head>
+    <body>
+        <h1 id="cnt">0</h1>
+        <button onclick="setTime()">3초 후 경고</button>
+		<button onclick="start(this)">증가</button>
+        <button onclick="stop()">정지</button>
+    </body>
+    <script>
+        // setTimeout(함수,대기시간);
+        function setTime(){
+            console.log('setTime go!');
+            setTimeout(function(){
+                alert('3초가 경과 되었습니다.');
+            },3000);
+        }
+        // setInterval(함수,실행주기);
+        var i = 0;
+        var h1 =document.getElementById('cnt');
+        var time;
+        function start(elem){
+            elem.disabled=true;
+            time = setInterval(function(){
+                i++;
+                h1.innerHTML = i;
+            },1000);
+        }
+        function stop(){
+            var btn = document.getElementsByTagName('button')[1];
+            btn.disabled=false;
+            //claerInterval(멈춰야할 interval);
+            clearInterval(time);
+        }
+        
+    </script>
+</html>

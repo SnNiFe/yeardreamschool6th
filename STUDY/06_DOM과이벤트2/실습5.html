@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>제이쿼리 기초</title>
+
+    <style>
+        .favorites-icon {
+            display: block;
+            width: 50px;
+            height: 50px;
+            background-color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .on {
+            background-color: yellow;
+        }
+    </style>
+</head>
+
+<body>
+
+    <i id="first-favorites-icon" class="favorites-icon"></i>
+    <i id="second-favorites-icon" class="favorites-icon"></i>
+    <i id="third-favorites-icon" class="favorites-icon"></i>
+
+    <script>
+        // var icon = [];
+        // icon[0] = document.getElementById('first-favorites-icon');
+        // icon[1] = document.getElementById('second-favorites-icon');
+        // icon[2] = document.getElementById('third-favorites-icon');
+
+
+        // for (let i = 0; i < icon.length; i++) {
+        //     icon[i].classList.remove('on');
+        //     icon[i].addEventListener('click', function () {
+        //         icon[i].classList.toggle('on');
+        //     });
+        // }
+        
+
+        // icon[0].addEventListener('click', function () {
+        //     icon[0].classList.toggle('on');
+        //     icon[1].classList.remove('on');
+        //     icon[2].classList.remove('on');
+        // });
+        // icon2.addEventListener('click', function(){
+        //     icon1.classList.remove('on');
+        //     icon2.classList.toggle('on');
+        //     icon3.classList.remove('on');
+        // });
+        // icon3.addEventListener('click', function(){
+        //     icon1.classList.remove('on');
+        //     icon2.classList.remove('on');
+        //     icon3.classList.toggle('on');
+        // });
+
+        var btns = document.getElementsByTagName('i');
+
+        for (var btn of btns) {
+            //console.log(btn);
+            btn.addEventListener('click',toggle);
+        }
+
+        function toggle(e){
+            for (var item of btns) {
+                item.classList.remove('on');
+            }
+
+            console.log(this);//e.target
+            this.classList.add('on');
+        }
+
+    </script>
+
+</body>
+
+</html>

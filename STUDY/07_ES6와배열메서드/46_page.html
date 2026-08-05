@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ECMA SCRIPT 6</title>
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <p>spread 연산자(...) 는 뭉쳐있는 것들을 펼쳐줍니다.</p>
+    </body>
+    <script>
+        console.log([1,2,3],'->',...[1,2,3]);
+        console.log('elice','->',...'elice');
+
+        const arr1 = [1,2,3];
+        const arr2 = [10,20,30];
+        // result = arr1 + arr2 (pyhton 에서는 바로 가능)
+        let result = [arr1,arr2];
+        console.log(result);
+        result = arr1.concat(arr2);
+        console.log(result);
+        //1,2,3,10,20,30
+        result = [...arr1,...arr2];
+        console.log(result);
+
+        //shallow copy 문제 해결
+        let x = [1,2,3,4,5];
+        let y = [...x];
+        x[4] = 'X';
+        y[0] = 'Y';
+        console.log([...x]);
+        console.log([...y]);
+
+        function total(...params){ // def total(*params):
+            console.log(params); // array
+            return 0; // paramss 의 합 반환
+        }
+        console.log('인지값 2개: ',total(10,20));
+        console.log('인지값 3개: ',total(1,2,3));
+        console.log('인지값 5개: ',total(1,2,3,4,5));
+
+    </script>
+</html>

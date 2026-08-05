@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ECMA SCRIPT 6</title>
+        <style></style>
+    </head>
+    <body>
+        <p class="txt">구조분해 할당은 함수의 인자값, 배열 등에도 활용이 가능하다.</p>
+    </body>
+    <script>
+        const user = {
+            name:'홍길동',
+            age:25,
+            city:'서울'
+        };
+        //getUser(user.name,user.age);
+        getUser(user); // 함수 호출시 오브젝트 전체를 던져주면
+
+        // 그 중에서 특정 속성만 뽑아쓴다.(필요한 것만)
+        function getUser({name,age}){
+            console.log(name,age);
+        }
+
+        // p 태그를 클릭했을때 해당 태그의 innerHTML 과 className 을 출력하세요.
+        // const tag = document.getElementsByTagName('p')[0];
+        // tag.addEventListener('click',()=>console.log('p innerHTML:',tag.innerHTML,', p className:',tag.className));
+
+        p_tag = document.querySelector('.txt');
+        p_tag.addEventListener('click',({target:{innerHTML,className}})=>{ // 이정도로 깊게 들어가기 비추
+            console.log(innerHTML);
+            console.log(className); // target 정도까지만 들어가서 불러오기가 낫다
+        });
+
+        const numbers = [1,2,3,4,5];
+        const [first,second,...rest] = numbers;
+        console.log(first);
+        console.log(second);
+        console.log(rest);
+    </script>
+</html>

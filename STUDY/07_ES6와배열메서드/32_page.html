@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ECMA SCRIPT 6</title>
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <p>화살표 함수(fat arrow) =></p>
+        <p>익명함수 표현시 간단하게 해준다.</p>
+        <p>화살표 함수만의 특징도 존재 한다.</p>
+        <button id="btn">click</button>
+    </body>
+    <script>
+        const func = function(x,y){
+            console.log(x+y);
+        }
+        func(3,4);
+
+        // 규칙 1. function 은 생략 가능
+        const x1 = (x,y)=>{
+            console.log(x+y);
+        }
+        x1(6,9);
+        // 규칙 2. 실행문이 console 이나 return 문만 존재할 경우 {} 생략이 가능
+        const x2 = (x,y)=>console.log(x+y);
+        x2(6,9);
+        // 규칙 3. 매개변수가 1개라면 () 도 생략 가능
+        const x3 = x=>console.log(x*x);
+        x3(4);
+
+        // 차이점 1 : this 가 이벤트를 당한 당사자가 아닌 window
+        document.getElementById('btn').addEventListener('click',evt=>console.log(this));
+
+        // 차이점 2 : hoisting 지원이 되지 않는다.
+        hoisting();
+        function hoisting(){
+            console.log('hoist : 끌어 올려지다.');
+        }
+
+        // x4(3);
+        // const x4 = x=>console.log(x*x);
+
+    </script>
+</html>

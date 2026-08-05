@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <title>DOM SCRIPT</title>
+        <meta charset="UTF-8">
+        <style>
+            progress{
+                width: 500px;
+                height: 25px;
+            }
+            #proc{
+                position: absolute; 
+                background-color: red;
+                width: 10px;
+                height: 10px;
+                top: 100px;
+                left: 10px;
+            }
+            #cnt{
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <!--다운로드 중... -> 다운로드 완료--> 
+        <h1><span id="cnt">5</span> 초 후 다운로드가 진행 됩니다.</h1>       
+        <!--특정 시간마다 value 가 증가-->
+        <progress id="download" max="100" min="0" value="0"></progress>
+        <button onclick="count()">다운로드</button>
+        <!--value 증가 에 따라서 left 로 이동-->
+        <div id="proc"></div>        
+    </body>
+    <script>
+        // var cnt = document.getElementById('cnt');
+        // var i = parseInt(cnt.innerText);
+        // var time;
+        // function count(){
+        //     time = setInterval(function(){
+        //         cnt.innerHTML = i--;
+        //     },1000);
+        // }
+        // if(i<=0){
+        //     clearInterval(time);
+        // }
+
+        var span = document.getElementById('cnt');
+        var time;
+        function count(){
+            var cnt = parseInt(span.innerHTML);            
+            time = setInterval(function(){// 5,4,3,2,1,0
+                cnt--;
+                console.log(cnt);
+                span.innerHTML = cnt;
+            },1000);
+
+            setTimeout(function(){
+                clearInterval(time);
+                download();
+            },5000);
+        }
+
+        function download(){
+            // progress 와 #proc 을 움직이는 함수
+            // progress 의 value 를 0->100 으로 만들기
+            var progress = document.getElementById('download');
+            var per = 0;
+            var h1 = document.getElementsByTagName('h1')[0];
+            var proc = document.getElementById('proc');
+
+            var time = setInterval(function(){
+                per++;
+                progress.value = per;
+                h1.innerHTML = `다운로드 중(<span id="cnt">${per}%</span>)`;
+                proc.style.left = (per * 5)+'px';
+                if(per >= 100){
+                    clearInterval(time);
+                }
+
+            },10);
+            // 100 이 되면 멈춰야 함
+        }
+        
+    </script>
+</html>
