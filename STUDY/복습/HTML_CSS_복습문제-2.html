@@ -19,6 +19,10 @@
         min-height: 100vh;
         padding: 20px;
         gap: 28px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     /* 아티클 카드 바깥 상자 */
@@ -26,28 +30,47 @@
         border-radius: 16px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
         border: 1px solid #e5e0d8;
+        max-width: 680px;
+        padding: 24px;
+        background-color: white;
     }
 
     /* 카테고리 뱃지 */
     .category {
         font-weight: 700;
         border-radius: 20px;
+        margin-bottom: 8px;
+        padding: 4px 10px;
+        font-size: 12px;
+        color: #15803d;
+        background-color: #f0fdf4;
+        display: inline;
     }
 
     /* 아티클 제목 */
     .title {
         font-weight: 700;
         line-height: 1.3;
+        margin-bottom: 10px;
+        font-size: 20px;
+        color: #0f172a;
     }
 
     .text {
         color: #1c1917;
         line-height: 1.65;
+        font-size: 15px;
+        color: #1c1917;
     }
 
     .thumbnail {
         object-fit: cover;
         border-radius: 10px;
+        float: left;
+        width: 200px;
+        height: 140px;
+        margin: 0 20px 12px 0;
+        display: block;
     }
   </style>
 </head>

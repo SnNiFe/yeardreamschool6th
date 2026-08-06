@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard Layout</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f1f5f9;
+      color: #334155;
+    }
+
+    /* 1. Grid Layout Setup */
+    .dashboard-container {
+      height: 100vh;
+    }
+
+    /* 2. Side-Bar */
+    .header {
+      grid-area: header;
+      color: #ffffff;
+      display: flex;
+      z-index: 10;
+    }
+
+    .sidebar {
+      grid-area: sidebar;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-item {
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      background-color: #334155;
+      color: #ffffff;
+    }
+
+    /* 3. Main-Content */
+    .main-content {
+      grid-area: main;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .card {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-box {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 4. Right Panel(Widgets) */
+    .widgets {
+      grid-area: widgets;
+      background-color: #ffffff;
+      overflow-y: auto;
+    }
+
+    .widget-item {
+      font-size: 0.9rem;
+    }
+
+    /* 5. Footer */
+    .footer {
+      grid-area: footer;
+      color: #64748b;
+      display: flex;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-container {
+        grid-template-columns: 200px 1fr;
+        grid-template-areas:
+          "header  header"
+          "sidebar main"
+          "footer  footer";
+      }
+      .widgets {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 60px auto 1fr 40px;
+        grid-template-areas:
+          "header"
+          "sidebar"
+          "main"
+          "footer";
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <!-- Header -->
+    <header class="header">
+      <div style="font-weight: bold; font-size: 1.2rem;">Dashboard Studio</div>
+      <div>Profile Area</div>
+    </header>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul class="nav-list">
+        <li class="nav-item active">홈 (Home)</li>
+        <li class="nav-item">통계 (Analytics)</li>
+        <li class="nav-item">사용자 (Users)</li>
+        <li class="nav-item">설정 (Settings)</li>
+      </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <h2>대시보드 개요</h2>
+      
+      <!-- Top Cards Grid -->
+      <div class="stats-grid">
+        <div class="card">
+          <h4>총 매출</h4>
+          <p style="font-size: 1.5rem; font-weight: bold; margin-top: 8px;">₩ 12,450,000</p>
+        </div>
+        <div class="card">
+          <h4>신규 가입자</h4>
+          <p style="font-size: 1.5rem; font-weight: bold; margin-top: 8px;">+1,240명</p>
+        </div>
+        <div class="card">
+          <h4>활성 세션</h4>
+          <p style="font-size: 1.5rem; font-weight: bold; margin-top: 8px;">856</p>
+        </div>
+      </div>
+
+      <!-- Main Chart Area -->
+      <div class="chart-box">
+        <h3>주요 트래픽 그래프</h3>
+        <div style="margin-top: 20px; color: #94a3b8;">[차트 데이터가 표시될 영역입니다]</div>
+      </div>
+    </div>
+
+    <!-- Right Side Widgets -->
+    <div class="widgets">
+      <h3>최근 활동</h3>
+      <div class="widget-item">User A님이 결제를 완료했습니다.</div>
+      <div class="widget-item">새로운 시스템 업데이트가 진행되었습니다.</div>
+      <div class="widget-item">User B님이 문의를 남겼습니다.</div>
+    </div>
+
+    <div class="footer">
+      <p>© 2026 Dashboard System. All rights reserved.</p>
+    </div>
+  </div>
+
+</body>
+</html>

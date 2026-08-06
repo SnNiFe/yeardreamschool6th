@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>비동기</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        // 47_callback_hell.html 의 plus, multi, divide 함수를 Promise 객체를 활용하도록 변경
+        function plus(a, b){
+            return new Promise((resolve,reject)=>setTimeout(() => resolve(a+b),100));
+        }
+        function multi(a, b){
+            return new Promise((resolve,reject)=>setTimeout(() => resolve(a*b),100));
+        }
+        function divide(a, b){
+            return new Promise((resolve,reject)=>setTimeout(() => resolve(a/b),100));
+        }
+        // 사용1
+        // plus(20,30)
+        //     .then(r1=>multi(r1,4))
+        //     .then(r2=>divide(r2,2))
+        //     .then(result=>console.log('(a+b)*c/d=',result));
+
+        // Promise 객체를 반환하는 함수는 반드시 await 을 붙여야 한다.
+        async function getResult(a,b){
+            try{
+                let r1 = await plus(a,b);
+                let r2 = await multi(r1,4);
+                let r3 = await divide(r2,2);
+                console.log('(a+b)*c/d=',r3);
+            }catch(err){ // try 실행 중 reject 가 발생되면 이쪽으로 튕긴다.
+                console.error(err);
+            }
+        }
+        getResult(20,30);
+
+        /* // 감싸줄수 있는 함수가 없을 경우?
+        let r2 = await multi(r1, 4);
+        // 1. then 을 활용
+        multi(20,20).then(data=>{});
+        // 2. 강제로 함수를 만들어 사용
+        async function multi_func(){
+            let r = await multi(r1, 4);
+        }
+        multi_func();
+        */
+
+        // plus(1,2)
+        // .then(data=>console.log(data))
+        // .catch(error=>console.log(error))
+        // .finally(()=>console.log('done'));
+
+        // function plus(a,b){
+        //     return new Promise(function(resolve,reject){
+        //         setTimeout(function(){
+        //             resolve(a+b);
+        //         },100);
+        //     });
+        // }
+        // function multi(a,b){
+        //     return new Promise(function(resolve,reject){
+        //         setTimeout(function(){
+        //             resolve(a*b);
+        //         },100);
+        //     });
+        // }
+        // function divide(a,b){
+        //     return new Promise(function(resolve,reject){
+        //         setTimeout(function(){
+        //             if(a!=0){
+        //                 resolve(a/b);
+        //             }else{
+        //                 reject('0은 나눌 수 없습니다.');
+        //             }
+        //         },100);
+        //     });
+        // }
+    </script>
+</html>

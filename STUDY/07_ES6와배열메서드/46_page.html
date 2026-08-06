@@ -35,11 +35,29 @@
 
         function total(...params){ // def total(*params):
             console.log(params); // array
-            return 0; // paramss 의 합 반환
+            // params 에서 받은 값을 합하여 반환
+            let result = 0;
+            // for (let i=0; i<params.length; i++){
+            //     result += parseInt(params[i]);
+            // }
+            for (const num of params){
+                result += num;
+            }
+            return result; // paramss 의 합 반환
         }
         console.log('인지값 2개: ',total(10,20));
         console.log('인지값 3개: ',total(1,2,3));
         console.log('인지값 5개: ',total(1,2,3,4,5));
+
+        // spread copy
+        const user = {name:'홍길동',age:25};
+        // key:value 형태여야 하는데 user 는?
+        let person = {user,city:'서울'};
+        console.log(person);
+        // spread 를 사용하면 객체 안의 객체가 아닌
+        // 동일선상의 속성으로 추가가 된다.
+        person = {...user,city:'서울'};
+        console.log(person);
 
     </script>
 </html>

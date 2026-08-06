@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>내장객체</title>
+        <style>
+            
+        </style>
+    </head>
+    <body>
+        <button onclick="myWinOpen()">창열기</button>
+        <button onclick="myWinClose()">창닫기</button>
+    </body>
+    <script>
+        //console.log(window);
+        console.log(window.innerWidth+' / '+window.innerHeight);
+        let win;
+        function myWinOpen(){
+            //window.open(url,창제목,옵션);
+            //window.open('','',''); // 크기를 정해주지 않으면 새 탭으로 생성
+            // width=100, height=100 : 창 크기
+            // top=100,left=100 : 창 위치(1번모니터)
+            win = window.open('https://www.naver.com/','',
+                'width=400,height=400,top=100,left=100, resizable=no,scrollbar=no');
+        }
+        function myWinClose(){
+            win.close();
+        }
+    </script>
+</html>

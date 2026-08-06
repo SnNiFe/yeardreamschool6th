@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>비동기</title>
+    <style></style>
+</head>
+
+<body>
+    <p>
+        ID : <input type="text" id="test" value="" />
+        <button id="goLink">확인</button>
+    </p>
+    <a href="#">링크 이동</a>
+</body>
+<script>
+    // 입력된 아이디(admin,...)에 따라 elice.io 와 naver.com 으로 이동되도록 해 보자!
+    // let inp = document.getElementById('test');
+    // let btn = document.getElementById('goLink');
+    // let link = document.getElementsByTagName('a')[0];
+    // btn.addEventListener('click',function(){
+    //     if (inp.value == 'admin'){
+    //         link.href = 'https://elice.io/';
+    //     }else{
+    //         link.href = 'https://naver.com';
+    //     }
+    // });
+
+    let btn = document.getElementById('goLink');
+    let input = document.getElementById('test');
+    let a = document.querySelector('a'); // 3. a 태그 가져오기
+
+    // 1. 버튼을 누르면 input 의 value 속성을 가져온다.
+    btn.addEventListener('click',()=>{
+        let link = 'https://www.naver.com';
+        // 2. value 의 값이 admin 이냐 아니냐 구분
+        if(input.value === 'admin'){
+            link = 'https://yeardream2026.elice.io/lxp';
+        }
+        // link = input.value==='admin'? 'https://yeardream2026.elice.io/lxp':'https://www.naver.com';
+        // 4. a 태그의 href 속성을 변경
+        a.setAttribute('target','_blank');
+        a.setAttribute('href',link);
+    });
+</script>
+
+</html>

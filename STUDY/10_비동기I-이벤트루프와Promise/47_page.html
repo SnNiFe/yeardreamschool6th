@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>비동기</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        // 비동기 방식의 문제점
+        function plus(a){
+            let result = 0;
+            setTimeout(()=>{
+                result = a+10;
+                //return result; // undefined
+            },100);
+            console.log('비동기 방식 : ',result);
+        }
+        plus(5);
+
+        // 콜백 함수 : 특정 내용이 끝나면 실행할 함수를 전달
+        function puls_call(a, onResult){
+            let result = 0;
+            setTimeout(()=>{
+                onResult(a+10);
+            },100);
+        }
+        puls_call(5,sum => console.log('콜백함수에서 내놓은 값 : '+sum));
+
+        // 콜백지옥을 해결하기 위한 첫 단계 - Promise 객체
+        // Promise 객체 사용시 콜백함수를 기본으로 사용한다.
+        function prom(a){
+            // resolve : 성공시 실행할 함수
+            // reject : 실패시 실행할 함수
+            return new Promise(function(resolve,reject){
+                setTimeout(()=>resolve(a+10),100);
+            });
+        }
+
+        // PromiseResult : 결과값
+        // PromiseState  : 상태값
+        // peding        : 비동기 처리 전, 대기
+        // fullfilled    : 비동기 처리 완료, 성공
+        // rejected      : 비동기 처리 완료, 실패
+        console.log(prom(10)); // resolve 에서 보내주는 값을 어떻게 뽑아내느냐?
+    </script>
+</html>

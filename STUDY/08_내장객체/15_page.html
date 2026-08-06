@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>내장객체</title>
+        <style>
+            
+        </style>
+    </head>
+    <body>
+        항목 : <input type="text" name="key" value=""/>
+        <br/>
+        값 :   <input type="text" name="val" value=""/>
+        <br/>
+        <button onclick="add()">추가</button>
+    </body>
+    <script>
+        // Java Script Object Notation
+        let json = {
+            name:'Daniel',
+            age:12,
+            message:'Hello, My name is Daniel,Lee'
+        };
+        console.log(json); // {name: 'Daniel', age: 12, message: 'Hello, My name is Daniel,Lee'}
+
+        // 직렬화(통신을 할수 있는 형태로 변경(object -> string))
+
+        let str_json = JSON.stringify(json);
+        console.log(str_json); // {"name":"Daniel","age":12,"message":"Hello, My name is Daniel,Lee"}
+        // 문자열 다루기
+        // console.log(str_json.toLocaleUpperCase());
+        // console.log(str_json.split(','));
+        // console.log(str_json.includes('Lee'));
+        // console.log(str_json.indexOf('age'));
+
+        // {"name":"Daniel","age":12,"message":"Hello, My name is Daniel,Lee"
+        // ,"gender":"male",married":"false"}
+
+        // let new_json = str_json.replace('}', ',"gender":"male",married":"false"}');
+        // console.log(new_json);
+
+        let values = str_json.replace('{','').replace('}','');
+        console.log(values);
+        function add(){
+            let key = document.querySelector('input[name="key"]').value;
+            let val = document.querySelector('input[name="val"]').value;
+            console.log(key+':'+val);
+            values = values.replace('{','').replace('}','');
+            values += `,"${key}":"${val}"`;
+            console.log(values);
+            values =`{${values}}`;
+            console.log(values);
+            let result = JSON.parse(values); // 역직렬화
+            console.log(result);
+        }
+
+    </script>
+</html>

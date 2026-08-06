@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>내장객체</title>
+        <style>
+
+        </style>
+    </head>
+    <body>
+        
+    </body>
+    <script>
+        // js 에서는 변수선언시 선언문을 안 붙이면? 전역변수로 인식
+        
+        // setInterval(function(){
+        //     let date = new Date();
+        //     let year = date.getFullYear();   // 연도(YYYY)
+        //     let month = date.getMonth()+1;   // 월(0~11)+1 : 인덱스 개념
+        //     let day = date.getDate();        // 일(1~31)
+        //     let hours = date.getHours();     // 시(0~23)
+        //     let minutes = date.getMinutes(); // 분(0~59)
+        //     let seconds = date.getSeconds(); // 초(0~59)
+        //     let str_month = month.toString().padStart(2,'0'); // 만들고싶은자릿수,붙일내용
+        //     let str_day = day.toString().padStart(2,'0');
+        //     let str_hours = hours.toString().padStart(2,'0');
+        //     let str_min = minutes.toString().padStart(2,'0');
+        //     let str_sec = seconds.toString().padStart(2,'0');
+        
+        //     document.getElementsByTagName('body').innerHTML = 
+        //     `<h1>${year}-${str_month}-${str_day} ${str_hours}:${str_min}:${str_sec}</h1>`;
+        // },1000);
+        document.getElementsByTagName('body')[0].innerHTML= '<h1>current time loading</h1>';
+        
+        let time = setInterval(function(){
+            let date = new Date();
+    
+            console.log(Date); // Wed Aug 05 2026 13:34:20 GMT+0900 (한국 표준시)
+            let year = date.getFullYear();   // 연도(YYYY)
+            let month = date.getMonth()+1;   // 월(0~11)+1 : 인덱스 개념
+            let day = date.getDate();        // 일(1~31)
+            let hours = date.getHours();     // 시(0~23)
+            let minutes = date.getMinutes(); // 분(0~59)
+            let seconds = date.getSeconds(); // 초(0~59)
+    
+            let str_month = month.toString().padStart(2,'0'); // 만들고싶은자릿수,붙일내용
+            let str_day = day.toString().padStart(2,'0');
+            let str_hours = hours.toString().padStart(2,'0');
+            let str_min = minutes.toString().padStart(2,'0');
+            let str_sec = seconds.toString().padStart(2,'0');
+    
+            console.log(`${year}-${str_month}-${str_day} ${str_hours}:${str_min}:${str_sec}`);
+            let print_date = `${year}-${str_month}-${str_day} ${str_hours}:${str_min}:${str_sec}`;
+            document.getElementsByTagName('body')[0].innerHTML= '<h1>'+print_date+'</h1>'
+        },1000);
+
+    </script>
+</html>

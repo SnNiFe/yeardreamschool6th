@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>비동기</title>
+        <style></style>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        let num = prompt('숫자를 입력 하세요');
+        console.log(num);
+        // prom(parseInt(num)).then(data=>console.log(data),error=>console.error(error));
+        prom(parseInt(num))
+        .then(data=>console.log(data))
+        .catch(error=>console.error(error))
+        .finally(()=>console.log('성공을 하던, 실패를 하던 실행함'));
+
+
+        function prom(a){
+            return new Promise(function(resolve,reject){
+                setTimeout(()=>{
+                    if(a>=10){
+                        resolve(a+10);
+                    }else{
+                        reject('인자값은 10보다 크거나 같아야 합니다.');
+                    }
+                },100);
+            });
+        }
+    </script>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>비동기</title>
+        <style></style>
+    </head>
+    <body>
+        <p>콜백지옥은 처리단계가 많아 지면서 콜백에 콜백을 호출할때 발생 한다.</p>
+        <P>가독성이 굉장이 좋지 않다.</P>
+    </body>
+    <script>
+        // 콜백 함수로 동작되는 plus, multi, divide 함수를 이용해 보자
+        function plus(a, b, onResult){
+            setTimeout(() => onResult(a+b),100);
+        }
+        function multi(a, b, onResult){
+            setTimeout(() => onResult(a*b),100);
+        }
+        function divide(a, b, onResult){
+            setTimeout(() => onResult(a/b),100);
+        }
+
+        //(a+b)*c/d
+        // 1단계 : a 와 b 를 더한 값 구하기
+        plus(3,4,function(r1){
+            console.log('a+b=',r1);
+        });
+        // 2단계 : 여기에 c 를 곱한다.
+        plus(3,4,function(r1){
+            multi(r1,4,function(r2){
+                console.log('(a+b)*c=',r2);
+            });
+        });
+        // 3단계 : 여기에 d 를 나눈다.
+        plus(3,4,function(r1){
+            multi(r1,4,function(r2){
+                divide(r2,2,function(r3){
+                    console.log('(a+b)*c/d=',r3);
+                });
+            });
+        });
+
+        // 콜백은 최대 2단계를 넘지 않는걸로 하자
+        
+    </script>
+</html>

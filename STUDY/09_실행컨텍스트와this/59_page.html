@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>this</title>
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <p>Hoisting : 끌어올리다.</p>
+    </body>
+    <script>
+        // 함수 호이스팅
+        test(); // 선언보다 호출이 먼저 일어난다.
+        function test(){
+            console.log('test function!!');
+        }
+
+        /* // 변수에 담는 익명 함수는 호이스팅이 되지 않는다.
+        func();
+        const func = function(){
+            console.log('func function!!');
+        };
+        */
+
+        // 변수 호이스팅 - 내용까지는 생각하지 말고 현상에 집중하자
+        console.log('선언 전 : ',elice); // undefined
+        var elice = 'hello';
+
+        // console.log('선언 전 : ',elice2); // Error
+        // let elice2 = 'hello';
+
+        // console.log('선언 전 : ',elice3); // Error
+        // const elice3 = 'hello';
+
+        // let 과 const 는 호이스팅이 지원되지 않네? -> 아니야 되는거야
+        // 단지 var 는 선언부를 등록하고 기본 값을 undefined 로 넣는 것이고
+        // let 과 const 는 선언부를 등록하고 기본값을 안 넣는 거야
+    </script>
+</html>
