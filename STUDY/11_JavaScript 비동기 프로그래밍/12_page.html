@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>try catch finally</title>
+        <style>
+
+        </style>
+    </head>
+    <body>
+
+    </body>
+    <script> 
+        // debug > log > warn > error
+        console.debug('console.debug'); // Default levels 에서 verbose 선택
+        console.log('console.log');
+        console.warn('console.warn');
+        console.error('console.error');
+
+        const json_str = '{"name":"jhone","age":30';
+
+        try{ // 문제가 발생할것 같은 블록
+            let obj = JSON.parse(json_str);
+            console.log(obj);
+        }catch(err){
+            console.error('역직렬화 중 문제 발생',err);
+            console.log('에러 발생시 처리할 내용...');
+        }finally{
+            console.log('성공이든 실패든 최종 처리 종료');
+        }
+
+    </script>
+</html>

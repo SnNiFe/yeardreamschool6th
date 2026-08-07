@@ -1,0 +1,67 @@
+<!-- axios.rest 에 가서 CDN 방식 복사 -->
+<!-- https://unpkg.com/axios@<x.x.x>/dist/axios.min.js 에서 버전을 모르면 -->
+<!-- https://unpkg.com/axios/dist/axios.min.js 이렇게 주소창에 입력 -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>REST API</title>
+        <!-- CDN 방식 -->
+        <script src="https://unpkg.com/axios@1.19.0/dist/axios.min.js"></script>
+        <style>
+            li {
+                list-style-type: none;
+                padding: 15px 5px;
+                border: 1px solid gray;
+                font-weight: bold;
+                margin-top: 5px;
+                cursor: pointer;
+            }
+
+            #overlay{
+                position:fixed;
+                display: none;
+                top: 35%;
+                left: 35%;
+                background-color: white;
+                z-index: 2;
+                border: 1px solid black;
+            }
+
+            .selected{
+                background-color: lightgray;
+                color:orange;
+            }
+        </style>
+    </head>
+    <body>
+        <ul id="list"></ul>
+        <div id="overlay"></div>
+    </body>
+    <script>
+        axios.get('https://pokeapi.co/api/v2/pokemon/').then(({data})=>{
+            console.log(data.results); // 기본 url 에서 데이터 가져오기
+            let content = '';
+            for(const item of data.results){
+                console.log(item.name, item.url);
+                content += `<li onclick="detail(this,'${item.url}')">${item.name}</li>`;
+            }
+            document.getElementById('list').innerHTML = content;
+        });
+
+        async function detail(elem,url){
+            //console.log(elem);
+            document.querySelectorAll('li').forEach(item=>{
+                item.classList.remove('selected');
+            });
+            //console.log('연결할 URL : ',url);
+            let {data} = await axios.get(url);
+            // let content =`<img src="${data.sprites.front_default}"/>`;
+            // content =`<img src="${data.sprites.back_default}"/>`;
+            // content =`<img src="${data.sprites.front_shiny}"/>`;
+            // content =`<img src="${data.sprites.back_shiny}"/>`;
+
+            elem.classList.add('selected');
+        }
+    </script>
+</html>

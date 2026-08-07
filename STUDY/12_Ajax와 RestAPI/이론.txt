@@ -1,0 +1,42 @@
+### 20 ~ 29 page
+HTTP 요청 메시지 구조
+[start line] <- POST | GET | PUT | PATCH | DELETE
+[header] <- 요청 보낸 이와 관련된 정보들
+
+[body] <- 모낼 본문 내용
+
+POST -> url 에 정보 노출하지 않음, 길이 거의 무제한, 속도 상대적 느림
+GET -> url 에 정보 노출 함, 길이 제한 있음, 속도 상대적으로 빠름
+
+상태 코드
+* 200 <- 성공
+3XX <- 리다이렉션
+* 4XX <- 클라이언트 에러
+- 400 <- Bad Request(요청할 때 보내야할 파라메터수가 안 맞음)
+- 401 <- Unauthorized(요청자의 인증 없음)
+- 403 <- Forbidden(인증자격은 되나 접근 권한의 불충분)
+- 404 <- Not Fount(없는 페이지 또는 요청)
+- 405 <- Method Not Allowed(요청과 서버의 메서드가 안 맞음)
+
+5XX <- 서버 에러
+- 500 : 서버 코드 문제 발생
+
+### 30 page
+API - Application Programming Interface
+Interface - 실제로하면 어렵지만 이용하면 간단하게 할 수 있는 것  (예: 차의 브레이크 패달)
+- 사용법, 규격을 포함하기 도 함
+
+### 33 ~ 42page
+REST - REpresentational State Tranfer
+GET     : 데이터 조회
+POST    : 데이터 생성
+PUT     : 데이터 전체 수정
+PATCH   : 데이터 일부 수정
+DELETE  : 데이터 삭제
+
+### 43 page
+AJAX - Ansynchronous Javascript and XML
+JS : XML HttpRequest  (코드가 긺)
+J-query Lib : $.ajax()
+JS : fetch()  (GET에는 편하나 POST방식은..)
+Axios Lib : axios

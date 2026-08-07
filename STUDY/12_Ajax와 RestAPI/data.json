@@ -1,0 +1,104 @@
+{
+    "Employees": [
+        {
+            "userId": "ohgod",
+            "jobTitleName": "developer",
+            "firstName": "태환",
+            "lastName": "박",
+            "employeeCode": "A",
+            "region": "부산",
+            "phoneNumber": "010-1234-5678",
+            "emailAddress": "thpark135@gmail.com"
+        },
+        {
+            "userId": "kkkkkkkwwwwing",
+            "jobTitleName": "developer",
+            "firstName": "바마",
+            "lastName": "오",
+            "employeeCode": "B",
+            "region": "미국",
+            "phoneNumber": "010-5678-1234",
+            "emailAddress": "ohbama5678@gmail.com"
+        },
+        {
+            "userId": "betterworld",
+            "jobTitleName": "ceo",
+            "firstName": "머스크",
+            "lastName": "일론",
+            "employeeCode": "C",
+            "region": "미국",
+            "phoneNumber": "010-5678-4321",
+            "emailAddress": "mymusk@gmail.com"
+        },
+        {
+            "userId": "jarijari",
+            "jobTitleName": "developer",
+            "firstName": "태훈",
+            "lastName": "김",
+            "employeeCode": "D",
+            "region": "대전",
+            "phoneNumber": "010-8765-4321",
+            "emailAddress": "thkim2222@gmail.com"
+        },
+        {
+            "userId": "zzzzzzzziiiiiiiiiii",
+            "jobTitleName": "developer",
+            "firstName": "나라",
+            "lastName": "김",
+            "employeeCode": "E",
+            "region": "서울",
+            "phoneNumber": "010-1765-4321",
+            "emailAddress": "naraguham@gmail.com"
+        },
+        {
+            "userId": "gubigubi",
+            "jobTitleName": "developer",
+            "firstName": "일성",
+            "lastName": "최",
+            "employeeCode": "F",
+            "region": "전주",
+            "phoneNumber": "010-2345-4321",
+            "emailAddress": "gubigubi@gmail.com"
+        },
+        {
+            "userId": "gimbab777",
+            "jobTitleName": "developer",
+            "firstName": "유아",
+            "lastName": "이",
+            "employeeCode": "G",
+            "region": "서울",
+            "phoneNumber": "010-5522-4321",
+            "emailAddress": "gimbab777@gmail.com"
+        },
+        {
+            "userId": "hiyaho22",
+            "jobTitleName": "developer",
+            "firstName": "순신",
+            "lastName": "이",
+            "employeeCode": "H",
+            "region": "경기",
+            "phoneNumber": "010-2222-4321",
+            "emailAddress": "sunshin22@gmail.com"
+        },
+        {
+            "userId": "whatsupman",
+            "jobTitleName": "developer",
+            "firstName": "파도",
+            "lastName": "성",
+            "employeeCode": "I",
+            "region": "부산",
+            "phoneNumber": "010-1342-4321",
+            "emailAddress": "padosori92@gmail.com"
+        },
+        {
+            "userId": "hangbokgg",
+            "jobTitleName": "developer",
+            "firstName": "동석",
+            "lastName": "김",
+            "employeeCode": "J",
+            "region": "대전",
+            "phoneNumber": "010-1242-4321",
+            "emailAddress": "dskim214@gmail.com"
+        }
+    ]
+}

@@ -4,7 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>비동기</title>
-    <style></style>
+    <style>
+        table, th, td{
+            border: solid 1px black;
+            border-collapse: collapse;
+        }
+    </style>
 </head>
 
 <body>
@@ -25,6 +30,74 @@
     <button>입력</button>
 </body>
 <script>
+    /* // let btn = document.getElementsByTagName('button')[0];
+    // let table = document.getElementsByTagName('table')[0];
+    // console.log(table);
+    // btn.addEventListener('click',function(){
+    //     let no = document.getElementById('no');
+    //     let name = document.getElementById('name');
+    //     let sub = document.getElementById('sub');
+    //     let score = document.getElementById('score');
+    //     let desc = document.getElementById('desc');
+    //     let nrow = table.insertRow();
+    //     let cell = [];
+    //     for(let i=0;i<5;i++){
+    //         cell[i] = nrow.insertCell(i);
+    //     }
+    //     cell[0].innerText = no.value;
+    //     cell[1].innerText = name.value;
+    //     cell[2].innerText = sub.value;
+    //     cell[3].innerText = score.value;
+    //     cell[4].innerText = desc.value;
+    //     //
+    //     table.innerHTML += `<tr>
+    //         <th>${no.value}</th>
+    //         <th>${name.value}</th>
+    //         <th>${sub.value}</th>
+    //         <th>${score.value}</th>
+    //         <th>${desc.value}</th>
+    //         </tr>`;
+    // }); */
+
+    let btn = document.querySelector('button');
+    let table = document.querySelector('table');
+    btn.addEventListener('click',function(evt){
+        let inputs = document.getElementsByTagName('input');
+        let tr = document.createElement('tr'); // tr 태그 생성
+        // td 내용 생성
+        let content = '';
+        for (let i = 0; i < inputs.length; i++){
+            content += `<td>${inputs[i].value}</td>`; // 비추천(위치가 고정되어있음 id 안따라감)
+        }
+
+        // td 내용을 tr 태그의 태그와 태그사이에 넣는다.
+        tr.innerHTML = content;
+        // table 의 자식요소 맨 마지막에 넣는다.
+        table.appendChild(tr);
+    });
+
+    // let btn = document.querySelector('button');
+    // let no = document.getElementById('no');
+    // let name = document.getElementById('name');
+    // let sub = document.getElementById('sub');
+    // let score = document.getElementById('score');
+    // let desc = document.getElementById('desc');
+    // let table = document.querySelector('table');
+    // btn.addEventListener('click',function(evt){
+    //     console.log(no.value, name.value, sub.value, score.value, desc.value);
+    //     let tr = document.createElement('tr'); // tr 태그 생성
+    //     // td 내용 생성
+    //     let content = '';
+    //     content += `<td>${no.value}</td>`;
+    //     content += `<td>${name.value}</td>`;
+    //     content += `<td>${sub.value}</td>`;
+    //     content += `<td>${score.value}</td>`;
+    //     content += `<td>${desc.value}</td>`;
+    //     // td 내용을 tr 태그의 태그와 태그사이에 넣는다.
+    //     tr.innerHTML = content;
+    //     // table 의 자식요소 맨 마지막에 넣는다.
+    //     table.appendChild(tr);
+    // });
 
 </script>
 

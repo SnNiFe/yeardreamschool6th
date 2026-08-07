@@ -1,0 +1,49 @@
+<!-- axios.rest 에 가서 CDN 방식 복사 -->
+<!-- https://unpkg.com/axios@<x.x.x>/dist/axios.min.js 에서 버전을 모르면 -->
+<!-- https://unpkg.com/axios/dist/axios.min.js 이렇게 주소창에 입력 -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>REST API</title>
+        <!-- CDN 방식 -->
+        <script src="https://unpkg.com/axios@1.19.0/dist/axios.min.js"></script>
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <button>데이터 요청</button>
+    </body>
+    <script>
+        let url = 'https://catfact.ninja/breeds';
+
+        // 버튼 클릭시 서버에 요청하여 데이터 console 로 출력하기
+
+        // let btn = document.querySelector('button');
+        // let body = document.querySelector('body');
+        // btn.addEventListener('click',function(){
+        //     console.log('데이터 요청 중..');
+        //     axios.get(url).then(function({data}){
+        //         let breeds = data.data;
+        //         let bre = [];
+        //         let p = [];
+        //         for(let i=0;i<breeds.length;i++){bre[i]=document.createTextNode(JSON.stringify(breeds[i]));}
+        //         console.log(breeds);
+        //         for(let i=0;i<bre.length;i++){
+        //         p[i] = document.createElement('p');
+        //         p[i].appendChild(bre[i]);
+        //         document.querySelector('body').appendChild(p[i]);
+        //         }
+        //     });
+        // });
+
+        let btn = document.getElementsByTagName('button')[0];
+        btn.addEventListener('click',async(evt)=>{
+            let {data} = await axios.get(url);
+            console.log(data);
+        });
+
+
+    </script>
+</html>

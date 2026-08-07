@@ -25,6 +25,49 @@
         <button onclick="stop()">stop</button>
     </body>
     <script>
+        // let screen = document.getElementById('screen');
+        // let bg = document.getElementById('bg');
+        // let x = 0;
+        // let run;
+        // let r_sp = 20;
+        // function start(){
+        //     let i = 0;
+        //     run = setInterval(function(){
+        //         if(x>=1000-r_sp){clearInterval(run);}
+        //         i++; 
+        //         x+=r_sp;
+        //         screen.style.backgroundPositionX = `${-256*i}px`;
+        //         if(i>=5){i=0;}
+        //         bg.style.backgroundPositionX = `${-x}px`;
+        //     },100);
+        // }
+        // function stop(){
+        //     clearInterval(run);
+        // }
+
+        const pos = [0, -256*1, -256*2, -256*3, -256*4, -256*5]; // 보여줄 이미지 x위치
+        let screen = document.getElementById('screen');
+        let bg = document.getElementById('bg');
+        let time;
+        let x = 0;
+
+        function start(){
+            let i = 0;
+            time = setInterval(()=>{
+                screen.style.background = `url(sprite.png) ${pos[i%6]}px 0`;
+                i++;
+
+                bg.style.background = `url(background.jpg) ${x}px 0`;
+                x -= 20;
+                if(x <= -1000){
+                    stop();
+                }
+            },100);
+        }
+
+        function stop(){
+            clearInterval(time);
+        }
 
     </script>
 </html>

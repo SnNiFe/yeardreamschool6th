@@ -20,6 +20,43 @@
         <button onclick="stop()">stop</button>
     </body>
     <script>        
+        // let btns = document.querySelectorAll('button');
+        // let scr = document.getElementById('screen');
+        // let srt = btns[0];
+        // let stp = btns[1];
+        // let run;
+        // srt.onclick = function(){
+        //     let i = 0;
+        //     run = setInterval(function(){
+        //         scr.style.backgroundPositionX = (-256*i)+'px'; // 버튼 여러번 누르면 중복 됨
+        //         i++;
+        //     },100);
+        // };
+        // stp.onclick = function(){
+        //     clearInterval(run);
+        // }
 
+        // 0, -297, -538, -790, -1065, -1310
+        const pos = [0, -256*1, -256*2, -256*3, -256*4, -256*5]; // 보여줄 이미지 x위치
+        let time;
+        let screen = document.getElementById('screen');
+        let x = 0;
+        function start(){
+            console.log('start');
+            let i = 0;
+            time = setInterval(function(){
+                screen.style.background = `url(sprite.png) ${pos[i]}px 0`;
+                i++;
+                x += 20;
+                if (i >= pos.length){
+                    i = 0;
+                }
+                screen.style.left = `${x}px`;
+            },100);
+        }
+        function stop(){
+            console.log('stop');
+            clearInterval(time);
+        }
     </script>
 </html>
