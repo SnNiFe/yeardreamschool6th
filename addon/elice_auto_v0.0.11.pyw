@@ -16,7 +16,23 @@ import json
 import ctypes      
 import traceback   
 import calendar    # 👈 [추가됨] 미니 달력을 만들기 위한 내장 모듈
+import ctypes # [추가] 윈도우 API 제어용
 
+# 절전 모드 방지를 위한 윈도우 상수
+ES_CONTINUOUS = 0x80000000
+ES_SYSTEM_REQUIRED = 0x00000001
+ES_DISPLAY_REQUIRED = 0x00000002
+
+def set_caffeine_mode(enable):
+    """윈도우 절전/화면꺼짐 방지 ON/OFF"""
+    if enable:
+        # 화면 켜짐 유지 & 절전 방지 활성화
+        ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED)
+        print("☕ [카페인 모드 ON] 컴퓨터가 잠들지 않습니다.")
+    else:
+        # 절전 방지 해제 (기본 상태로 복구)
+        ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
+        print("💤 [카페인 모드 OFF] 절전 방지가 해제되었습니다.")
 
 # =====================================================================
 # [1] 시스템 기본 설정 및 전역 변수
@@ -701,6 +717,58 @@ def run_bot():
                 print("💀 최대 재시도 횟수 초과 혹은 중지 요청으로 인해 봇을 대기 상태로 전환합니다.")
                 break 
 
+# ==========================================
+# 🛠️ 투명 망토를 활용한 미니 모드 전환 함수 
+# ==========================================
+global mini_window, mini_log_var
+mini_window = None
+mini_log_var = None
+
+def switch_to_mini():
+    """본체를 숨기고 미니 창을 띄웁니다."""
+    global mini_window, root, caffeine_var, close_browser_var, mini_log_var
+    
+    root.withdraw() 
+    
+    mini_window = tk.Toplevel(root)
+    mini_window.title("출석 봇 미니 대시보드")
+    mini_window.geometry("500x80") # 👈 가로로 길고 세로는 얇게!
+    mini_window.attributes("-topmost", True)
+    mini_window.resizable(False, False) # 창 크기 고정
+    
+    mini_window.protocol("WM_DELETE_WINDOW", stop_bot_mini)
+
+    # 1. 상단 프레임: 버튼과 토글들을 가로로 나열
+    top_frame = tk.Frame(mini_window)
+    top_frame.pack(fill=tk.X, padx=10, pady=(10, 5))
+    
+    tk.Label(top_frame, text="🚀 봇 가동 중", font=("Helvetica", 10, "bold"), fg="#4CAF50").pack(side=tk.LEFT, padx=(0, 15))
+
+    def toggle_caffeine():
+        set_caffeine_mode(caffeine_var.get())
+        
+    tk.Checkbutton(top_frame, text="☕ 카페인", variable=caffeine_var, command=toggle_caffeine, cursor="hand2").pack(side=tk.LEFT, padx=5)
+    tk.Checkbutton(top_frame, text="브라우저 함께 닫기", variable=close_browser_var, cursor="hand2").pack(side=tk.LEFT, padx=5)
+
+    # 중지 버튼은 맨 우측에 찰싹 붙임
+    tk.Button(top_frame, text="■ 중지 및 복원", command=stop_bot_mini, 
+              bg="#ff5252", fg="white", bd=0, cursor="hand2", padx=10).pack(side=tk.RIGHT)
+
+    # 2. 하단 프레임: 실시간 1줄 로그 출력창
+    bottom_frame = tk.Frame(mini_window)
+    bottom_frame.pack(fill=tk.X, padx=10, pady=(0, 5))
+    
+    mini_log_var = tk.StringVar(value="대기 중...")
+    tk.Label(bottom_frame, textvariable=mini_log_var, font=("Consolas", 9), fg="#555", anchor="w").pack(fill=tk.X)
+
+def stop_bot_mini():
+    """미니 창을 끄고 다시 원래 창으로 돌아옵니다."""
+    global mini_window, root, stop_bot
+    set_caffeine_mode(False)
+    if mini_window:
+        mini_window.destroy()
+    stop_bot() 
+    root.deiconify()
 
 # =====================================================================
 # [5] GUI 및 스케줄러 루프 제어
@@ -713,6 +781,16 @@ class PrintLogger:
     def _append(self, message):
         self.text_widget.insert(tk.END, message)
         self.text_widget.see(tk.END) 
+        # 2. 미니 모드가 켜져 있다면, 쓸데없는 줄바꿈을 쳐내고 1줄 텍스트로 갱신!
+        clean_msg = message.strip()
+        if clean_msg:
+            try:
+                global mini_log_var
+                if mini_log_var is not None:
+                    # 로그가 너무 길면 뒤를 잘라서 예쁘게 보여줌
+                    display_msg = clean_msg if len(clean_msg) < 60 else clean_msg[:57] + "..."
+                    mini_log_var.set(f"> {display_msg}")
+            except: pass
     def flush(self): pass
 
 def run_scheduler_loop():
@@ -724,7 +802,14 @@ def run_scheduler_loop():
         if var.get(): target_times.append(t_str)
     for t_str, var in afternoon_vars.items():
         if var.get(): target_times.append(t_str)
-            
+
+    # 시작이 완료되면 미니 모드로 변신!
+    switch_to_mini()
+    print("창 소형화 설정 확인 중..")
+    # 봇이 켜질 때 카페인이 체크되어 있다면 즉시 적용
+    if caffeine_var.get():
+        set_caffeine_mode(True)
+
     if not target_times:
         print("\n⚠️ 선택된 예약 시간이 없습니다! 기본 모드로 1회만 진행합니다.")
     else:
@@ -749,8 +834,9 @@ def run_scheduler_loop():
     print("🛑 스케줄러 대기 상태가 종료되었습니다.")
 
 def create_gui():
-    global url_entry, morning_vars, afternoon_vars, retry_var, wait_var
-    
+    # 👇 [수정됨] root, stop_bot, caffeine_var를 추가로 적어줍니다.
+    global url_entry, morning_vars, afternoon_vars, retry_var, wait_var, root, stop_bot, caffeine_var, close_browser_var
+
     root = tk.Tk()
     root.title("엘리스 통합 자동 출석 매니저")
     root.geometry("640x750") 
@@ -792,6 +878,9 @@ def create_gui():
 
     saved_config = load_config()
     close_browser_var = tk.BooleanVar(value=saved_config.get("close_browser", True)) 
+
+    # 👇 [여기에 1줄 추가!] 카페인 변수를 여기서 미리 만들어 줍니다.
+    caffeine_var = tk.BooleanVar(value=False)
     
     title_lbl = tk.Label(root, text="🚀 엘리스 LXP 통합 출석 자동화 시스템", font=("Helvetica", 14, "bold"), bg="#f4f4f4")
     title_lbl.pack(pady=10)

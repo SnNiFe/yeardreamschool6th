@@ -16,6 +16,22 @@
     "attendance_log": {
         "2026-08-04": {
             "morning": true,
+            "afternoon": true
+        },
+        "2026-08-03": {
+            "morning": true,
+            "afternoon": true
+        },
+        "2026-08-05": {
+            "morning": true,
+            "afternoon": true
+        },
+        "2026-08-06": {
+            "morning": true,
+            "afternoon": true
+        },
+        "2026-08-07": {
+            "morning": true,
             "afternoon": false
         }
     }
