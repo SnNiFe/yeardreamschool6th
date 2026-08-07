@@ -720,19 +720,20 @@ def run_bot():
 # ==========================================
 # 🛠️ 투명 망토를 활용한 미니 모드 전환 함수 
 # ==========================================
-global mini_window, mini_log_var
+global mini_window, mini_log_var, mini_status_var
 mini_window = None
 mini_log_var = None
+mini_status_var = None
 
 def switch_to_mini():
     """본체를 숨기고 미니 창을 띄웁니다."""
-    global mini_window, root, caffeine_var, close_browser_var, mini_log_var
+    global mini_window, root, caffeine_var, close_browser_var, mini_log_var, mini_status_var, attendance_log
     
     root.withdraw() 
     
     mini_window = tk.Toplevel(root)
-    mini_window.title("출석 봇 미니 대시보드")
-    mini_window.geometry("500x80") # 👈 가로로 길고 세로는 얇게!
+    mini_window.title("🚀 출석 봇 가동 중")
+    mini_window.geometry("500x80") # 👈 사용자님 맞춤 사이즈!
     mini_window.attributes("-topmost", True)
     mini_window.resizable(False, False) # 창 크기 고정
     
@@ -742,7 +743,9 @@ def switch_to_mini():
     top_frame = tk.Frame(mini_window)
     top_frame.pack(fill=tk.X, padx=10, pady=(10, 5))
     
-    tk.Label(top_frame, text="🚀 봇 가동 중", font=("Helvetica", 10, "bold"), fg="#4CAF50").pack(side=tk.LEFT, padx=(0, 15))
+    # 👇 [변경점 2] 빈자리에 들어갈 '실시간 상태창' 생성
+    mini_status_var = tk.StringVar(value="상태 불러오는 중...")
+    tk.Label(top_frame, textvariable=mini_status_var, font=("Helvetica", 9, "bold"), fg="#333").pack(side=tk.LEFT, padx=(0, 10))
 
     def toggle_caffeine():
         set_caffeine_mode(caffeine_var.get())
@@ -760,6 +763,30 @@ def switch_to_mini():
     
     mini_log_var = tk.StringVar(value="대기 중...")
     tk.Label(bottom_frame, textvariable=mini_log_var, font=("Consolas", 9), fg="#555", anchor="w").pack(fill=tk.X)
+
+    # 👇 [변경점 3] 1초마다 시계와 출석 상태(DB)를 읽어와서 갱신하는 타이머 루프
+    def update_status_loop():
+        if not mini_window or not mini_window.winfo_exists():
+            return # 미니 창이 꺼지면 시계도 안전하게 멈춤
+        
+        now = datetime.datetime.now()
+        time_str = now.strftime("%H:%M:%S")
+        today_str = now.strftime("%Y-%m-%d")
+        
+        # 현재 날짜의 출석 데이터를 가져옴
+        log = attendance_log.get(today_str, {"morning": False, "afternoon": False})
+        
+        # 출석 완료면 초록/파랑, 안 했으면 빈 동그라미(⚪)
+        m_mark = "🟢" if log.get("morning") else "⚪"
+        a_mark = "🔵" if log.get("afternoon") else "⚪"
+        
+        # 화면에 즉시 반영!
+        mini_status_var.set(f"[{time_str}] 오전:{m_mark} 오후:{a_mark}")
+        
+        # 1000ms(1초) 뒤에 자기 자신을 다시 불러서 영원히 똑딱거리게 만듦
+        mini_window.after(1000, update_status_loop)
+        
+    update_status_loop() # 시계 가동 시작!
 
 def stop_bot_mini():
     """미니 창을 끄고 다시 원래 창으로 돌아옵니다."""
