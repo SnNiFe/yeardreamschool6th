@@ -1,0 +1,83 @@
+<!-- axios.rest 에 가서 CDN 방식 복사 -->
+<!-- https://unpkg.com/axios@<x.x.x>/dist/axios.min.js 에서 버전을 모르면 -->
+<!-- https://unpkg.com/axios/dist/axios.min.js 이렇게 주소창에 입력 -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>REST API</title>
+        <!-- CDN 방식 -->
+        <script src="https://unpkg.com/axios@1.19.0/dist/axios.min.js"></script>
+        <style>
+            .container {
+                height: 100vh;
+                max-width: 600px;
+                margin: auto;
+                display: flex;
+                justify-content: space-around;
+            }
+            .item {
+                max-width: 350px;
+                text-align: center;
+            }
+            .button {
+                border: 2px solid #4CAF50;
+                background-color: white;
+                padding: 16px 32px;
+                text-decoration: none;
+                font-size: 2rem;
+                margin: 4px 2px;
+                transition-duration: 0.4s;
+                cursor: pointer;
+            }
+            .button:hover {
+                background-color: #4CAF50;
+                color: white;
+            }
+            ol {
+                float: left;
+                padding: 0 1rem 0 0;
+            }
+            li {
+                list-style: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="item">
+            <h3>Dogs API 활용하기</h3>
+            <h3>(클릭하여 사진 얻기)</h3>
+            <button class="button" id="buttonSubmit">클릭</button>
+            <img id="dogImage" src="noimage.png"></img>
+            </div>
+        </div>
+    </body>
+    <script>
+        // let btn = document.getElementById('buttonSubmit');
+        // let img = document.getElementById('dogImage');
+        // btn.addEventListener('click',async function(evt){
+        //     let {data} = await axios.get('https://dog.ceo/api/breeds/image/random');
+        //     //console.log(data.message);
+        //     img.src = data.message;
+        // });
+
+        let btn = document.getElementById('buttonSubmit');
+        let img = document.getElementById('dogImage');
+        const url = 'https://dog.ceo/api/breeds/image/random';
+
+        // 1. 클릭하면...
+        btn.addEventListener('click',async ()=>{
+            let {data} = await axios.get(url);   // 2. url 을 요청하고
+            console.log(data);
+            // 3. 그 안에서 이미지 주소를 가져와
+            if(data.status == 'success'){
+                // 4. img 태그의 src 속성에 적용해 준다.
+                img.setAttribute('src',data.message);
+            }else{
+                img.setAttribute('src',noimage.png);
+            }
+        });
+        
+    </script>
+</html>

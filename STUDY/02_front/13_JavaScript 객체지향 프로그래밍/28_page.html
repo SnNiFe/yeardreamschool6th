@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>JAVA SCRIPT OOP</title>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        class Car{
+            name;
+            speed;
+            wheels = 4;
+            /*
+            init(self,name,speed):
+                self.name = name
+                self.speed = speed
+            */
+            constructor(name,speed){
+                this.name = name;
+                this.speed = speed;
+            }
+
+            printThis(){
+                let name = 'local name'
+                console.log(this);
+                console.log(this.name);
+                console.log(name);
+            }
+
+            drive(){
+                console.log('driving!!!!');
+                //printThis();  {} 내부에서 찾는다.
+                this.printThis(); // this, 즉 이 객체 내부에서 찾는다.
+            }
+        }
+        // 일반적인 객체화
+        // 객체화 == 생성자 호출(생성자는 너무 당연한 것이기 때문에 생략이 가능)
+        const car = new Car('빵빵이',200);
+        car.printThis();
+        car.drive();
+
+        car.name = '붕붕이';
+        car.printThis();
+    </script>
+</html>

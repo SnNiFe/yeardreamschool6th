@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>JAVA SCRIPT OOP</title>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        class Car{
+
+            // self.name (python, js 에서만 생략가능)
+            constructor(name,speed){
+                this.name = name;
+                this.speed = speed;
+            }
+
+            // 불러오기용 메서드(getter)
+            get spec(){
+                return {name:this.name, speed:this.speed}
+            }
+
+            // 수정하기용 메서드(settet)
+            set spec(newSpec){
+                console.log(`${newSpec} 적용`);
+                let arr = newSpec.split(',');
+                this.name = arr[0];
+                this.speed = parseInt(arr[1]);
+            }
+        }
+
+        const car = new Car('Casper',200);
+        console.log(car.spec);
+        car.spec='morning,180';
+        console.log(car.spec);
+    </script>
+</html>

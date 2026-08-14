@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>JAVA SCRIPT OOP</title>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        class Car{
+            #name; // private(상속되지않음)
+            #speed;
+
+            constructor(name,speed){
+                this.#name = name;
+                this.#speed = speed;
+            }
+
+            get speed(){
+                return this.#speed;
+            }
+            set speed(speed){
+                if(speed<0){
+                    console.error('마이너스 속도는 낼 수 없습니다.');
+                }else{
+                    this.#speed = speed;
+                }
+            }
+            printSpec(){
+                return {name: this.#name, speed: this.#speed};
+            }
+        }
+
+        class SportsCar extends Car{
+            #isTurbo = false;
+            turboSpeed(turbo){
+                this.#isTurbo = turbo;
+                if(this.#isTurbo){
+                    console.log('turbo 동작!');
+                    // set speed(get speed() * 1.2)
+                    this.speed *= 1.2; // this 는 자식개체를 의미(부모가 상속해 준것도 내것처럼...)
+                }else{
+                    console.log('turbo 종료');
+                    this.speed = 400;
+                }
+            }
+        }
+
+        let sportsCar = new SportsCar('Porsche',400);
+        sportsCar.turboSpeed(true);
+        console.log(sportsCar.printSpec());
+        sportsCar.turboSpeed(false);
+        console.log(sportsCar.printSpec());
+        
+    </script>
+</html>

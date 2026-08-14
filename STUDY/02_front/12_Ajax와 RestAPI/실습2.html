@@ -43,7 +43,7 @@
             console.log(data.results); // 기본 url 에서 데이터 가져오기
             let content = '';
             for(const item of data.results){
-                console.log(item.name, item.url);
+                // console.log(item.name, item.url);
                 content += `<li onclick="detail(this,'${item.url}')">${item.name}</li>`;
             }
             document.getElementById('list').innerHTML = content;
@@ -56,12 +56,14 @@
             });
             //console.log('연결할 URL : ',url);
             let {data} = await axios.get(url);
-            // let content =`<img src="${data.sprites.front_default}"/>`;
-            // content =`<img src="${data.sprites.back_default}"/>`;
-            // content =`<img src="${data.sprites.front_shiny}"/>`;
-            // content =`<img src="${data.sprites.back_shiny}"/>`;
-
+            let content = `<img src="${data.sprites.front_default}"/>`;
+            content += `<img src="${data.sprites.back_default}"/>`;
+            content += `<img src="${data.sprites.front_shiny}"/>`;
+            content += `<img src="${data.sprites.back_shiny}"/>`;
             elem.classList.add('selected');
+            let overlay = document.getElementById('overlay');
+            overlay.innerHTML = content;
+            overlay.style.display='block';
         }
     </script>
 </html>

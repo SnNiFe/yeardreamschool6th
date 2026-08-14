@@ -154,6 +154,10 @@ def get_browser_driver():
     try:
         c_options = ChromeOptions()
         c_options.add_experimental_option("detach", True) 
+        # 👇 [여기에 추가!] "마우스 클릭 없어도 그냥 소리 틀어라!" 옵션
+        c_options.add_argument("--autoplay-policy=no-user-gesture-required") 
+        c_options.add_argument("--disable-blink-features=AutomationControlled")
+
         c_options.add_argument("--disable-blink-features=AutomationControlled")
         c_options.add_experimental_option("excludeSwitches", ["enable-automation"])
         c_options.add_experimental_option("useAutomationExtension", False)
@@ -173,6 +177,10 @@ def get_browser_driver():
     try:
         e_options = EdgeOptions()
         e_options.add_experimental_option("detach", True)
+        # 👇 [여기에 추가!] 엣지도 마찬가지로 추가
+        e_options.add_argument("--autoplay-policy=no-user-gesture-required")
+        e_options.add_argument("--disable-blink-features=AutomationControlled")
+
         e_options.add_argument("--disable-blink-features=AutomationControlled")
         e_options.add_experimental_option("excludeSwitches", ["enable-automation"])
         e_options.add_experimental_option("useAutomationExtension", False)

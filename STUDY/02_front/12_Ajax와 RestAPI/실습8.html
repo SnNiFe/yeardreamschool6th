@@ -1,0 +1,99 @@
+<!-- axios.rest 에 가서 CDN 방식 복사 -->
+<!-- https://unpkg.com/axios@<x.x.x>/dist/axios.min.js 에서 버전을 모르면 -->
+<!-- https://unpkg.com/axios/dist/axios.min.js 이렇게 주소창에 입력 -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>REST API</title>
+        <!-- CDN 방식 -->
+        <script src="https://unpkg.com/axios@1.19.0/dist/axios.min.js"></script>
+        <style>
+            .container {
+                height: 100vh;
+                max-width: 600px;
+                margin: auto;
+                display: flex;
+                justify-content: space-around;
+            }
+            .item {
+                max-width: 350px;
+            }
+            .label {
+                width: 4rem;
+                display: block;
+            }
+            ol {
+                float: left;
+                padding: 0 1rem 0 0;
+            }
+            li {
+                list-style: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="item">
+            <h3>Random User API 활용하기 (아래 숫자 이상의 나이를 가진 사람 목록)</h3>
+            <form>
+                <label class="label" >숫자
+                <input type="number" id="inputNumber" placeholder="30" />
+                </label>
+                <br />
+                <button id="buttonSubmit">클릭</button>
+                <br />
+                <ol id="userList"></ol>
+            </form>
+            </div>
+        </div>
+    </body>
+    <script>
+        // let inp = document.getElementById('inputNumber');
+        // let btn = document.getElementById('buttonSubmit');
+        // let lis = document.getElementById('userList');
+
+        // btn.addEventListener('click',getName);
+
+        // async function getName(e){
+        //     e.preventDefault();
+        //     lis.innerHTML = '';
+        //     let {data} = await axios.get('https://randomuser.me/api/?results=100');
+        //     console.log(data);
+        //     console.log('====',inp.value, '세 이상의 리스트====');
+        //     for (let i=0; i<data.results.length; i++){
+        //         if(inp.value <= data.results[i].dob.age){
+        //             console.log(data.results[i].dob.age+'세, '+data.results[i].name.first+' '+data.results[i].name.last);
+        //             lis.innerHTML += `<li>${data.results[i].name.title}. ${data.results[i].name.first} ${data.results[i].name.last}</li>`;
+        //         }
+        //     }
+        // }
+
+        let btn = document.getElementById('buttonSubmit');
+        let list = document.getElementById('userList');
+        let input = document.getElementById('inputNumber');
+
+        btn.addEventListener('click',async(evt)=>{
+            evt.preventDefault(); // 기본 기능 막기(submit 기능)
+            // 1. 데이터 들고오기
+            let {data} = await axios.get('https://randomuser.me/api/?results=100');
+            console.log(data.results);
+
+            let content = '';
+            for (const item of data.results) {
+                if(item.dob.age >= input.value){ // 2. 입력한 나이와 비교
+                    // 3. 조건에 맞으면 출력하기
+                    // picture.thumbnail
+                    console.log(item.name.title, item.name.first, item.name.last, item.dob.age);
+                    content += `<li>`;
+                    content += `<img src="${item.picture.thumbnail}"/>`;
+                    content += ` ${item.name.title}. `; 
+                    content += `${item.name.first} ${item.name.last} (${item.dob.age})`;
+                    content += `</li>`;
+                }
+                list.innerHTML = content;
+            }
+        });
+
+    </script>
+</html>

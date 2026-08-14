@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>JAVA SCRIPT OOP</title>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        class Car{
+            #name; // private(상속되지않음)
+            #speed;
+
+            constructor(name,speed){
+                console.log('부모 객체화');
+                this.#name = name;
+                this.#speed = speed;
+            }
+
+            printSpec(){
+                return {name: this.#name, speed: this.#speed};
+            }
+        }
+
+        // I.D.E.(Integrated Development Environment) : 통합 개발 환경 ->편집,프로젝트생성,실행,컴파일 까지 가능(pycharm)
+        // (VSCode는 편집기 이지만 확장을 붙이기에 따라 ide로 사용도 가능)
+        // Editor : 편집기 -> 소스수정만 가능(notepad++,colab)
+        class SportsCar extends Car{
+            #isTurbo;
+            #horsePower;
+
+            constructor(name,speed,isTurbo,horsePower){
+                super(name,speed); // super 위에는 어떠한 작업도 해서는 안됨
+                console.log('자식 객체화');
+                // 자식의 isTurbo 와 horsePower 도 printSpec 에서 보여주고 싶다면?
+                this.#horsePower = horsePower;
+                this.#isTurbo = isTurbo;
+            }
+        }
+
+        let sportsCar = new SportsCar('porsche',400,false,500);
+        console.log(sportsCar.printSpec());
+
+    </script>
+</html>

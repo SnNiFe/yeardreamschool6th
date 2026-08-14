@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>JAVA SCRIPT OOP</title>
+    </head>
+    <body>
+
+    </body>
+    <script>
+        class Car{
+            #name; // private(상속되지않음)
+            #speed;
+
+            constructor(name,speed){
+                console.log('부모 객체화');
+                this.#name = name;
+                this.#speed = speed;
+            }
+
+            printSpec(){
+                return {name: this.#name, speed: this.#speed};
+            }
+        }
+
+        class SportsCar extends Car{
+            #isTurbo;
+            #horsePower;
+
+            constructor(name,speed,isTurbo,horsePower){
+                super(name,speed); 
+                console.log('자식 객체화');
+                this.#horsePower = horsePower;
+                this.#isTurbo = isTurbo;
+            }
+
+            // 부모와 자식이 같은 이름의 메서드를 가지고 있다?(override)
+            // override 는 부모의 기능을 완전히 다시 만들거나 개선할때 사용
+            printSpec(){
+                let super_spec = super.printSpec();
+                // {name,speed,isTurbo,horsePower} 를 보여주고 싶다.
+                // super_spec.isTurbo = this.#isTurbo;
+                // super_spec.horsePower = this.#horsePower;
+                return {...super_spec, isTurbo: this.#isTurbo, horsePower: this.#horsePower};
+            }
+        }
+
+        let sportsCar = new SportsCar('porsche',400,false,500);
+        console.log(sportsCar.printSpec());
+
+    </script>
+</html>

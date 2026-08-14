@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>JAVA SCRIPT OOP</title>
+    </head>
+    <body>
+        <p>private 접근 제한자 :  class 내부에서만 쓸 수 있음</p>
+        <p>만약 밖에서도 쓰고 싶다면 getter 와 setter 를 활용 해야함</p>
+    </body>
+    <script>
+        class Computer{
+            #power; // set, get
+            #panSpeed; // set, get
+            #temp; // get
+
+            setPower(power){
+                this.#power = power;
+                if(power){
+                    this.#panSpeed=30;
+                    this.#temp=70;
+                }else{
+                    this.#panSpeed=0;
+                    this.#temp=0;
+                }
+            }
+
+            getPanSpeed(){
+                return this.#panSpeed;
+            }
+
+            getTemp(){
+                return this.#temp;
+            }
+
+            setPanSpeed(speed){
+                this.#panSpeed = speed;
+                this.#temp = 100-this.#panSpeed;
+            }
+
+            isPower(){ // getPower
+                return this.#power;
+            }
+        }
+
+        com = new Computer();
+        com.setPower(true);
+        console.log('컴퓨터 전원 ON : ',com.isPower()); // getPower
+        console.log('팬 속도 : ',com.getPanSpeed());
+        console.log('온도 : ',com.getTemp());
+        com.setPanSpeed(50);
+        console.log('팬 속도 : ',com.getPanSpeed());
+        console.log('온도 : ',com.getTemp());
+    </script>
+</html>

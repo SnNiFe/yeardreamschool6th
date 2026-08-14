@@ -1,0 +1,106 @@
+<!-- axios.rest 에 가서 CDN 방식 복사 -->
+<!-- https://unpkg.com/axios@<x.x.x>/dist/axios.min.js 에서 버전을 모르면 -->
+<!-- https://unpkg.com/axios/dist/axios.min.js 이렇게 주소창에 입력 -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>REST API</title>
+        <!-- CDN 방식 -->
+        <script src="https://unpkg.com/axios@1.19.0/dist/axios.min.js"></script>
+        <style>
+            .container {
+                height: 100vh;
+                max-width: 600px;
+                margin: auto;
+                display: flex;
+                justify-content: space-around;
+            }
+            .item {
+                max-width: 500px;
+            }
+            .label {
+                width: 8rem;
+                display: block;
+            }
+            .select-box {
+                width: 8rem;
+            }
+            .employee-email {
+                width: 10rem;
+            }
+            ol {
+                float: left;
+                padding: 0 1rem 0 0;
+            }
+            li {
+                list-style: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="item">
+            <h3>json 데이터 활용하기</h3>
+            <form>
+                <label class="label" >근로자 코드
+                <select name="select-employee-code" class="select-box" id="selectEmployeeCode">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                    <option value="I">I</option>
+                    <option value="J">J</option>
+                </select>
+                </label>
+                <br />
+                <!-- <button id="buttonSubmit">클릭</button> -->
+                <h3 class="employee-email" id="employeeEmail"></h3>
+            </form>
+            </div>
+        </div>
+    </body>
+    <script>
+        // 1. select 에 change 이벤트 발생시 getEmatl 실행
+        let select = document.getElementById('selectEmployeeCode');
+        select.addEventListener('change',getEmail);
+        
+        async function getEmail(){
+            // url 말고 json 파일을 읽어 오는 것도 가능하다.
+            let {data} = await axios.get('data.json'); // (라이브서버로 실행해야 에러 안남)
+            let h3 = document.getElementById('employeeEmail');
+            console.log(data);
+            // 2. data.Employees.employeeCode 와 select 의 value 비교
+            console.log(select.value);
+            // 3-1. for
+            /*for (let i = 0; i < data.Employees.length; i++){
+                if(select.value == data.Employees[i].employeeCode){ // 원하는 값을 찾았다면...
+                    h3.innerHTML = data.Employees[i].emailAddress; // 표시하고
+                    break;  // for 문을 빠져 나온다.
+                }
+            }*/
+            /* 3-2. filter : return 의 조건 값이 맞으면 해당 내용을 배열로 반환한다.
+            // 찾으려는 조건에 값이 여러개라는 전제, 그렇기 때문에 배열을 끝까지 순회 한다.
+            const result = data.Employees.filter(function(item){
+                return item.employeeCode === select.value;
+            });
+            console.log(result);
+            h3.innerHTML = result.emailAddress;
+            */
+            // 3-3. find : return 의 조건 값이 맞으면 해당 내용을 반환한다.(처음찾은 녀석만 반환)
+            const result = data.Employees.find(function(item){
+                return item.employeeCode === select.value;
+            });
+            console.log(result);
+            h3.innerHTML = result.emailAddress;
+        }
+
+
+
+
+    </script>
+</html>
