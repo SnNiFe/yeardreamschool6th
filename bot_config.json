@@ -10,7 +10,7 @@
         "16:30",
         "16:35"
     ],
-    "close_browser": true,
+    "close_browser": false,
     "retry_count": "2",
     "wait_time": "1",
     "attendance_log": {
@@ -32,6 +32,34 @@
         },
         "2026-08-07": {
             "morning": true,
+            "afternoon": true
+        },
+        "2026-08-14": {
+            "morning": false,
+            "afternoon": true
+        },
+        "2026-08-18": {
+            "morning": true,
+            "afternoon": true
+        },
+        "2026-08-10": {
+            "morning": true,
+            "afternoon": true
+        },
+        "2026-08-11": {
+            "morning": true,
+            "afternoon": true
+        },
+        "2026-08-12": {
+            "morning": true,
+            "afternoon": true
+        },
+        "2026-08-13": {
+            "morning": true,
+            "afternoon": true
+        },
+        "2026-08-19": {
+            "morning": false,
             "afternoon": false
         }
     }
