@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    .pulse-effect{
+        width: 80px;
+        height: 80px;
+        background-color: aqua;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+        0%{transform: scale(1); opacity: 1;}
+        50%{transform: scale(1.2); opacity: 0.5;}
+        100%{transform: scale(1); opacity: 1;}
+    }
+</style>
+<body>
+  <div class="pulse-effect"></div>
+</body>
+</html>

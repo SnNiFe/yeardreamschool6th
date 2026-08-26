@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <button id="submitBtn">제출하기</button>
+  <script>
+    // handleFormSubmitWithDelay 함수 내부를 완성하세요.
+    function handleFormSubmitWithDelay() {
+    /* 코드를 작성하세요. */
+    submitBtnElem.disabled = true;
+    submitBtnElem.innerText = "전송 중...";
+    setTimeout(function(){
+        submitBtnElem.disabled = false;
+        submitBtnElem.innerText = "제출 완료";
+    },4000);
+    }
+
+    const submitBtnElem = document.querySelector('#submitBtn');
+
+    submitBtnElem.addEventListener("click", handleFormSubmitWithDelay);
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <button id="btnOpaque">불투명(1)</button>
+  <button id="btnSemi">반투명(0.5)</button>
+  <button id="btnTransparent">투명(0)</button>
+
+  <div id="preview" style="width: 150px; height: 150px; background-color: blue; margin-top: 10px;">미리보기</div>
+</body>
+<script>
+    /* index.js에 버튼 클릭 동작을 구현하세요. index.html과 index.css는 변경하지 마세요. */
+    const btn1 = document.getElementById("btnOpaque");
+    const btn2 = document.getElementById("btnSemi");
+    const btn3 = document.getElementById("btnTransparent");
+    const preview = document.getElementById("preview");
+    btn1.addEventListener('click',function(e){
+        e.preventDefault();
+        preview.style.opacity = '1';
+    });
+    btn2.addEventListener('click',function(e){
+        e.preventDefault();
+        preview.style.opacity = '0.5';
+    });
+    btn3.addEventListener('click',function(e){
+        e.preventDefault();
+        preview.style.opacity = '0';
+    });
+</script>
+</html>

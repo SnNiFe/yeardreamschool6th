@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <input type="number" id="totalAmount" placeholder="총 금액">
+  <input type="number" id="peopleCount" placeholder="인원수">
+  <button id="splitBtn">정산하기</button>
+  <div id="perPersonResult"></div>
+</body>
+<script>
+    // index.js의 calculateSplit 함수를 완성하세요.
+    function calculateSplit(e) {
+    /* 코드를 작성하세요. */
+    e.preventDefault();
+    const tot = document.getElementById("totalAmount");
+    const peo = document.getElementById("peopleCount");
+    const ans = tot.value / peo.value;
+    const res = document.getElementById("perPersonResult");
+    res.innerText = Math.ceil(ans);
+    }
+
+    const splitBtn = document.getElementById("splitBtn");
+    splitBtn.addEventListener("click", calculateSplit);
+</script>
+</html>

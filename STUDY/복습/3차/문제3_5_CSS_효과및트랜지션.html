@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    .modal-backdrop{
+        /* transition-property: visibility, opacity; */
+        transition-property: opacity;
+        transition-duration: 0.25s;
+        transition-timing-function: ease;
+        transition-delay: 0s;
+    }
+    .modal-backdrop{
+        /* visibility: hidden; */
+        opacity: 0;
+    }
+    .modal-backdrop:hover{
+        /* visibility: visible; */
+        opacity: 1;
+    }
+</style>
+<body>
+  <div class="modal-backdrop">모달 레이어 배경</div>
+</body>
+</html>

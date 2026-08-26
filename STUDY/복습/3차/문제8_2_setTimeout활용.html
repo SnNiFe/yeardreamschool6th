@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <button id="triggerAlertBtn">경고창 띄우기</button>
+  <div id="alertBox" style="display: none; background-color: red; color: white; padding: 10px; margin-top: 10px;">
+    경고: 3초 후 이 메시지는 자동으로 사라집니다.
+  </div>
+  <script>
+    // showAlertAndHideWithDelay 함수 내부를 완성하세요.
+    function showAlertAndHideWithDelay() {
+    /* 코드를 작성하세요. */
+    alertBoxElem.style.display = "block"
+    setTimeout(function(){
+        alertBoxElem.style.display = "none"
+    },3000);
+    }
+
+    const triggerAlertBtn = document.querySelector('#triggerAlertBtn');
+    const alertBoxElem = document.querySelector('#alertBox');
+
+    triggerAlertBtn.addEventListener("click", showAlertAndHideWithDelay);
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <input type="text" id="searchInput" placeholder="검색어를 입력하세요">
+  <div id="searchResult"></div>
+  <script>
+    // showSearchTermWithDelay 함수 내부를 완성하세요.
+    function showSearchTermWithDelay(e) {
+    /* 코드를 작성하세요. */
+        let a = e.target.value;
+        setTimeout(function(){
+            searchResultElem.textContent = a;
+        },2000);
+    }
+
+    const searchInputElem = document.querySelector('#searchInput');
+    const searchResultElem = document.querySelector('#searchResult');
+
+    searchInputElem.addEventListener("input", showSearchTermWithDelay);
+  </script>
+</body>
+</html>

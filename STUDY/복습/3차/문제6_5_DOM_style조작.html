@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <script defer src="index.js"></script>
+</head>
+<body>
+  <button id="btnShow">모달 열기</button>
+  <button id="btnHide">모달 닫기</button>
+
+  <div id="modal" style="display: none; padding: 20px; background-color: #eee; margin-top: 10px;">
+    모달 팝업창 내용입니다.
+  </div>
+</body>
+<script>
+    /* index.js에 버튼 클릭 동작을 구현하세요. index.html과 index.css는 변경하지 마세요. */
+    const btn1 = document.getElementById("btnShow");
+    const btn2 = document.getElementById("btnHide");
+    const modal = document.getElementById("modal");
+    btn1.addEventListener('click',function(e){
+        e.preventDefault();
+        modal.style.display = 'block';
+    });
+    btn2.addEventListener('click',function(e){
+        e.preventDefault();
+        modal.style.display = 'none';
+    });
+</script>
+</html>

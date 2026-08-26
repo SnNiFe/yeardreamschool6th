@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미션 1: 감성 프로필 카드</title>
+    <!-- 구글 웹폰트 로드 -->
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        /* 이 아래에 CSS를 작성하세요 */
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Noto Sans KR', sans-serif;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 1. 카드 전체 컨테이너 */
+        .profile-card {
+            border-radius: 16px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+
+            padding: 24px 24px 24px 24px;
+            width: 350px;
+            background-color: white;
+            display: block;
+        }
+
+        /* 2. 프로필 이미지 */
+        .avatar {
+            border-radius: 50px;
+            vertical-align: middle;
+
+            margin-left: 16px;
+
+            size: 60px 60px;
+            display: inline;
+        }
+
+        /* 3. 텍스트 정보 영역 */
+        .info-area {
+            vertical-align: middle;
+
+            display: inline;
+        }
+
+        /* 이름 */
+        .name {
+            font-weight: 700;
+
+            margin-left: 8px;
+            font-size: 18px;
+            color: #333333;
+        }
+
+        /* 4. 직업 배지 */
+        .badge {
+            font-weight: 500;
+            border-radius: 20px;
+            font-size: 12px;
+            padding: 5px 5px;
+            margin-left: 10px;
+            color: #3b31d8;
+            background-color: rgb(227, 213, 247);
+        }
+
+        /* 5. 소개글 */
+        .bio {
+            line-height: 1.6;
+            margin: 20px 0 24px 0;
+            font: 14px;
+            color: #666666;
+            display: block;
+        }
+
+        /* 6. 버튼 (Block 구조) */
+        .btn {
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            padding: 12px 0;
+            width: 100%;
+            background-color: #4f46e5;
+            color: #ffffff;
+            font: 14px ;
+        }
+
+        .btn:hover {
+            background-color: #3b31d8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 프로필 카드 전체 컨테이너 -->
+    <div class="profile-card">
+        
+        <!-- 상단 레이아웃: 이미지와 정보 영역 -->
+        <img class="avatar" src="./nuri.png" alt="프로필">
+        
+        <div class="info-area">
+            <span class="name">김누리</span>
+            <span class="badge">프론트엔드</span>
+        </div>
+
+        <!-- 하단 레이아웃: 소개글과 버튼 -->
+        <p class="bio">안녕하세요! 세상에 긍정적인 변화를 주는 UI를 만드는 디자이너이자 개발자 김누리입니다. 야구와 코딩을 좋아합니다.</p>
+        
+        <button class="btn">포트폴리오 보기</button>
+    </div>
+
+</body>
+</html>

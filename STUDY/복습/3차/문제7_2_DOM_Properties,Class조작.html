@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <label><input type="checkbox" id="selectAll"> 전체 선택</label>
+  <hr>
+  <label><input type="checkbox" class="item-check"> 항목 1</label>
+  <label><input type="checkbox" class="item-check"> 항목 2</label>
+  <label><input type="checkbox" class="item-check"> 항목 3</label>
+  <script>
+    /* 지시사항을 참고하여 index.js를 작성하세요. */
+    const inpA = document.getElementById("selectAll");
+    const inp = document.getElementsByClassName('item-check');
+    inpA.addEventListener('change',function(){
+        if(inpA.checked){
+            console.log('true');
+        }else if (!inpA.checked){
+            console.log('false');
+        }
+        for(let i=0; i<inp.length; i++){
+            inp[i].checked = inpA.checked;
+        }
+    });
+  </script>
+</body>
+</html>

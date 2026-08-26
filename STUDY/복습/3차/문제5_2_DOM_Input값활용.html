@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <form id="tempForm">
+    <input type="number" id="celsius" placeholder="섭씨 온도 입력">
+    <button type="submit">변환</button>
+  </form>
+  <div id="fahrenheitResult"></div>
+</body>
+<script>
+    // index.js의 convertToFahrenheit 함수를 완성하세요.
+    function convertToFahrenheit(e) {
+    /* 코드를 작성하세요. */
+    e.preventDefault();
+    const deg = document.getElementById("celsius");
+    const fDeg = deg.value * 9 / 5 + 32;
+    const res = document.getElementById("fahrenheitResult");
+    res.innerText = fDeg.toFixed(1);
+    }
+
+    const form = document.getElementById("tempForm");
+    form.addEventListener("submit", convertToFahrenheit);
+</script>
+</html>

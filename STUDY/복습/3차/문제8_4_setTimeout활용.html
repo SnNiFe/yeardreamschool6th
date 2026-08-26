@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <input type="text" id="noticeText" value="새로운 공지사항이 등록되었습니다.">
+  <button id="loadNoticeBtn">공지 로드</button>
+  <div id="noticeBanner"></div>
+  <script>
+    // showPopupWithDelay 함수 내부를 완성하세요.
+    function showPopupWithDelay() {
+    /* 코드를 작성하세요. */
+    const inp = document.getElementById('noticeText');
+    const a = inp.value;
+    setTimeout(function(){
+        bannerElem.innerHTML = a;
+    },1000);
+    }
+
+    const bannerElem = document.querySelector('#noticeBanner');
+    const loadNoticeBtn = document.querySelector('#loadNoticeBtn');
+
+    loadNoticeBtn.addEventListener("click", showPopupWithDelay);
+  </script>
+</body>
+</html>

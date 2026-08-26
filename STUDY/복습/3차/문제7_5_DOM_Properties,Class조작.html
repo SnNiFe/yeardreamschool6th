@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <input type="text" id="userInput" value="사용자 데이터" disabled>
+  <button id="editBtn">수정하기</button>
+  <script>
+    /* 지시사항을 참고하여 index.js를 작성하세요. */
+    const inp = document.getElementById('userInput');
+    const btn = document.getElementById('editBtn');
+    btn.addEventListener('click',function(){
+        if(inp.disabled){
+            inp.disabled = false;
+            btn.innerText = '저장하기';
+            btn.classList.remove('editing');
+        }else{
+            inp.disabled = true;
+            btn.innerText = '수정하기';
+            btn.classList.add('editing');
+        }
+    });
+  </script>
+</body>
+</html>

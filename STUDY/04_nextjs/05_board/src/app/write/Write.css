@@ -1,0 +1,32 @@
+.write{
+    width:500px;
+}
+
+input[type="text"]{
+    width: 98%;
+}
+
+textarea{
+    width: 98%;
+    height: 300px;
+    resize: none;
+}
+
+.header{
+    background-color: lightgray;
+    height: 30px;
+    padding: 5px;
+}
+
+.title{
+    padding: 5px;
+    font-weight: bold;
+}
+
+.btn_area{
+    text-align: center;
+}
+
+button{
+    margin-left: 10px;
+}

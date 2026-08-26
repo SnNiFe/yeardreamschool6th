@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    .badge{
+        display: inline-block;
+        padding: 4px 8px;
+        font-size: 12px;
+        background-color: #e0e0e0;
+        color: #333333;
+    }
+    .badge.primary{
+        background-color: #29a745;
+        color: white;
+    }
+    .card-list li:nth-child(even){
+        background-color: #fafafa;
+    }
+</style>
+<body>
+  <span class="badge">기본 배지</span>
+  <span class="badge primary">주요 배지</span>
+
+  <ul class="card-list">
+    <li>첫 번째 카드</li>
+    <li>두 번째 카드</li>
+    <li>세 번째 카드</li>
+    <li>네 번째 카드</li>
+  </ul>
+</body>
+</html>

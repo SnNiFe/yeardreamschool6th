@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <button id="accordionHeader" aria-expanded="false">아코디언 제목</button>
+  <div id="accordionBody">
+    <p>아코디언의 상세 본문 내용입니다.</p>
+  </div>
+  <script>
+    /* 지시사항을 참고하여 index.js를 작성하세요. */
+    const btn = document.getElementById("accordionHeader");
+    const ac = document.getElementById("accordionBody");
+    btn.addEventListener('click',function(e){
+        if(ac.classList.contains('is-open')){
+            ac.classList.remove('is-open');
+            btn.setAttribute('aria-expanded','false');
+        }else{
+            ac.classList.add('is-open');
+            btn.setAttribute('aria-expanded','true');
+        }
+    });
+  </script>
+</body>
+</html>

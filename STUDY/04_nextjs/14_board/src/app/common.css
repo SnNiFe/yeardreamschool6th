@@ -1,0 +1,30 @@
+table, th, td{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th, td{
+    padding: 5px;
+}
+
+table{
+    width: 300px;
+}
+
+input[type='text'],input[type=password]{
+    width: 96%;
+}
+
+table.list{
+    width: 60%;
+}
+
+table.form{
+    width: 500px;
+}
+
+textarea{
+    width: 97%;
+    height: 150px;
+    resize: none;
+}

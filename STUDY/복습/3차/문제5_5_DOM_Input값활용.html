@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <form id="speedForm">
+    <input type="number" id="distance" placeholder="거리(km)">
+    <input type="number" id="time" placeholder="시간(h)">
+    <button type="submit">속도 계산</button>
+  </form>
+  <div id="speedResult"></div>
+</body>
+<script>
+    // index.js의 calculateSpeed 함수를 완성하세요.
+    function calculateSpeed(e) {
+    /* 코드를 작성하세요. */
+    e.preventDefault();
+    const d = document.getElementById("distance");
+    const t = document.getElementById("time");
+    const res = document.getElementById("speedResult");
+    const ans = d.value / t.value;
+    res.innerText = ans.toFixed(2);
+    }
+
+    const speedForm = document.getElementById("speedForm");
+    speedForm.addEventListener("submit", calculateSpeed);
+</script>
+</html>

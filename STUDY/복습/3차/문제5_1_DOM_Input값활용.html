@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <input type="number" id="radiusInput" placeholder="반지름 입력">
+  <button id="calcArea">계산</button>
+  <div id="areaResult"></div>
+</body>
+<script>
+    // index.js의 calculateArea 함수를 완성하세요.
+    function calculateArea(e) {
+    /* 코드를 작성하세요. */
+    e.preventDefault();
+    const r = document.getElementById("radiusInput");
+    let res = document.getElementById("areaResult");
+    const cir = Math.PI * r.value * r.value;
+    res.innerText = cir.toFixed(2);
+    console.log(cir);
+    }
+
+    const btn = document.getElementById("calcArea");
+    btn.addEventListener("click", calculateArea);
+</script>
+</html>

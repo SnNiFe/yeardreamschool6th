@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <button id="themeToggleBtn" aria-label="라이트 모드 활성화됨">다크 모드로 전환</button>
+  <script>
+    /* 지시사항을 참고하여 index.js를 작성하세요. */
+    const btn = document.getElementById("themeToggleBtn");
+    const body = document.getElementsByTagName("body")[0];
+    btn.addEventListener('click',function(e){
+        e.preventDefault();
+        if(body.classList.contains('dark-mode')){
+            body.classList.remove('dark-mode');
+            btn.innerText = '다크 모드로 전환';
+            btn.setAttribute('aria-label', '라이트 모드 활성화됨');
+        }else{
+            body.classList.add('dark-mode');
+            btn.innerText = '라이트 모드로 전환';
+            btn.setAttribute('aria-label', '다크 모드 활성화됨');
+        }
+        console.log(body);
+    });
+  </script>
+</body>
+</html>

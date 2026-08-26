@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <button id="btnShadowSoft">부드러운 그림자</button>
+  <button id="btnShadowHard">강한 그림자</button>
+  <button id="btnShadowNone">그림자 없음</button>
+
+  <div id="card" style="width: 200px; height: 120px; border: 1px solid #ccc; margin-top: 10px;">카드 컨텐츠</div>
+</body>
+<script>
+    /* index.js에 버튼 클릭 동작을 구현하세요. index.html과 index.css는 변경하지 마세요. */
+    const btn1 = document.getElementById("btnShadowSoft");
+    const btn2 = document.getElementById("btnShadowHard");
+    const btn3 = document.getElementById("btnShadowNone");
+    const card = document.getElementById("card");
+    btn1.addEventListener('click',function(e){
+        e.preventDefault();
+        card.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    });
+    btn2.addEventListener('click',function(e){
+        e.preventDefault();
+        card.style.boxShadow = '5px 5px 0px rgba(0,0,0,0.8)';
+    });
+    btn3.addEventListener('click',function(e){
+        e.preventDefault();
+        card.style.boxShadow = 'none';
+    });
+</script>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <input type="number" id="rectWidth" placeholder="가로 길이">
+  <input type="number" id="rectHeight" placeholder="세로 길이">
+  <button id="calcRect">둘레 계산</button>
+  <div id="perimeterResult"></div>
+</body>
+<script>
+    // index.js의 calculatePerimeter 함수를 완성하세요.
+    function calculatePerimeter(e) {
+    /* 코드를 작성하세요. */
+    e.preventDefault()
+    const w = document.getElementById("rectWidth");
+    const h = document.getElementById("rectHeight");
+    const res = document.getElementById("perimeterResult");
+    const ans = 2 * (Number(w.value) + Number(h.value));
+    res.innerText = ans;
+    }
+
+    const calcRectBtn = document.getElementById("calcRect");
+    calcRectBtn.addEventListener("click", calculatePerimeter);
+</script>
+</html>

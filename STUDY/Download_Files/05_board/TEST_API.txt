@@ -1,0 +1,20 @@
+POST http://localhost/write
+Content-Type: application/json
+
+{"user_name":"admin", "subject":"test subject", "content" : "test content"} 
+
+###
+
+GET http://localhost/list/1
+Content-Type: application/json
+
+###
+
+GET http://localhost/detail/123
+Content-Type: application/json
+
+###
+
+GET http://localhost/delete/123
+Content-Type: application/json
+

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <button id="btnLeft">왼쪽 정렬</button>
+  <button id="btnCenter">중앙 정렬</button>
+  <button id="btnRight">오른쪽 정렬</button>
+
+  <p id="paragraph">정렬 상태가 변경되는 텍스트입니다.</p>
+</body>
+<script>
+    /* index.js에 버튼 클릭 동작을 구현하세요. index.html과 index.css는 변경하지 마세요. */
+    const btn1 = document.getElementById("btnLeft");
+    const btn2 = document.getElementById("btnCenter");
+    const btn3 = document.getElementById("btnRight");
+    const par = document.getElementById("paragraph");
+    btn1.addEventListener('click',function(e){
+        e.preventDefault();
+        par.style.textAlign = 'left';
+    });
+    btn2.addEventListener('click',function(e){
+        e.preventDefault();
+        par.style.textAlign = 'center';
+    });
+    btn3.addEventListener('click',function(e){
+        e.preventDefault();
+        par.style.textAlign = 'right';
+    });
+</script>
+</html>

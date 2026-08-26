@@ -1,0 +1,21 @@
+.post{
+    width: 50%;
+    border: 1px solid lightgrey;
+    cursor: pointer;
+    margin-top: 5px;
+    padding: 10px;
+}
+
+.post:hover{
+    background-color: lightgrey;
+}
+
+.title{
+    font-weight: bold;
+    font-size: 20px;
+}
+
+a{
+    text-decoration: none;
+    color: orange;
+}

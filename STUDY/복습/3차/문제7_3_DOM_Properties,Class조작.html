@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- <script defer src="index.js"></script> -->
+</head>
+<body>
+  <div role="tablist">
+    <button class="tab-btn active" role="tab" aria-selected="true">탭 1</button>
+    <button class="tab-btn" role="tab" aria-selected="false">탭 2</button>
+    <button class="tab-btn" role="tab" aria-selected="false">탭 3</button>
+  </div>
+  <script>
+    /* 지시사항을 참고하여 index.js를 작성하세요. */
+    const btn = document.getElementsByClassName("tab-btn");
+    for(let j=0; j<btn.length; j++){
+        btn[j].addEventListener('click',function(e){
+            for(let i=0; i<btn.length; i++){
+                btn[i].classList.remove('active');
+                btn[i].setAttribute('aria-selected','false');
+            }
+            e.target.classList.add('active');
+            e.target.setAttribute('aria-selected','true');
+        });
+    }
+  </script>
+</body>
+</html>

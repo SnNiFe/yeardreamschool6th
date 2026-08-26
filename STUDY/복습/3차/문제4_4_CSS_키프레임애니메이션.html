@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    .bounce-ball{
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: orange;
+        animation: bounce 0.8s ease infinite alternate;
+    }
+    @keyframes bounce {
+        0%{transform: translateY(0);}
+        100%{transform: translateY(-100px);}        
+    }
+</style>
+<body>
+  <div class="bounce-ball"></div>
+</body>
+</html>
